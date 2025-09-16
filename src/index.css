@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Reset body margin and set default font */
+body {
+  margin: 0;
+  font-family: 'Fira Code', monospace;
+}
