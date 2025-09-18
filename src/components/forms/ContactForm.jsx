@@ -91,14 +91,14 @@ const ContactForm = () => {
   if (isSubmitted) {
     return (
       <motion.div
-        className="text-center py-12"
+        className="text-center py-12 text-[#0013ff]"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
           <svg
-            className="w-8 h-8 text-green-600"
+            className="w-8 h-8 text-[#0013ff]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -111,59 +111,58 @@ const ContactForm = () => {
             />
           </svg>
         </div>
-        <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+        <h3 className="text-2xl font-bold mb-2">
           Mensagem enviada!
         </h3>
-        <p className="text-gray-600 mb-6">
+        <p className="mb-6">
           Obrigado pelo contato. Responderemos em breve!
         </p>
-        <Button
+        <button
           onClick={() => setIsSubmitted(false)}
-          variant="outline"
+          className="bg-[#0013ff] text-white px-6 py-2 rounded-3xl text-base font-bold hover:bg-blue-800 transition-colors"
         >
           Enviar nova mensagem
-        </Button>
+        </button>
       </motion.div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Input
-        id="name"
-        name="name"
-        type="text"
-        label="Nome"
-        placeholder="Seu nome completo"
-        value={formData.name}
-        onChange={handleChange}
-        error={errors.name}
-        required
-      />
+    <form onSubmit={handleSubmit} className="flex flex-col gap-8 items-center">
+      <div className="flex flex-col gap-4 w-full">
+        <input
+          id="name"
+          name="name"
+          type="text"
+          placeholder="Nome"
+          value={formData.name}
+          onChange={handleChange}
+          className="bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none"
+          required
+        />
 
-      <Input
-        id="email"
-        name="email"
-        type="email"
-        label="E-mail"
-        placeholder="seu@email.com"
-        value={formData.email}
-        onChange={handleChange}
-        error={errors.email}
-        required
-      />
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="E-mail"
+          value={formData.email}
+          onChange={handleChange}
+          className="bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none"
+          required
+        />
 
-      <Textarea
-        id="message"
-        name="message"
-        label="Mensagem"
-        placeholder="Conte-nos sobre seu projeto, prazos e necessidades..."
-        rows={6}
-        value={formData.message}
-        onChange={handleChange}
-        error={errors.message}
-        required
-      />
+        <textarea
+          id="message"
+          name="message"
+          placeholder="Mensagem"
+          rows={8}
+          value={formData.message}
+          onChange={handleChange}
+          className="bg-white p-2.5 h-[200px] text-xs text-[#575756] border-0 outline-none resize-none"
+          required
+        />
+      </div>
 
       {errors.submit && (
         <div className="text-red-600 text-sm text-center">
@@ -171,16 +170,13 @@ const ContactForm = () => {
         </div>
       )}
 
-      <div className="flex justify-center">
-        <Button
-          type="submit"
-          loading={isSubmitting}
-          disabled={isSubmitting}
-          size="lg"
-        >
-          {isSubmitting ? 'Enviando...' : 'Enviar'}
-        </Button>
-      </div>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="bg-[#0013ff] text-white px-6 py-2 rounded-3xl text-base font-bold hover:bg-blue-800 transition-colors disabled:opacity-50"
+      >
+        {isSubmitting ? 'Enviando...' : 'Enviar'}
+      </button>
     </form>
   );
 };
