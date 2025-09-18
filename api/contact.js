@@ -1,22 +1,24 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
 import { Resend } from 'resend';
 
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3001;
-
-// Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+export default async function handler(req, res) {
+  // Handle CORS preflight request
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return res.status(200).end();
+  }
 
-// Contact form endpoint
-app.post('/api/contact', async (req, res) => {
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({
+      error: 'Método não permitido'
+    });
+  }
+
   try {
     const { name, email, message } = req.body;
 
@@ -35,6 +37,13 @@ app.post('/api/contact', async (req, res) => {
       });
     }
 
+    // Validate message length
+    if (message.trim().length < 10) {
+      return res.status(400).json({
+        error: 'Mensagem deve ter pelo menos 10 caracteres'
+      });
+    }
+
     // Send email using Resend
     const { data, error } = await resend.emails.send({
       from: 'Mok Labs <contato@moklabs.com.br>',
@@ -42,7 +51,7 @@ app.post('/api/contact', async (req, res) => {
       subject: `Novo contato de ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">Novo contato via site</h2>
+          <h2 style="color: #0013ff;">Novo contato via site</h2>
 
           <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>Nome:</strong> ${name}</p>
@@ -77,14 +86,14 @@ app.post('/api/contact', async (req, res) => {
       subject: 'Recebemos sua mensagem - Mok Labs',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">Obrigado pelo contato, ${name}!</h2>
+          <h2 style="color: #0013ff;">Obrigado pelo contato, ${name}!</h2>
 
           <p style="line-height: 1.6; color: #4b5563;">
             Recebemos sua mensagem e entraremos em contato em breve.
           </p>
 
-          <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2563eb;">
-            <h3 style="margin-top: 0; color: #1e40af;">Sua mensagem:</h3>
+          <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0013ff;">
+            <h3 style="margin-top: 0; color: #0013ff;">Sua mensagem:</h3>
             <p style="line-height: 1.6; color: #4b5563;">${message.replace(/\n/g, '<br>')}</p>
           </div>
 
@@ -114,13 +123,4 @@ app.post('/api/contact', async (req, res) => {
       error: 'Erro interno do servidor'
     });
   }
-});
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+}

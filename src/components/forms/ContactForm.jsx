@@ -62,8 +62,8 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // API endpoint - works for both development and production
-      const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/contact' : '/api/contact';
+      // API endpoint
+      const apiUrl = '/api/contact';
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
