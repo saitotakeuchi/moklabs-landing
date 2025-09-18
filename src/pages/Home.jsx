@@ -5,8 +5,7 @@ import {
   Services,
   HowWorks,
   AnimatedPanel,
-  Solutions,
-  Process,
+  OurWay,
   FAQ,
   Contact,
   Footer,
@@ -22,8 +21,7 @@ const Home = () => {
         <Services />
         <AnimatedPanel />
         <HowWorks />
-        <Solutions />
-        <Process />
+        <OurWay />
         <FAQ />
         <Contact />
       </main>

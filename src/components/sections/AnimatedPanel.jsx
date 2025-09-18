@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
-const topText = "SOLU\u00C7\u00D5ES DIGITAIS SOB MEDIDA.";
+const topText = "SOLUÇÕES DIGITAIS SOB MEDIDA.";
 const bottomText = "SEM RETRABALHO. SEM STRESS.";
 
 const AnimatedPanel = () => {
