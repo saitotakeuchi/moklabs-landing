@@ -76,12 +76,13 @@ const ContactForm = () => {
         setIsSubmitted(true);
         setFormData({ name: '', email: '', message: '' });
       } else {
-        throw new Error('Erro ao enviar mensagem');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Erro ao enviar mensagem');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       setErrors({
-        submit: 'Erro ao enviar mensagem. Tente novamente.'
+        submit: error.message || 'Erro ao enviar mensagem. Tente novamente.'
       });
     } finally {
       setIsSubmitting(false);

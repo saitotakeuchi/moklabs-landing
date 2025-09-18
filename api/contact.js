@@ -45,9 +45,12 @@ export default async function handler(req, res) {
     }
 
     // Send email using Resend
+    const fromEmail = process.env.FROM_EMAIL || 'contato@moklabs.com.br';
+    const toEmail = process.env.TO_EMAIL || 'contato@moklabs.com.br';
+
     const { data, error } = await resend.emails.send({
-      from: 'Mok Labs <contato@moklabs.com.br>',
-      to: ['contato@moklabs.com.br'],
+      from: `Mok Labs <${fromEmail}>`,
+      to: [toEmail],
       subject: `Novo contato de ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -78,39 +81,6 @@ export default async function handler(req, res) {
         error: 'Erro ao enviar e-mail. Tente novamente.'
       });
     }
-
-    // Send auto-reply to the user
-    await resend.emails.send({
-      from: 'Mok Labs <contato@moklabs.com.br>',
-      to: [email],
-      subject: 'Recebemos sua mensagem - Mok Labs',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #0013ff;">Obrigado pelo contato, ${name}!</h2>
-
-          <p style="line-height: 1.6; color: #4b5563;">
-            Recebemos sua mensagem e entraremos em contato em breve.
-          </p>
-
-          <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0013ff;">
-            <h3 style="margin-top: 0; color: #0013ff;">Sua mensagem:</h3>
-            <p style="line-height: 1.6; color: #4b5563;">${message.replace(/\n/g, '<br>')}</p>
-          </div>
-
-          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="margin-top: 0; color: #374151;">Entre em contato direto:</h3>
-            <p><strong>WhatsApp:</strong> +55 (41) 99999-9999</p>
-            <p><strong>E-mail:</strong> contato@moklabs.com.br</p>
-            <p><strong>Instagram:</strong> @moklabs</p>
-          </div>
-
-          <p style="font-size: 14px; color: #6b7280;">
-            Atenciosamente,<br>
-            Equipe Mok Labs
-          </p>
-        </div>
-      `,
-    });
 
     res.status(200).json({
       message: 'Mensagem enviada com sucesso!',

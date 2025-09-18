@@ -22,10 +22,16 @@ This project is configured for deployment on Vercel with serverless functions fo
 In your Vercel project dashboard:
 
 1. Go to **Settings** → **Environment Variables**
-2. Add the following variable:
+2. Add the following variables:
    - **Name**: `RESEND_API_KEY`
-   - **Value**: Your Resend API key
-   - **Environment**: Production, Preview, Development
+     - **Value**: Your Resend API key
+     - **Environment**: Production, Preview, Development
+   - **Name**: `FROM_EMAIL` (optional)
+     - **Value**: `contato@moklabs.com.br` (defaults to this if not set)
+     - **Environment**: Production, Preview, Development
+   - **Name**: `TO_EMAIL` (optional)
+     - **Value**: `contato@moklabs.com.br` (defaults to this if not set)
+     - **Environment**: Production, Preview, Development
 
 ### 3. Deploy
 
@@ -100,14 +106,20 @@ RESEND_API_KEY=your_resend_api_key_here
    - Verify RESEND_API_KEY is correct
    - Check function logs in Vercel dashboard
 
-2. **Build failures**:
+2. **Email sending issues**:
+   - **Domain not verified**: Use `onboarding@resend.dev` as FROM_EMAIL
+   - **Auto-reply failing**: Set `SEND_AUTO_REPLY=false` to disable
+   - **Rate limits**: Check Resend dashboard for usage limits
+   - **Invalid email**: Verify TO_EMAIL format
+
+3. **Build failures**:
    - Ensure all dependencies are in package.json
    - Check for TypeScript errors if applicable
 
-3. **Contact form not working**:
-   - Verify Resend domain is verified
-   - Check API endpoint URL
-   - Review CORS settings
+4. **Contact form not working**:
+   - Check browser network tab for API errors
+   - Verify API endpoint URL is correct
+   - Review CORS settings in vercel.json
 
 ### Support
 
