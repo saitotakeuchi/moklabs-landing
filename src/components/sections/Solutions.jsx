@@ -4,34 +4,6 @@ const Solutions = () => {
   return (
     <section className="py-16 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Solution Headlines */}
-        <div className="space-y-16 mb-24">
-          <motion.div
-            className="text-left"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl lg:text-5xl font-bold text-gray-900">
-              <span className="text-blue-600">SOLUÇÕES DIGITAIS</span>{' '}
-              SOB MEDIDA.
-            </h2>
-          </motion.div>
-
-          <motion.div
-            className="text-right"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <h2 className="text-3xl lg:text-5xl font-bold text-gray-900">
-              SEM RETRABALHO.{' '}
-              <span className="text-green-600">SEM STRESS.</span>
-            </h2>
-          </motion.div>
-        </div>
 
         {/* Our Approach Section */}
         <motion.div

@@ -3,12 +3,14 @@ import {
   Hero,
   ProblemStatement,
   Services,
+  HowWorks,
+  AnimatedPanel,
   Solutions,
   Process,
   FAQ,
   Contact,
-  Footer
-} from '../components/sections';
+  Footer,
+} from "../components/sections";
 
 const Home = () => {
   return (
@@ -18,6 +20,8 @@ const Home = () => {
         <Hero />
         <ProblemStatement />
         <Services />
+        <AnimatedPanel />
+        <HowWorks />
         <Solutions />
         <Process />
         <FAQ />

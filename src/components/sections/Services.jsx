@@ -1,4 +1,16 @@
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+
 const Services = () => {
+  const splashRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: splashRef,
+    offset: ["start end", "center center"],
+  });
+
+  const splashRotate = useTransform(scrollYProgress, [0, 1], [-90, 20]);
+
   return (
     <section
       className="py-24 px-0 relative bg-white"
@@ -15,29 +27,29 @@ const Services = () => {
         <div className="flex flex-col gap-16 items-center justify-center">
           {/* Title */}
           <div className="w-full text-center">
-            <h2 className="text-[32px] font-bold text-[#0013FF] leading-[1.2]">
+            <h2 className="text-[32px] font-bold text-mok-blue leading-[1.2]">
               O que fazemos
             </h2>
           </div>
 
           {/* Services List */}
           <div className="flex flex-col gap-10 items-center w-full">
-            <div className="text-[24px] font-bold text-[#0013FF] text-center leading-[1.2]">
+            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
               LIVROS DIGITAIS
             </div>
-            <div className="text-[24px] font-bold text-[#0013FF] text-center leading-[1.2]">
+            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
               PNLD DIGITAL
             </div>
-            <div className="text-[24px] font-bold text-[#0013FF] text-center leading-[1.2]">
+            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
               ACESSIBILIDADE
             </div>
-            <div className="text-[24px] font-bold text-[#0013FF] text-center leading-[1.2]">
+            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
               INTERATIVIDADE
             </div>
-            <div className="text-[24px] font-bold text-[#0013FF] text-center leading-[1.2]">
+            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
               AUDIODESCRIÇÃO
             </div>
-            <div className="text-[24px] font-bold text-[#0013FF] text-center leading-[1.2]">
+            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
               CONSULTORIA E SUPORTE
             </div>
           </div>
@@ -76,14 +88,18 @@ const Services = () => {
 
         {/* 100% Conformidade Badge */}
         <div className="absolute left-[101px] top-[50px]">
-          <div className="w-[240px] h-[240px] transform rotate-[-15deg] relative">
+          <motion.div
+            ref={splashRef}
+            className="w-[240px] h-[240px] relative"
+            style={{ rotate: splashRotate }}
+          >
             <img src="/services-splash.svg" alt="" className="w-full h-full" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[24px] font-bold text-center leading-[1.2] max-w-[191px]">
                 100% DE CONFORMIDADE COM O PNLD
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Before/After Comparison */}

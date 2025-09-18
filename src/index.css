@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --color-mok-blue: #0013FF;
+  --color-mok-green: #CBFF63;
+}
+
 /* Reset body margin and set default font */
 body {
   margin: 0;

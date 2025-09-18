@@ -6,11 +6,11 @@ export default defineConfig({
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    colors: {
+      'mok-blue': '#0013FF',
+      'mok-green': '#CBFF63',
+    },
     extend: {
-      colors: {
-        'mok-blue': '#0013FF',
-        'mok-green': '#CBFF63',
-      },
       fontFamily: {
         'sans': ['Fira Code', 'monospace'],
       },
