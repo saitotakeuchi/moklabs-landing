@@ -1,54 +1,111 @@
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-export default async function handler(req, res) {
-  // Handle CORS preflight request
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    return res.status(200).end();
+const parseJsonBody = async (req) => {
+  if (req.body) {
+    if (typeof req.body === "string") {
+      try {
+        return JSON.parse(req.body);
+      } catch (error) {
+        console.error("Failed to parse string body:", error);
+        return {};
+      }
+    }
+
+    return req.body;
   }
 
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).json({
-      error: 'Método não permitido'
+  const chunks = [];
+
+  for await (const chunk of req) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+  }
+
+  if (chunks.length === 0) {
+    return {};
+  }
+
+  const rawBody = Buffer.concat(chunks).toString();
+
+  try {
+    return rawBody ? JSON.parse(rawBody) : {};
+  } catch (error) {
+    console.error("Failed to parse streamed body:", error);
+    return {};
+  }
+};
+
+const sendStatus = (res, statusCode) => {
+  if (typeof res.status === "function") {
+    return res.status(statusCode).end();
+  }
+
+  res.statusCode = statusCode;
+  res.end();
+};
+
+const sendJson = (res, statusCode, payload) => {
+  if (typeof res.status === "function" && typeof res.json === "function") {
+    return res.status(statusCode).json(payload);
+  }
+
+  res.statusCode = statusCode;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(payload));
+};
+
+const simulateSend = (payload) => {
+  console.info("[contact] Simulated email send:", JSON.stringify(payload, null, 2));
+
+  return {
+    id: "simulated-email",
+    simulated: true,
+  };
+};
+
+export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return sendStatus(res, 200);
+  }
+
+  if (req.method !== "POST") {
+    res.setHeader("Allow", ["POST"]);
+    return sendJson(res, 405, {
+      error: "Método não permitido",
     });
   }
 
   try {
-    const { name, email, message } = req.body;
+    const { name, email, message } = await parseJsonBody(req);
 
-    // Validate required fields
     if (!name || !email || !message) {
-      return res.status(400).json({
-        error: 'Todos os campos são obrigatórios'
+      return sendJson(res, 400, {
+        error: "Todos os campos são obrigatórios",
       });
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        error: 'E-mail inválido'
+      return sendJson(res, 400, {
+        error: "E-mail inválido",
       });
     }
 
-    // Validate message length
     if (message.trim().length < 10) {
-      return res.status(400).json({
-        error: 'Mensagem deve ter pelo menos 10 caracteres'
+      return sendJson(res, 400, {
+        error: "Mensagem deve ter pelo menos 10 caracteres",
       });
     }
 
-    // Send email using Resend
-    const fromEmail = process.env.FROM_EMAIL || 'contato@moklabs.com.br';
-    const toEmail = process.env.TO_EMAIL || 'contato@moklabs.com.br';
+    const fromEmail = process.env.FROM_EMAIL || "contato@moklabs.com.br";
+    const toEmail = process.env.TO_EMAIL || "contato@moklabs.com.br";
 
-    const { data, error } = await resend.emails.send({
+    const emailPayload = {
       from: `Mok Labs <${fromEmail}>`,
       to: [toEmail],
       subject: `Novo contato de ${name}`,
@@ -63,7 +120,7 @@ export default async function handler(req, res) {
 
           <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
             <h3 style="margin-top: 0; color: #374151;">Mensagem:</h3>
-            <p style="line-height: 1.6; color: #4b5563;">${message.replace(/\n/g, '<br>')}</p>
+            <p style="line-height: 1.6; color: #4b5563;">${message.replace(/\n/g, "<br>")}</p>
           </div>
 
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;">
@@ -73,24 +130,33 @@ export default async function handler(req, res) {
           </p>
         </div>
       `,
-    });
+    };
 
-    if (error) {
-      console.error('Resend error:', error);
-      return res.status(500).json({
-        error: 'Erro ao enviar e-mail. Tente novamente.'
-      });
+    let result;
+
+    if (!resend) {
+      result = simulateSend(emailPayload);
+    } else {
+      const { data, error } = await resend.emails.send(emailPayload);
+
+      if (error) {
+        console.error("Resend error:", error);
+        return sendJson(res, 500, {
+          error: "Erro ao enviar e-mail. Tente novamente.",
+        });
+      }
+
+      result = data;
     }
 
-    res.status(200).json({
-      message: 'Mensagem enviada com sucesso!',
-      data: data
+    return sendJson(res, 200, {
+      message: resend ? "Mensagem enviada com sucesso!" : "Mensagem recebida (modo teste).",
+      data: result,
     });
-
   } catch (error) {
-    console.error('Server error:', error);
-    res.status(500).json({
-      error: 'Erro interno do servidor'
+    console.error("Server error:", error);
+    return sendJson(res, 500, {
+      error: "Erro interno do servidor",
     });
   }
 }
