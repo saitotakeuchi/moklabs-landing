@@ -23,7 +23,7 @@ const ContactForm = () => {
     if (!formData.email.trim()) {
       newErrors.email = "E-mail é obrigatório";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "E-mail inválido!";
+      newErrors.email = "E-mail inválido";
     }
 
     if (!formData.message.trim()) {
