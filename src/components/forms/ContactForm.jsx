@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Input, Textarea, Button } from '../ui';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Input, Textarea, Button } from "../ui";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
+    name: "",
+    email: "",
+    message: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -17,19 +17,19 @@ const ContactForm = () => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Nome é obrigatório';
+      newErrors.name = "Nome é obrigatório";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'E-mail é obrigatório';
+      newErrors.email = "E-mail é obrigatório";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'E-mail inválido';
+      newErrors.email = "E-mail inválido!";
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = 'Mensagem é obrigatória';
+      newErrors.message = "Mensagem é obrigatória";
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Mensagem deve ter pelo menos 10 caracteres';
+      newErrors.message = "Mensagem deve ter pelo menos 10 caracteres";
     }
 
     setErrors(newErrors);
@@ -38,16 +38,16 @@ const ContactForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
@@ -63,26 +63,26 @@ const ContactForm = () => {
 
     try {
       // API endpoint
-      const apiUrl = '/api/contact';
+      const apiUrl = "/api/contact";
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         setIsSubmitted(true);
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: "", email: "", message: "" });
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Erro ao enviar mensagem');
+        throw new Error(errorData.error || "Erro ao enviar mensagem");
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
       setErrors({
-        submit: error.message || 'Erro ao enviar mensagem. Tente novamente.'
+        submit: error.message || "Erro ao enviar mensagem. Tente novamente.",
       });
     } finally {
       setIsSubmitting(false);
@@ -112,12 +112,8 @@ const ContactForm = () => {
             />
           </svg>
         </div>
-        <h3 className="text-2xl font-bold mb-2">
-          Mensagem enviada!
-        </h3>
-        <p className="mb-6">
-          Obrigado pelo contato. Responderemos em breve!
-        </p>
+        <h3 className="text-2xl font-bold mb-2">Mensagem enviada!</h3>
+        <p className="mb-6">Obrigado pelo contato. Responderemos em breve!</p>
         <button
           onClick={() => setIsSubmitted(false)}
           className="bg-[#0013ff] text-white px-6 py-2 rounded-3xl text-base font-bold hover:bg-blue-800 transition-colors"
@@ -166,9 +162,7 @@ const ContactForm = () => {
       </div>
 
       {errors.submit && (
-        <div className="text-red-600 text-sm text-center">
-          {errors.submit}
-        </div>
+        <div className="text-red-600 text-sm text-center">{errors.submit}</div>
       )}
 
       <button
@@ -176,7 +170,7 @@ const ContactForm = () => {
         disabled={isSubmitting}
         className="bg-[#0013ff] text-white px-6 py-2 rounded-3xl text-base font-bold hover:bg-blue-800 transition-colors disabled:opacity-50"
       >
-        {isSubmitting ? 'Enviando...' : 'Enviar'}
+        {isSubmitting ? "Enviando..." : "Enviar"}
       </button>
     </form>
   );
