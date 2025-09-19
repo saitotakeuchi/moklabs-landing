@@ -1,6 +1,9 @@
 import { Resend } from "resend";
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
+const isProd =
+  process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
 
 const parseJsonBody = async (req) => {
   if (req.body) {
@@ -80,6 +83,13 @@ export default async function handler(req, res) {
     });
   }
 
+  if (!resend && isProd) {
+    console.error("RESEND_API_KEY is missing in production environment");
+    return sendJson(res, 500, {
+      error: "Configuração de e-mail ausente. Tente novamente mais tarde.",
+    });
+  }
+
   try {
     const { name, email, message } = await parseJsonBody(req);
 
@@ -132,9 +142,11 @@ export default async function handler(req, res) {
       `,
     };
 
+    const useSimulation = !resend;
+
     let result;
 
-    if (!resend) {
+    if (useSimulation) {
       result = simulateSend(emailPayload);
     } else {
       const { data, error } = await resend.emails.send(emailPayload);
