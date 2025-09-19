@@ -1,19 +1,45 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleNavClick = (e, targetId) => {
     e.preventDefault();
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+
+    // If we're not on the home page, navigate to home first
+    if (location.pathname !== '/') {
+      navigate('/');
+      // Use setTimeout to allow navigation to complete before scrolling
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 100);
+    } else {
+      // If we're on the home page, scroll to the section
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
     }
+
     // Close mobile menu after clicking
     setIsMenuOpen(false);
+  };
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    navigate('/');
   };
 
   const toggleMenu = () => {
@@ -27,7 +53,8 @@ const Header = () => {
           <img
             src="/logo-moklabs.svg"
             alt="Mok Labs"
-            className="h-[28px] w-[193px] sm:h-[36px] sm:w-[248px] md:h-[42px] md:w-[289px]"
+            className="h-[28px] w-[193px] sm:h-[36px] sm:w-[248px] md:h-[42px] md:w-[289px] cursor-pointer"
+            onClick={handleLogoClick}
           />
 
           {/* Desktop Navigation */}

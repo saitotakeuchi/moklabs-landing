@@ -53,37 +53,6 @@ const FAQ = () => {
         >
           <Accordion items={faqItems} />
         </motion.div>
-
-        <motion.div
-          className="text-center mt-8 sm:mt-16"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <p className="text-mok-blue text-[14px] sm:text-[16px] mb-4">
-            Não encontrou sua resposta?
-          </p>
-          <a
-            href="#contato"
-            className="inline-flex items-center justify-center gap-2 text-mok-blue text-[14px] sm:text-[16px] font-semibold transition-colors hover:text-mok-blue/80"
-          >
-            Entre em contato conosco
-            <svg
-              className="w-3 h-3 sm:w-4 sm:h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </a>
-        </motion.div>
       </div>
     </section>
   );

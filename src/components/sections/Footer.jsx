@@ -1,4 +1,5 @@
 import { Phone, Mail, Instagram } from "iconoir-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -64,18 +65,12 @@ const Footer = () => {
               © {currentYear} Mok Labs. Todos os direitos reservados.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a
-                href="#"
-                className="text-white hover:text-white text-sm transition-colors duration-200"
+              <Link
+                to="/politica-de-privacidade"
+                className="text-white hover:text-gray-300 text-sm transition-colors duration-200"
               >
                 Política de Privacidade
-              </a>
-              <a
-                href="#"
-                className="text-white hover:text-white text-sm transition-colors duration-200"
-              >
-                Termos de Uso
-              </a>
+              </Link>
             </div>
           </div>
         </div>

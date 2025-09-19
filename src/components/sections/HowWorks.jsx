@@ -23,7 +23,7 @@ const HowWorks = () => {
           <h2 className="text-mok-blue text-center text-[24px] sm:text-[32px] font-bold leading-[1.2] mb-8 sm:mb-16">
             Como funciona?
           </h2>
-          <div className="flex flex-col gap-6 sm:gap-10 items-center md:flex-row md:justify-center">
+          <div className="flex flex-col gap-6 sm:gap-10 items-center lg:flex-row lg:justify-center">
             {steps.map(({ title, description }) => (
               <div
                 key={title}
