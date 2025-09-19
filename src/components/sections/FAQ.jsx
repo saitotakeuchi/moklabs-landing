@@ -31,16 +31,16 @@ const faqItems = [
 
 const FAQ = () => {
   return (
-    <section id="faq" className="bg-white py-24">
-      <div className="max-w-[1184px] mx-auto px-8">
+    <section id="faq" className="bg-white py-12 sm:py-24">
+      <div className="max-w-[1184px] mx-auto px-4 sm:px-8">
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-8 sm:mb-16"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-mok-blue text-center text-[32px] font-bold leading-[1.2]">
+          <h2 className="text-mok-blue text-center text-[24px] sm:text-[32px] font-bold leading-[1.2]">
             Perguntas frequentes
           </h2>
         </motion.div>
@@ -55,22 +55,22 @@ const FAQ = () => {
         </motion.div>
 
         <motion.div
-          className="text-center mt-16"
+          className="text-center mt-8 sm:mt-16"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <p className="text-mok-blue text-[16px] mb-4">
+          <p className="text-mok-blue text-[14px] sm:text-[16px] mb-4">
             Não encontrou sua resposta?
           </p>
           <a
             href="#contato"
-            className="inline-flex items-center justify-center gap-2 text-mok-blue text-[16px] font-semibold transition-colors hover:text-mok-blue/80"
+            className="inline-flex items-center justify-center gap-2 text-mok-blue text-[14px] sm:text-[16px] font-semibold transition-colors hover:text-mok-blue/80"
           >
             Entre em contato conosco
             <svg
-              className="w-4 h-4"
+              className="w-3 h-3 sm:w-4 sm:h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

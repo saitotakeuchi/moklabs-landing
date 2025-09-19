@@ -112,13 +112,15 @@ export default async function handler(req, res) {
       });
     }
 
-    const fromEmail = process.env.FROM_EMAIL || "contato@moklabs.com.br";
+    const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
     const toEmail = process.env.TO_EMAIL || "contato@moklabs.com.br";
+    const fromName = process.env.FROM_NAME || "Mok Labs";
 
     const emailPayload = {
-      from: `Mok Labs <${fromEmail}>`,
+      from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
       subject: `Novo contato de ${name}`,
+      reply_to: [email],
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #0013ff;">Novo contato via site</h2>
@@ -154,7 +156,8 @@ export default async function handler(req, res) {
       if (error) {
         console.error("Resend error:", error);
         return sendJson(res, 500, {
-          error: "Erro ao enviar e-mail. Tente novamente.",
+          error:
+            "Erro ao enviar e-mail. Verifique a configuração do remetente em Resend.",
         });
       }
 

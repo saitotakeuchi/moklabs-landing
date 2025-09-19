@@ -1,22 +1,22 @@
 const highlights = [
   {
-    icon: "/our-way-01.png",
-    title: "N\u00E3o acreditamos em solu\u00E7\u00F5es engessadas.",
+    icon: "/our-way-01.jpg",
+    title: "Não acreditamos em soluções engessadas.",
     description:
-      "Cada projeto recebe um plano feito sob medida para o resultado que voc\u00EA precisa."
+      "Cada projeto recebe um plano feito sob medida para o resultado que você precisa.",
   },
   {
-    icon: "/our-way-02.png",
-    title: "Entregamos r\u00E1pido e com custos eficientes.",
+    icon: "/our-way-02.jpg",
+    title: "Entregamos rápido e com custos eficientes.",
     description:
-      "Times enxutos, processos \u00E1geis e comunica\u00E7\u00E3o clara para manter o or\u00E7amento no lugar."
+      "Times enxutos, processos ágeis e comunicação clara para manter o orçamento no lugar.",
   },
   {
-    icon: "/our-way-03.png",
-    title: "Garantimos atendimento humano e \u00E1gil.",
+    icon: "/our-way-03.jpg",
+    title: "Garantimos atendimento humano e ágil.",
     description:
-      "Voc\u00EA fala com especialistas de verdade, sempre prontos para ajustar o que for preciso."
-  }
+      "Você fala com especialistas de verdade, sempre prontos para ajustar o que for preciso.",
+  },
 ];
 
 const OurWay = () => {
@@ -36,7 +36,7 @@ const OurWay = () => {
               <img
                 src={icon}
                 alt={title}
-                className="w-[168px] h-[168px] object-contain"
+                className="w-[168px] h-[168px] object-contain rounded-full"
               />
               <div className="flex flex-col gap-3">
                 <h3 className="text-white text-[20px] font-bold leading-[1.3]">

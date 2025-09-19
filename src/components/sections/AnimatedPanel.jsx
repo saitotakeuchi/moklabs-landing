@@ -18,11 +18,11 @@ const AnimatedPanel = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden w-full h-[120px] bg-mok-blue flex flex-col justify-center"
+      className="relative overflow-hidden w-full h-[80px] sm:h-[120px] bg-mok-blue flex flex-col justify-center"
     >
       <div className="flex h-1/2 items-center justify-center overflow-hidden">
         <motion.span
-          className="font-sans text-[24px] font-bold leading-[1.2] text-white"
+          className="font-sans text-[18px] sm:text-[24px] font-bold leading-[1.2] text-white"
           style={{ x: topX }}
         >
           {topText}
@@ -30,7 +30,7 @@ const AnimatedPanel = () => {
       </div>
       <div className="flex h-1/2 items-center justify-center overflow-hidden">
         <motion.span
-          className="font-sans text-[24px] font-bold leading-[1.2] text-white"
+          className="font-sans text-[18px] sm:text-[24px] font-bold leading-[1.2] text-white"
           style={{ x: bottomX }}
         >
           {bottomText}
