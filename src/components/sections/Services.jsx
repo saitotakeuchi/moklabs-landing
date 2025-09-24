@@ -23,6 +23,18 @@ const Services = () => {
         backgroundSize: "40px 40px",
       }}
     >
+      <div className="hidden md:block absolute right-[16px] top-[32px]">
+        <div className="w-[100px] h-[100px]">
+          <img src="/services-blue-star.svg" alt="" className="w-full h-full" />
+        </div>
+      </div>
+
+      <div className="hidden md:block absolute right-[0] top-[196px]">
+        <div className="w-[200px] h-[200px]">
+          <img src="/services-half-star.svg" alt="" className="w-full h-full" />
+        </div>
+      </div>
+
       <div className="max-w-[1184px] mx-auto px-8 relative">
         {/* Desktop Layout */}
         <div className="hidden md:flex flex-col gap-16 items-center justify-center">
@@ -152,39 +164,8 @@ const Services = () => {
           </div>
         </div>
 
-        {/* Decorative Stars - Hidden on mobile */}
-        <div className="hidden md:block absolute left-[20px] top-[145px]">
-          <div className="w-[111px] h-[111px] transform rotate-[15deg]">
-            <img
-              src="/services-green-star.svg"
-              alt=""
-              className="w-full h-full"
-            />
-          </div>
-        </div>
-
-        <div className="hidden md:block absolute right-[16px] top-[-64px]">
-          <div className="w-[100px] h-[100px]">
-            <img
-              src="/services-blue-star.svg"
-              alt=""
-              className="w-full h-full"
-            />
-          </div>
-        </div>
-
-        <div className="hidden md:block absolute right-[0] top-[150px]">
-          <div className="w-[200px] h-[200px]">
-            <img
-              src="/services-half-star.svg"
-              alt=""
-              className="w-full h-full"
-            />
-          </div>
-        </div>
-
         {/* 100% Conformidade Badge - Desktop only */}
-        <div className="hidden md:block absolute left-[70px] top-[50px]">
+        <div className="hidden md:block absolute left-[70px] top-[50px] z-10">
           <motion.div
             className="w-[180px] h-[180px] lg:w-[240px] lg:h-[240px] relative"
             style={{ rotate: splashRotate }}
@@ -196,6 +177,17 @@ const Services = () => {
               </div>
             </div>
           </motion.div>
+        </div>
+
+        {/* Decorative Stars - Full page width */}
+        <div className="hidden md:block absolute left-[30px] top-[40px] z-0">
+          <div className="w-[111px] h-[111px] transform rotate-[15deg]">
+            <img
+              src="/services-green-star.svg"
+              alt=""
+              className="w-full h-full"
+            />
+          </div>
         </div>
 
         {/* Before/After Comparison - Desktop only */}
