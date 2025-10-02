@@ -44,7 +44,7 @@ const HowWorks = () => {
       <section className="bg-white py-3 sm:py-4 flex">
         <div className="max-w-[1184px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center">
           <p className="text-mok-blue text-[14px] sm:text-[16px] font-bold">
-            Pronto para comecar?
+            Pronto para começar?
           </p>
           <a
             href="https://wa.me/5541992694663"
