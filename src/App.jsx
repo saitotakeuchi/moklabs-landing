@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/common';
-import { Home, PrivacyPolicy } from './pages';
+import { Home, MainLanding, PnldLanding, PrivacyPolicy } from './pages';
 
 function App() {
   return (
@@ -11,7 +11,8 @@ function App() {
       </div>}>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
+            <Route index element={<MainLanding />} />
+            <Route path="pnld" element={<PnldLanding />} />
             <Route path="politica-de-privacidade" element={<PrivacyPolicy />} />
           </Route>
         </Routes>

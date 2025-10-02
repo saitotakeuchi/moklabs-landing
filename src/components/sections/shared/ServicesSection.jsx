@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
-const Services = () => {
+const Services = ({ content }) => {
   const splashRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
@@ -25,13 +25,13 @@ const Services = () => {
     >
       <div className="hidden md:block absolute right-[16px] top-[32px]">
         <div className="w-[100px] h-[100px]">
-          <img src="/services-blue-star.svg" alt="" className="w-full h-full" />
+          <img src={content.decorativeImages[0].src} alt={content.decorativeImages[0].alt} className="w-full h-full" />
         </div>
       </div>
 
       <div className="hidden md:block absolute right-[0] top-[196px]">
         <div className="w-[200px] h-[200px]">
-          <img src="/services-half-star.svg" alt="" className="w-full h-full" />
+          <img src={content.decorativeImages[1].src} alt={content.decorativeImages[1].alt} className="w-full h-full" />
         </div>
       </div>
 
@@ -41,30 +41,17 @@ const Services = () => {
           {/* Title */}
           <div className="w-full text-center">
             <h2 className="text-[32px] font-bold text-mok-blue leading-[1.2]">
-              O que fazemos
+              {content.title}
             </h2>
           </div>
 
           {/* Services List */}
           <div className="flex flex-col gap-10 items-center w-full">
-            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              LIVROS DIGITAIS
-            </div>
-            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              PNLD DIGITAL
-            </div>
-            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              ACESSIBILIDADE
-            </div>
-            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              INTERATIVIDADE
-            </div>
-            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              AUDIODESCRIÇÃO
-            </div>
-            <div className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              CONSULTORIA E SUPORTE
-            </div>
+            {content.items.map((item, index) => (
+              <div key={index} className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
+                {item}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -76,10 +63,10 @@ const Services = () => {
             className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] relative"
             style={{ rotate: splashRotate }}
           >
-            <img src="/services-splash.svg" alt="" className="w-full h-full" />
+            <img src={content.splashImage} alt="" className="w-full h-full" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[10px] sm:text-[14px] font-bold text-center leading-[1.2] max-w-[90px] sm:max-w-[120px]">
-                100% DE CONFORMIDADE COM O PNLD
+                {content.splashText}
               </div>
             </div>
           </motion.div>
@@ -87,30 +74,17 @@ const Services = () => {
           {/* Title */}
           <div className="w-full text-center">
             <h2 className="text-[24px] sm:text-[32px] font-bold text-mok-blue leading-[1.2]">
-              O que fazemos
+              {content.title}
             </h2>
           </div>
 
           {/* Services List */}
           <div className="flex flex-col gap-6 sm:gap-10 items-center w-full">
-            <div className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              LIVROS DIGITAIS
-            </div>
-            <div className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              PNLD DIGITAL
-            </div>
-            <div className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              ACESSIBILIDADE
-            </div>
-            <div className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              INTERATIVIDADE
-            </div>
-            <div className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              AUDIODESCRIÇÃO
-            </div>
-            <div className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
-              CONSULTORIA E SUPORTE
-            </div>
+            {content.items.map((item, index) => (
+              <div key={index} className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
+                {item}
+              </div>
+            ))}
           </div>
 
           {/* Mobile Before/After Comparison - At bottom */}
@@ -170,10 +144,10 @@ const Services = () => {
             className="w-[180px] h-[180px] lg:w-[240px] lg:h-[240px] relative"
             style={{ rotate: splashRotate }}
           >
-            <img src="/services-splash.svg" alt="" className="w-full h-full" />
+            <img src={content.splashImage} alt="" className="w-full h-full" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[18px] lg:text-[24px] font-bold text-center leading-[1.2] max-w-[140px] lg:max-w-[191px]">
-                100% DE CONFORMIDADE COM O PNLD
+                {content.splashText}
               </div>
             </div>
           </motion.div>

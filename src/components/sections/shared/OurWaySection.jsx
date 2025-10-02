@@ -1,34 +1,13 @@
-const highlights = [
-  {
-    icon: "/our-way-01.jpg",
-    title: "Não acreditamos em soluções engessadas.",
-    description:
-      "Cada projeto recebe um plano feito sob medida para o resultado que você precisa.",
-  },
-  {
-    icon: "/our-way-02.jpg",
-    title: "Entregamos rápido e com custos eficientes.",
-    description:
-      "Times enxutos, processos ágeis e comunicação clara para manter o orçamento no lugar.",
-  },
-  {
-    icon: "/our-way-03.jpg",
-    title: "Garantimos atendimento humano e ágil.",
-    description:
-      "Você fala com especialistas de verdade, sempre prontos para ajustar o que for preciso.",
-  },
-];
-
-const OurWay = () => {
+const OurWay = ({ content }) => {
   return (
     <section className="bg-mok-blue py-24">
       <div className="max-w-[1184px] mx-auto px-8">
         <h2 className="text-white text-center text-[32px] font-bold leading-[1.2] mb-16">
-          Nosso jeito
+          {content.title}
         </h2>
 
         <div className="grid gap-12 md:grid-cols-3 md:items-start">
-          {highlights.map(({ icon, title, description }) => (
+          {content.highlights.map(({ icon, title, description }) => (
             <div
               key={title}
               className="flex flex-col items-center text-center gap-6"

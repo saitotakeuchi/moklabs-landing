@@ -11,7 +11,9 @@ const Layout = ({ title, description, keywords }) => {
       <GoogleAnalytics />
       <VercelAnalytics />
       <div className="min-h-screen bg-white">
-        <Outlet />
+        <div className="pt-[60px] sm:pt-[84px] md:pt-[98px]">
+          <Outlet />
+        </div>
         <CookieConsent />
       </div>
     </>

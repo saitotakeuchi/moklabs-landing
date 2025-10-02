@@ -1,30 +1,15 @@
 import { Whatsapp } from "iconoir-react";
 
-const HowWorks = () => {
-  const steps = [
-    {
-      title: "Você envia os arquivos",
-      description: "→ Só precisamos dos originais.",
-    },
-    {
-      title: "Adaptamos ao edital ",
-      description: "→ Formatação, digitalização e testes de acessibilidade.",
-    },
-    {
-      title: "Você recebe tudo pronto",
-      description: "→ Arquivos revisados e prontos para inscrição.",
-    },
-  ];
-
+const HowWorks = ({ content }) => {
   return (
     <>
       <section className="bg-mok-green py-12 sm:py-24">
         <div className="max-w-[1184px] mx-auto px-4 sm:px-8 flex flex-col items-center">
           <h2 className="text-mok-blue text-center text-[24px] sm:text-[32px] font-bold leading-[1.2] mb-8 sm:mb-16">
-            Como funciona?
+            {content.title}
           </h2>
           <div className="flex flex-col gap-6 sm:gap-10 items-center lg:flex-row lg:justify-center">
-            {steps.map(({ title, description }) => (
+            {content.steps.map(({ title, description }) => (
               <div
                 key={title}
                 className="w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[320px] md:h-[320px] rounded-full bg-white flex flex-col items-center justify-center text-center px-4 sm:px-6"
@@ -44,16 +29,16 @@ const HowWorks = () => {
       <section className="bg-white py-3 sm:py-4 flex">
         <div className="max-w-[1184px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center">
           <p className="text-mok-blue text-[14px] sm:text-[16px] font-bold">
-            Pronto para começar?
+            {content.cta.text}
           </p>
           <a
-            href="https://wa.me/5541992694663"
+            href={content.cta.button.url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex h-8 sm:h-8 items-center gap-2 rounded-full bg-mok-blue px-4 sm:px-6 text-white text-[14px] sm:text-[16px] font-semibold transition-colors hover:bg-mok-blue/90"
           >
             <Whatsapp className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-            <span>Vamos conversar!</span>
+            <span>{content.cta.button.text}</span>
           </a>
         </div>
       </section>

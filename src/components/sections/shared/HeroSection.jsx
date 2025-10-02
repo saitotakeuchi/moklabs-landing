@@ -1,19 +1,18 @@
 import { motion } from "framer-motion";
 
-const Hero = () => {
+const Hero = ({ content }) => {
   return (
     <section id="inicio" className="bg-mok-blue py-12 sm:py-24">
       <div className="w-full flex justify-center px-4">
         <div className="flex flex-col items-center text-center">
           {/* Text Content - Vertical Layout */}
           <div className="mb-8 sm:mb-16">
-            <h1 className="text-[32px] sm:text-[60px] md:text-[80px] lg:text-[98px] font-bold text-white leading-tight mb-4 sm:mb-6">
-              PNLD digital sem complicação
+            <h1 className="text-[32px] max-w-5xl sm:text-[60px] md:text-[80px] lg:text-[98px] font-bold text-white leading-tight mb-4 sm:mb-6">
+              {content.title}
             </h1>
 
             <p className="text-[16px] sm:text-[20px] md:text-[24px] font-bold text-mok-green leading-[1.2] max-w-xs sm:max-w-2xl md:max-w-4xl text-center mx-auto px-2">
-              No Mok Labs transformamos seus materiais em versões digitais
-              acessíveis e em conformidade com os editais do PNLD.
+              {content.subtitle}
             </p>
           </div>
 
@@ -33,10 +32,10 @@ const Hero = () => {
 
               {/* Green Circle */}
               <div className="absolute left-[18px] top-[18px] w-[214px] h-[214px] sm:left-[21px] sm:top-[21px] sm:w-[258px] sm:h-[258px] md:left-[26px] md:top-[26px] md:w-[321px] md:h-[321px] rounded-full bg-mok-green flex items-center justify-center">
-                {/* Pixelated Hand */}
+                {/* Dynamic Image */}
                 <img
-                  src="/hero-hand.svg"
-                  alt="Pixelated hand illustration"
+                  src={content.image}
+                  alt={content.imageAlt}
                   className="w-auto h-auto max-w-[80%] max-h-[80%]"
                 />
               </div>
