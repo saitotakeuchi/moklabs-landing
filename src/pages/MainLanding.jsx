@@ -20,9 +20,9 @@ const MainLanding = () => {
         <Hero content={mainContent.hero} />
         <ProblemStatement content={mainContent.problemStatement} />
         <Services content={mainContent.services} />
-        <AnimatedPanel content={mainContent.animatedPanel} />
         <HowWorks content={mainContent.howWorks} />
         <OurWay content={mainContent.ourWay} />
+        <AnimatedPanel content={mainContent.animatedPanel} />
         <FAQ content={mainContent.faq} />
         <Contact />
       </main>

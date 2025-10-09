@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
-const ServicesMain = ({ content }) => {
+const ServicesPnld = ({ content }) => {
   const splashRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
@@ -14,24 +14,24 @@ const ServicesMain = ({ content }) => {
   return (
     <section
       id="servicos"
-      className="py-6 md:py-24 px-0 relative bg-mok-green"
+      className="py-6 md:py-24 px-0 relative bg-white"
+      style={{
+        backgroundImage: `
+          linear-gradient(to right, #EAFF8F 1px, transparent 1px),
+          linear-gradient(to bottom, #EAFF8F 1px, transparent 1px)
+        `,
+        backgroundSize: "40px 40px",
+      }}
     >
-      {/* Decorative Stars */}
-      <div className="hidden md:block absolute right-[100px] top-[32px]">
-        <div className="w-[158px] h-[158px]">
-          <img src="/services-blue-star.svg" alt="" className="w-full h-full" />
+      <div className="hidden md:block absolute right-[16px] top-[32px]">
+        <div className="w-[100px] h-[100px]">
+          <img src={content.decorativeImages[0].src} alt={content.decorativeImages[0].alt} className="w-full h-full" />
         </div>
       </div>
 
-      <div className="hidden md:block absolute left-[70px] top-[200px]">
-        <div className="w-[137px] h-[137px]">
-          <img src="/services-blue-star.svg" alt="" className="w-full h-full" />
-        </div>
-      </div>
-
-      <div className="hidden md:block absolute right-[-50px] bottom-[100px]">
-        <div className="w-[294px] h-[294px]">
-          <img src="/services-blue-star.svg" alt="" className="w-full h-full" />
+      <div className="hidden md:block absolute right-[0] top-[196px]">
+        <div className="w-[200px] h-[200px]">
+          <img src={content.decorativeImages[1].src} alt={content.decorativeImages[1].alt} className="w-full h-full" />
         </div>
       </div>
 
@@ -138,23 +138,86 @@ const ServicesMain = ({ content }) => {
           </div>
         </div>
 
-        {/* White Badge/Seal - Desktop only */}
-        <div className="hidden md:block absolute left-[100px] top-[50px] z-10">
+        {/* 100% Conformidade Badge - Desktop only */}
+        <div className="hidden md:block absolute left-[70px] top-[50px] z-10">
           <motion.div
-            className="w-[150px] h-[150px] lg:w-[240px] lg:h-[240px] relative"
+            className="w-[180px] h-[180px] lg:w-[240px] lg:h-[240px] relative"
             style={{ rotate: splashRotate }}
           >
-            <img src={content.splashImage} alt="" className="w-full h-full absolute inset-0" />
-            <div className="absolute inset-0 flex items-center justify-center px-4 z-10">
-              <p className="text-mok-blue text-[12px] lg:text-[18px] font-bold text-center leading-[1.2] max-w-[100px] lg:max-w-[160px] break-words">
+            <img src={content.splashImage} alt="" className="w-full h-full" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-white text-[18px] lg:text-[24px] font-bold text-center leading-[1.2] max-w-[140px] lg:max-w-[191px]">
                 {content.splashText}
-              </p>
+              </div>
             </div>
           </motion.div>
+        </div>
+
+        {/* Decorative Stars - Full page width */}
+        <div className="hidden md:block absolute left-[30px] top-[40px] z-0">
+          <div className="w-[111px] h-[111px] transform rotate-[15deg]">
+            <img
+              src="/services-green-star.svg"
+              alt=""
+              className="w-full h-full"
+            />
+          </div>
+        </div>
+
+        {/* Before/After Comparison - Desktop only */}
+        <div className="hidden md:block absolute right-[35px] bottom-[6px]">
+          <div className="flex gap-3 lg:gap-4 items-center">
+            {/* Sem Mok Labs */}
+            <div className="flex flex-col gap-1 lg:gap-2 items-center w-[60px] lg:w-[80px]">
+              <div className="w-[42px] h-[42px] lg:w-[57px] lg:h-[57px] relative">
+                <img
+                  src="/sem-mok.svg"
+                  alt="Sem Mok Labs"
+                  className="w-full h-full"
+                />
+              </div>
+              <div className="text-[10px] lg:text-[12px] text-black text-center leading-[1.4]">
+                Sem Mok Labs
+              </div>
+            </div>
+
+            {/* Arrow */}
+            <div className="w-[24px] h-[18px] lg:w-[30px] lg:h-[22px] relative">
+              <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 30 22"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 11H28M28 11L18 1M28 11L18 21"
+                  stroke="#000000"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+
+            {/* Com Mok Labs */}
+            <div className="flex flex-col gap-1 lg:gap-2 items-center w-[60px] lg:w-[80px]">
+              <div className="w-[42px] h-[42px] lg:w-[57px] lg:h-[57px] relative">
+                <img
+                  src="/com-mok.svg"
+                  alt="Com Mok Labs"
+                  className="w-full h-full"
+                />
+              </div>
+              <div className="text-[10px] lg:text-[12px] text-black text-center leading-[1.4]">
+                Com Mok Labs
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-export default ServicesMain;
+export default ServicesPnld;

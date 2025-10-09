@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
-const AnimatedPanelMain = ({ content }) => {
+const AnimatedPanelPnld = ({ content }) => {
   const sectionRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
@@ -15,11 +15,11 @@ const AnimatedPanelMain = ({ content }) => {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden w-full h-[80px] sm:h-[120px] bg-mok-green flex flex-col justify-center"
+      className="relative overflow-hidden w-full h-[80px] sm:h-[120px] bg-mok-blue flex flex-col justify-center"
     >
       <div className="flex h-1/2 items-center justify-center overflow-hidden">
         <motion.span
-          className="text-[18px] sm:text-[24px] font-bold leading-[1.2] text-mok-blue"
+          className="text-[18px] sm:text-[24px] font-bold leading-[1.2] text-white"
           style={{ x: topX }}
         >
           {content.topText}
@@ -27,7 +27,7 @@ const AnimatedPanelMain = ({ content }) => {
       </div>
       <div className="flex h-1/2 items-center justify-center overflow-hidden">
         <motion.span
-          className="text-[18px] sm:text-[24px] font-bold leading-[1.2] text-mok-blue"
+          className="text-[18px] sm:text-[24px] font-bold leading-[1.2] text-white"
           style={{ x: bottomX }}
         >
           {content.bottomText}
@@ -37,4 +37,4 @@ const AnimatedPanelMain = ({ content }) => {
   );
 };
 
-export default AnimatedPanelMain;
+export default AnimatedPanelPnld;

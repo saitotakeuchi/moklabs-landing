@@ -1,10 +1,10 @@
 import {
   Header,
-  Hero,
-  ProblemStatement,
-  Services,
-  HowWorks,
-  AnimatedPanel,
+  HeroPnld,
+  ProblemStatementPnld,
+  ServicesPnld,
+  HowWorksPnld,
+  AnimatedPanelPnld,
   OurWay,
   FAQ,
   Contact,
@@ -17,11 +17,11 @@ const PnldLanding = () => {
     <>
       <Header />
       <main>
-        <Hero content={pnldContent.hero} />
-        <ProblemStatement content={pnldContent.problemStatement} />
-        <Services content={pnldContent.services} />
-        <AnimatedPanel content={pnldContent.animatedPanel} />
-        <HowWorks content={pnldContent.howWorks} />
+        <HeroPnld content={pnldContent.hero} />
+        <ProblemStatementPnld content={pnldContent.problemStatement} />
+        <ServicesPnld content={pnldContent.services} />
+        <AnimatedPanelPnld content={pnldContent.animatedPanel} />
+        <HowWorksPnld content={pnldContent.howWorks} />
         <OurWay content={pnldContent.ourWay} />
         <FAQ content={pnldContent.faq} />
         <Contact />

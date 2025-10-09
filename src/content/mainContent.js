@@ -1,10 +1,20 @@
 export const mainContent = {
   hero: {
     title: "Soluções digitais para a educação, sem complicação",
-    subtitle:
-      "No MokLabs transformamos ideias em experiências digitais: livros, PDFs, jogos, conteúdos multimídia e muito mais (sempre de olho em acessibilidade e inovação)",
-    image: "/hero-hand.svg",
+    image: "/main-lp-hero.svg",
     imageAlt: "Digital solutions illustration",
+    buttons: [
+      {
+        text: "Vamos conversar!",
+        url: "https://wa.me/5541992694663",
+        variant: "primary",
+      },
+      {
+        text: "Conheça os serviços",
+        url: "#servicos",
+        variant: "secondary",
+      },
+    ],
   },
 
   services: {
@@ -17,7 +27,7 @@ export const mainContent = {
       "CONSULTORIA DIGITAL",
       "AUTOMAÇÃO",
     ],
-    splashImage: "/services-splash.svg",
+    splashImage: "/services-splash-white.svg",
     splashText: "CRIATIVIDADE, INOVAÇÃO E AGILIDADE",
     decorativeImages: [
       { src: "/services-blue-star.svg", alt: "" },
@@ -26,15 +36,15 @@ export const mainContent = {
   },
 
   problemStatement: {
-    title: "Criar soluções digitais educacionais não é simples",
+    title: "Você tem uma ideia incrível, mas...",
     problems: [
-      "São muitas camadas: design pedagógico, programação, compatibilidade entre plataformas, acessibilidade e adequação a padrões técnicos.",
-      "Com prazos curtos, qualquer falha vira dor de cabeça: materiais fora do padrão ou com problemas de navegação comprometem a experiência do aluno e a entrega da instituição.",
+      "São tantas camadas: design, programação, responsividade, acessibilidade e padrões técnicos.",
+      "Qualquer falha vira dor de cabeça:  materiais fora do padrão de qualidade comprometem a experiência do aluno e a imagem da instituição.",
     ],
   },
 
   howWorks: {
-    title: "Como trabalhamos?",
+    title: "Processo simples e ágil",
     steps: [
       {
         title: "Você traz sua ideia ou material",
@@ -61,7 +71,7 @@ export const mainContent = {
   },
 
   ourWay: {
-    title: "Nosso jeito",
+    title: "Por que escolher o Mok Labs?",
     highlights: [
       {
         icon: "/our-way-01.jpg",
@@ -85,8 +95,8 @@ export const mainContent = {
   },
 
   animatedPanel: {
-    topText: "INOVAÇÃO DIGITAL PARA SEU NEGÓCIO.",
-    bottomText: "TECNOLOGIA QUE TRANSFORMA.",
+    topText: "EXPERIÊNCIA EXTENSIVA COM EDUCAÇÃO",
+    bottomText: "ENTREGAS RÁPIDAS E PREÇO JUSTO",
   },
 
   faq: {
@@ -95,27 +105,27 @@ export const mainContent = {
       {
         question: "Que tipo de projetos vocês desenvolvem?",
         answer:
-          "Desenvolvemos uma ampla gama de soluções digitais: sites institucionais, e-commerce, aplicativos mobile, sistemas web, automações e integrações entre sistemas.",
+          "A MokLabs é especializada em soluções tecnológicas para o setor educacional. Desenvolvemos objetos educacionais digitais interativos, livros digitais com recursos multimídia, plataformas LMS e AVA personalizadas para instituições de ensino, além de projetos de inteligência artificial aplicados tanto ao processo de aprendizagem quanto ao fluxo editorial. Trabalhamos principalmente com editoras e empresas de educação que buscam inovar e digitalizar seus conteúdos e processos pedagógicos.",
       },
       {
         question: "Quanto tempo leva para desenvolver um projeto?",
         answer:
-          "O prazo varia conforme a complexidade do projeto. Sites simples podem ficar prontos em 2-4 semanas, enquanto sistemas mais complexos podem levar de 2-6 meses.",
+          "O prazo varia de acordo com a complexidade e o escopo de cada projeto. Objetos educacionais mais simples podem ser desenvolvidos em algumas semanas, enquanto plataformas LMS completas ou projetos de IA mais robustos podem levar de três a seis meses ou mais. Durante nossa reunião inicial, fazemos uma análise detalhada das necessidades e fornecemos um cronograma realista e personalizado para o seu projeto específico.",
       },
       {
         question: "Vocês oferecem suporte após a entrega?",
         answer:
-          "Sim! Oferecemos diferentes planos de suporte e manutenção para garantir que sua solução continue funcionando perfeitamente e evolua com seu negócio.",
+          "Sim, oferecemos suporte completo após a entrega do projeto. Isso inclui correção de bugs, atualizações de segurança, treinamento para as equipes que irão utilizar a solução e suporte técnico para dúvidas operacionais. Trabalhamos com diferentes modalidades de suporte que podem ser ajustadas conforme as necessidades de cada cliente, garantindo que sua solução continue funcionando perfeitamente ao longo do tempo.",
       },
       {
         question: "Como funciona o processo de desenvolvimento?",
         answer:
-          "Começamos com uma análise detalhada das suas necessidades, criamos protótipos, desenvolvemos iterativamente com sua participação e entregamos com testes completos.",
+          "Nosso processo começa com uma fase de descoberta, onde entendemos profundamente suas necessidades, objetivos pedagógicos e público-alvo. Em seguida, criamos o planejamento do projeto com definição de escopo, cronograma e entregas. O desenvolvimento acontece de forma iterativa, com apresentações periódicas para validação e ajustes. Incluímos etapas de testes rigorosos antes da entrega final e oferecemos treinamento para sua equipe. Durante todo o processo, mantemos comunicação transparente e constante com nossos clientes.",
       },
       {
         question: "Por que escolher a MokLabs?",
         answer:
-          "Somos especialistas em criar soluções digitais personalizadas, com foco em qualidade, performance e resultados. Nossa equipe experiente garante entregas no prazo e dentro do orçamento.",
+          "A MokLabs combina expertise técnica com profundo conhecimento do setor educacional. Nossa especialização em projetos para editoras e empresas de educação significa que entendemos não apenas de tecnologia, mas também dos desafios pedagógicos e editoriais específicos desse mercado. Desenvolvemos soluções personalizadas que realmente atendem às necessidades educacionais, com foco em usabilidade, engajamento dos alunos e resultados de aprendizagem. Além disso, mantemos um compromisso de longo prazo com nossos clientes através de suporte contínuo e evolução constante das soluções entregues.",
       },
     ],
   },
