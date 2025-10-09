@@ -187,13 +187,103 @@ npm install vite-plugin-pwa
 
 Configure no `vite.config.js`.
 
+## 🌿 Workflow de Desenvolvimento
+
+Este projeto usa um workflow de duas branches com ambientes staging e production.
+
+### Estrutura de Branches
+
+- **`main`** - Branch de produção (moklabs.com.br)
+  - ✅ Protegida com PR obrigatório
+  - ✅ Requer aprovação para merge
+  - ✅ Deploy automático para produção
+
+- **`staging`** - Branch de homologação
+  - ✅ Protegida com PR obrigatório
+  - ✅ Deploy automático para ambiente de staging
+  - ✅ Base para novas features
+
+### Processo de Desenvolvimento
+
+#### 1. Criar Feature Branch
+
+```bash
+# Sempre criar a partir de staging
+git checkout staging
+git pull origin staging
+git checkout -b feature/nome-da-feature
+```
+
+#### 2. Desenvolver e Commitar
+
+```bash
+# Fazer alterações
+git add .
+git commit -m "Descrição clara da alteração"
+git push origin feature/nome-da-feature
+```
+
+#### 3. Pull Request para Staging
+
+1. Abra PR de `feature/nome-da-feature` → `staging`
+2. Aguarde checks passarem:
+   - ✅ Build
+   - ✅ Linting
+   - ✅ Type checking
+3. Solicite review (se necessário)
+4. Merge para `staging`
+5. Teste no ambiente de staging
+
+#### 4. Release para Produção
+
+1. Quando staging estiver estável, abra PR de `staging` → `main`
+2. Aguarde aprovação obrigatória
+3. Merge para `main`
+4. Deploy automático para produção
+
+### GitHub Actions
+
+#### PR Checks (`.github/workflows/pr-checks.yml`)
+
+Executado automaticamente em todos os PRs para `main` e `staging`:
+- ✅ Instalação de dependências
+- ✅ Linting (`npm run lint`)
+- ✅ Type checking (`npm run type-check`)
+- ✅ Build (`npm run build`)
+- ✅ Validação da build
+
+#### Staging Deploy (`.github/workflows/staging-deploy.yml`)
+
+Executado quando há push para `staging`:
+- ✅ Build de validação
+- ✅ Notificação de deployment
+- ✅ Vercel faz deploy automático
+
+### Proteção de Branches
+
+#### Main Branch
+
+- 🔒 Require pull request reviews before merging
+- 🔒 Require status checks to pass before merging
+- 🔒 Require branches to be up to date before merging
+- 🔒 Do not allow bypassing the above settings
+
+#### Staging Branch
+
+- 🔒 Require pull request before merging
+- 🔒 Require status checks to pass before merging
+
+### Ambientes
+
+| Ambiente | Branch | URL | Deploy |
+|----------|--------|-----|--------|
+| Production | `main` | moklabs.com.br | Automático via Vercel |
+| Staging | `staging` | staging.moklabs.com.br | Automático via Vercel |
+| Preview | Feature branches | `*.vercel.app` | Automático em PRs |
+
 ## 🤝 Contribuição
 
-1. Fork o projeto
-2. Crie uma branch: `git checkout -b feature/nova-feature`
-3. Commit: `git commit -m 'Adiciona nova feature'`
-4. Push: `git push origin feature/nova-feature`
-5. Abra um Pull Request
+Siga o workflow descrito acima para contribuir com o projeto.
 
 ## 📄 Licença
 

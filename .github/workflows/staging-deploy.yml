@@ -1,0 +1,41 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Deployment notification
+        run: |
+          echo "✅ Staging deployment triggered"
+          echo "📦 Build completed successfully"
+          echo "🚀 Vercel will automatically deploy this build"
+          echo "🔗 Check deployment status at: https://vercel.com/saitotakeuchi/moklabs-landing"
+
+      - name: Comment on related PRs
+        if: github.event_name == 'push'
+        run: |
+          echo "Staging deployment completed for commit ${{ github.sha }}"
+          echo "Preview will be available at Vercel preview URL"
