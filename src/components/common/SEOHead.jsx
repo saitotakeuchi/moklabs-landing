@@ -28,50 +28,97 @@ const SEOHead = ({
       element.setAttribute('content', content);
     };
 
+    // Update or create link tags (for canonical)
+    const updateLinkTag = (rel, href) => {
+      let element = document.querySelector(`link[rel="${rel}"]`);
+      if (!element) {
+        element = document.createElement('link');
+        element.setAttribute('rel', rel);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('href', href);
+    };
+
     // Basic meta tags
     updateMetaTag('description', description);
     updateMetaTag('keywords', keywords);
 
+    // Canonical URL
+    updateLinkTag('canonical', url);
+
     // Open Graph tags
     updateMetaTag('og:title', title);
     updateMetaTag('og:description', description);
-    updateMetaTag('og:image', image);
+    updateMetaTag('og:image', `https://moklabs.com.br${image}`);
     updateMetaTag('og:url', url);
     updateMetaTag('og:type', 'website');
     updateMetaTag('og:locale', 'pt_BR');
+    updateMetaTag('og:site_name', 'MokLabs');
 
     // Twitter Card tags
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
-    updateMetaTag('twitter:image', image);
+    updateMetaTag('twitter:image', `https://moklabs.com.br${image}`);
 
-    // Structured data
-    const structuredData = {
+    // Structured data - Organization
+    const organizationData = {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "Mok Labs",
-      "url": url,
-      "description": description,
+      "name": "MokLabs",
+      "alternateName": "Mok Labs",
+      "url": "https://moklabs.com.br",
+      "logo": "https://moklabs.com.br/logo.svg",
+      "description": "Especialistas em soluções digitais para educação. Desenvolvemos objetos educacionais digitais, plataformas LMS, materiais para PNLD e projetos de IA aplicados à educação.",
       "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": "+55-41-99999-9999",
+        "telephone": "+55-41-99269-4663",
         "contactType": "customer service",
-        "availableLanguage": "Portuguese"
+        "availableLanguage": ["Portuguese", "pt-BR"],
+        "areaServed": "BR"
       },
       "sameAs": [
         "https://instagram.com/moklabs"
-      ]
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "BR"
+      }
     };
 
-    let jsonLd = document.querySelector('#structured-data');
-    if (!jsonLd) {
-      jsonLd = document.createElement('script');
-      jsonLd.id = 'structured-data';
-      jsonLd.type = 'application/ld+json';
-      document.head.appendChild(jsonLd);
+    // Structured data - WebPage
+    const webPageData = {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": title,
+      "description": description,
+      "url": url,
+      "inLanguage": "pt-BR",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "MokLabs",
+        "url": "https://moklabs.com.br"
+      }
+    };
+
+    // Update or create structured data scripts
+    let orgJsonLd = document.querySelector('#structured-data-org');
+    if (!orgJsonLd) {
+      orgJsonLd = document.createElement('script');
+      orgJsonLd.id = 'structured-data-org';
+      orgJsonLd.type = 'application/ld+json';
+      document.head.appendChild(orgJsonLd);
     }
-    jsonLd.textContent = JSON.stringify(structuredData);
+    orgJsonLd.textContent = JSON.stringify(organizationData);
+
+    let pageJsonLd = document.querySelector('#structured-data-page');
+    if (!pageJsonLd) {
+      pageJsonLd = document.createElement('script');
+      pageJsonLd.id = 'structured-data-page';
+      pageJsonLd.type = 'application/ld+json';
+      document.head.appendChild(pageJsonLd);
+    }
+    pageJsonLd.textContent = JSON.stringify(webPageData);
 
   }, [title, description, keywords, image, url]);
 

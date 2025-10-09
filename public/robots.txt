@@ -1,0 +1,6 @@
+# MokLabs - robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://moklabs.com.br/sitemap.xml
