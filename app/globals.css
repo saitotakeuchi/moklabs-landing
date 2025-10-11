@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --color-mok-blue: #0013FF;
-    --color-mok-green: #CBFF63;
+    --color-mok-blue: #0013ff;
+    --color-mok-green: #cbff63;
   }
 
   /* Smooth scrolling for the entire page */
@@ -16,7 +16,8 @@
   /* Reset body margin and set default font */
   body {
     margin: 0;
-    font-family: var(--font-fira-code), 'Fira Code', monospace, ui-monospace, system-ui;
+    font-family:
+      var(--font-fira-code), "Fira Code", monospace, ui-monospace, system-ui;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -29,7 +30,13 @@
   }
 
   /* Remove default margins on common elements */
-  h1, h2, h3, h4, h5, h6, p {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
     margin: 0;
   }
 
@@ -52,7 +59,13 @@
   }
 
   /* Improve text rendering */
-  p, h1, h2, h3, h4, h5, h6 {
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     overflow-wrap: break-word;
   }
 }

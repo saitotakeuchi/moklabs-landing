@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 /**
  * Blog-specific error boundary
  * Catches errors in the blog section
  */
 
-import { useEffect } from 'react';
-import Link from 'next/link';
+import { useEffect } from "react";
+import Link from "next/link";
 
 export default function BlogError({
   error,
@@ -16,8 +16,8 @@ export default function BlogError({
   reset: () => void;
 }) {
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Blog error:', error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Blog error:", error);
     }
   }, [error]);
 

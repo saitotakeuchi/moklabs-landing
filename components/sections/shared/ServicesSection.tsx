@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -23,10 +23,7 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
   const splashRotate = useTransform(scrollYProgress, [0, 1], [-90, 20]);
 
   return (
-    <section
-      id="servicos"
-      className="py-6 md:py-24 px-0 relative bg-mok-green"
-    >
+    <section id="servicos" className="py-6 md:py-24 px-0 relative bg-mok-green">
       {/* Decorative Stars */}
       <div className="hidden md:block absolute right-[100px] top-[32px]">
         <div className="w-[158px] h-[158px]">
@@ -59,7 +56,10 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
           {/* Services List */}
           <div className="flex flex-col gap-10 items-center w-full">
             {content.items.map((item, index) => (
-              <div key={index} className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
+              <div
+                key={index}
+                className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]"
+              >
                 {item}
               </div>
             ))}
@@ -92,7 +92,10 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
           {/* Services List */}
           <div className="flex flex-col gap-6 sm:gap-10 items-center w-full">
             {content.items.map((item, index) => (
-              <div key={index} className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
+              <div
+                key={index}
+                className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]"
+              >
                 {item}
               </div>
             ))}
@@ -155,7 +158,11 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
             className="w-[150px] h-[150px] lg:w-[240px] lg:h-[240px] relative"
             style={{ rotate: splashRotate }}
           >
-            <img src={content.splashImage} alt="" className="w-full h-full absolute inset-0" />
+            <img
+              src={content.splashImage}
+              alt=""
+              className="w-full h-full absolute inset-0"
+            />
             <div className="absolute inset-0 flex items-center justify-center px-4 z-10">
               <p className="text-mok-blue text-[12px] lg:text-[18px] font-bold text-center leading-[1.2] max-w-[100px] lg:max-w-[160px] break-words">
                 {content.splashText}

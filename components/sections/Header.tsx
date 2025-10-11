@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -11,12 +11,15 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    targetId: string
+  ) => {
     e.preventDefault();
 
     // If we're not on the home page, navigate to home first
-    if (pathname !== '/') {
-      router.push('/');
+    if (pathname !== "/") {
+      router.push("/");
       // Use setTimeout to allow navigation to complete before scrolling
       setTimeout(() => {
         const element = document.getElementById(targetId);
@@ -44,15 +47,15 @@ const Header = () => {
 
   const handleLogoClick = (e: React.MouseEvent<HTMLImageElement>) => {
     e.preventDefault();
-    router.push('/');
+    router.push("/");
   };
 
   const handlePnldClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    router.push('/pnld');
+    router.push("/pnld");
     setIsMenuOpen(false);
     // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const toggleMenu = () => {
@@ -65,16 +68,18 @@ const Header = () => {
       setIsScrolled(scrollTop > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className={`bg-mok-blue transition-all duration-300 fixed top-0 left-0 right-0 z-50 ${
-      isScrolled
-        ? 'pt-2 pb-2 sm:pt-3 sm:pb-3 shadow-lg'
-        : 'pt-4 pb-4 sm:pt-8 sm:pb-8'
-    }`}>
+    <header
+      className={`bg-mok-blue transition-all duration-300 fixed top-0 left-0 right-0 z-50 ${
+        isScrolled
+          ? "pt-2 pb-2 sm:pt-3 sm:pb-3 shadow-lg"
+          : "pt-4 pb-4 sm:pt-8 sm:pb-8"
+      }`}
+    >
       <div className="max-w-[1184px] mx-auto px-4 sm:px-8">
         <div className="flex justify-between items-center">
           <Image
@@ -84,8 +89,8 @@ const Header = () => {
             height={42}
             className={`cursor-pointer transition-all duration-300 ${
               isScrolled
-                ? 'h-[24px] w-[165px] sm:h-[28px] sm:w-[193px] md:h-[32px] md:w-[221px]'
-                : 'h-[28px] w-[193px] sm:h-[36px] sm:w-[248px] md:h-[42px] md:w-[289px]'
+                ? "h-[24px] w-[165px] sm:h-[28px] sm:w-[193px] md:h-[32px] md:w-[221px]"
+                : "h-[28px] w-[193px] sm:h-[36px] sm:w-[248px] md:h-[42px] md:w-[289px]"
             }`}
             onClick={handleLogoClick}
             priority
@@ -98,7 +103,7 @@ const Header = () => {
                 href="/#servicos"
                 onClick={(e) => handleNavClick(e, "servicos")}
                 className={`font-small hover:text-mok-green/80 transition-colors cursor-pointer text-sm sm:text-base ${
-                  pathname === '/' ? 'text-mok-green' : 'text-mok-green/60'
+                  pathname === "/" ? "text-mok-green" : "text-mok-green/60"
                 }`}
               >
                 Serviços
@@ -107,7 +112,7 @@ const Header = () => {
                 href="/#faq"
                 onClick={(e) => handleNavClick(e, "faq")}
                 className={`font-small hover:text-mok-green/80 transition-colors cursor-pointer text-sm sm:text-base ${
-                  pathname === '/' ? 'text-mok-green' : 'text-mok-green/60'
+                  pathname === "/" ? "text-mok-green" : "text-mok-green/60"
                 }`}
               >
                 FAQ
@@ -116,7 +121,7 @@ const Header = () => {
                 href="/#contato"
                 onClick={(e) => handleNavClick(e, "contato")}
                 className={`font-small hover:text-mok-green/80 transition-colors cursor-pointer text-sm sm:text-base ${
-                  pathname === '/' ? 'text-mok-green' : 'text-mok-green/60'
+                  pathname === "/" ? "text-mok-green" : "text-mok-green/60"
                 }`}
               >
                 Contato
@@ -128,9 +133,9 @@ const Header = () => {
               href="/pnld"
               onClick={handlePnldClick}
               className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full font-semibold transition-all cursor-pointer text-sm sm:text-base ${
-                pathname === '/pnld'
-                  ? 'bg-white text-mok-blue ring-2 ring-mok-green'
-                  : 'bg-mok-green text-mok-blue hover:bg-mok-green/90'
+                pathname === "/pnld"
+                  ? "bg-white text-mok-blue ring-2 ring-mok-green"
+                  : "bg-mok-green text-mok-blue hover:bg-mok-green/90"
               }`}
             >
               PNLD
@@ -169,7 +174,7 @@ const Header = () => {
                 href="/#servicos"
                 onClick={(e) => handleNavClick(e, "servicos")}
                 className={`font-medium hover:bg-black/10 transition-all cursor-pointer text-base py-3 px-2 rounded ${
-                  pathname === '/' ? 'text-mok-blue' : 'text-mok-blue/60'
+                  pathname === "/" ? "text-mok-blue" : "text-mok-blue/60"
                 }`}
               >
                 Serviços
@@ -178,7 +183,7 @@ const Header = () => {
                 href="/#faq"
                 onClick={(e) => handleNavClick(e, "faq")}
                 className={`font-medium hover:bg-black/10 transition-all cursor-pointer text-base py-3 px-2 rounded ${
-                  pathname === '/' ? 'text-mok-blue' : 'text-mok-blue/60'
+                  pathname === "/" ? "text-mok-blue" : "text-mok-blue/60"
                 }`}
               >
                 FAQ
@@ -187,7 +192,7 @@ const Header = () => {
                 href="/#contato"
                 onClick={(e) => handleNavClick(e, "contato")}
                 className={`font-medium hover:bg-black/10 transition-all cursor-pointer text-base py-3 px-2 rounded ${
-                  pathname === '/' ? 'text-mok-blue' : 'text-mok-blue/60'
+                  pathname === "/" ? "text-mok-blue" : "text-mok-blue/60"
                 }`}
               >
                 Contato
@@ -199,9 +204,9 @@ const Header = () => {
                   href="/pnld"
                   onClick={handlePnldClick}
                   className={`font-bold transition-all cursor-pointer text-base py-3 px-4 rounded-lg block text-center ${
-                    pathname === '/pnld'
-                      ? 'bg-white text-mok-blue ring-2 ring-mok-blue'
-                      : 'bg-mok-blue text-mok-green hover:bg-mok-blue/90'
+                    pathname === "/pnld"
+                      ? "bg-white text-mok-blue ring-2 ring-mok-blue"
+                      : "bg-mok-blue text-mok-green hover:bg-mok-blue/90"
                   }`}
                 >
                   PNLD

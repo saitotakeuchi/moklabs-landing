@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { Fira_Code } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/sections";
-import { CookieConsent, DeferredCSS, GoogleAnalytics, VercelAnalytics } from "@/components/common";
+import {
+  CookieConsent,
+  DeferredCSS,
+  GoogleAnalytics,
+  VercelAnalytics,
+} from "@/components/common";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const firaCode = Fira_Code({
@@ -15,8 +20,10 @@ const firaCode = Fira_Code({
 
 export const metadata: Metadata = {
   title: "Mok Labs - PNLD Digital",
-  description: "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD. Soluções digitais sob medida, sem retrabalho, sem stress.",
-  keywords: "PNLD digital, livros digitais acessíveis, conversão PDF, ePUB, materiais educacionais, editais PNLD",
+  description:
+    "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD. Soluções digitais sob medida, sem retrabalho, sem stress.",
+  keywords:
+    "PNLD digital, livros digitais acessíveis, conversão PDF, ePUB, materiais educacionais, editais PNLD",
   authors: [{ name: "Mok Labs" }],
   creator: "Mok Labs",
   publisher: "Mok Labs",
@@ -51,7 +58,8 @@ export const metadata: Metadata = {
     url: "https://moklabs.com.br",
     siteName: "MokLabs",
     title: "Mok Labs - PNLD Digital Sem Complicação",
-    description: "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
+    description:
+      "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
     images: [
       {
         url: "/og-image.svg",
@@ -64,7 +72,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Mok Labs - PNLD Digital Sem Complicação",
-    description: "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
+    description:
+      "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
     images: ["/og-image.svg"],
   },
   robots: {
@@ -90,7 +99,11 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#0013FF" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className={`${firaCode.variable} antialiased`}>
         <DeferredCSS />

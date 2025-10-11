@@ -50,17 +50,11 @@ export default function NotFound() {
             Você também pode estar procurando por:
           </p>
           <div className="flex flex-wrap gap-4 justify-center text-sm">
-            <Link
-              href="/pnld"
-              className="text-[#0013FF] hover:underline"
-            >
+            <Link href="/pnld" className="text-[#0013FF] hover:underline">
               PNLD Digital
             </Link>
             <span className="text-gray-300">•</span>
-            <Link
-              href="/#contact"
-              className="text-[#0013FF] hover:underline"
-            >
+            <Link href="/#contact" className="text-[#0013FF] hover:underline">
               Contato
             </Link>
             <span className="text-gray-300">•</span>

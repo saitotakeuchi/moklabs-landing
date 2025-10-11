@@ -3,10 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 
 const Footer = () => {
-  // Type-safe icon components
-  const PhoneIcon = Phone as any;
-  const MailIcon = Mail as any;
-  const InstagramIcon = Instagram as any;
   const currentYear = new Date().getFullYear();
 
   return (
@@ -34,7 +30,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Contato</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <PhoneIcon className="w-5 h-5 text-green-400" />
+                <Phone className="w-5 h-5 text-green-400" />
                 <a
                   href="https://wa.me/5541992694663"
                   className="text-white hover:text-gray-300 transition-colors duration-200 text-sm"
@@ -44,7 +40,7 @@ const Footer = () => {
               </div>
 
               <div className="flex items-center space-x-3">
-                <MailIcon className="w-5 h-5 text-blue-400" />
+                <Mail className="w-5 h-5 text-blue-400" />
                 <a
                   href="mailto:contato@moklabs.com.br"
                   className="text-white hover:text-gray-300 transition-colors duration-200 text-sm"
@@ -54,7 +50,7 @@ const Footer = () => {
               </div>
 
               <div className="flex items-center space-x-3">
-                <InstagramIcon className="w-5 h-5 text-purple-400" />
+                <Instagram className="w-5 h-5 text-purple-400" />
                 <a
                   href="https://instagram.com/moklabs"
                   className="text-white hover:text-gray-300 transition-colors duration-200 text-sm"
@@ -88,3 +84,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

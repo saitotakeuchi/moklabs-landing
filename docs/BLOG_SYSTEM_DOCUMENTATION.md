@@ -71,13 +71,13 @@ nextjs-migration/
 
 ```json
 {
-  "gray-matter": "^4.0.3",           // Parse frontmatter
-  "next-mdx-remote": "^5.0.0",       // MDX rendering
-  "reading-time": "^1.5.0",          // Calculate reading time
-  "remark": "^15.0.1",               // Markdown processor
-  "remark-gfm": "^4.0.0",            // GitHub Flavored Markdown
-  "rehype-pretty-code": "^0.13.2",   // Syntax highlighting
-  "shiki": "^1.14.1"                 // Code syntax themes
+  "gray-matter": "^4.0.3", // Parse frontmatter
+  "next-mdx-remote": "^5.0.0", // MDX rendering
+  "reading-time": "^1.5.0", // Calculate reading time
+  "remark": "^15.0.1", // Markdown processor
+  "remark-gfm": "^4.0.0", // GitHub Flavored Markdown
+  "rehype-pretty-code": "^0.13.2", // Syntax highlighting
+  "shiki": "^1.14.1" // Code syntax themes
 }
 ```
 
@@ -117,6 +117,7 @@ tags: ["Tag1", "Tag2", "Tag3"]
 ```
 
 **Required fields:**
+
 - `title` (string)
 - `date` (YYYY-MM-DD format)
 - `description` (string)
@@ -126,7 +127,7 @@ tags: ["Tag1", "Tag2", "Tag3"]
 
 Write your content using Markdown or MDX:
 
-```mdx
+````mdx
 ---
 title: "Getting Started with Next.js"
 date: "2025-10-09"
@@ -136,7 +137,7 @@ tags: ["Next.js", "React", "Tutorial"]
 
 # Introduction
 
-This is a paragraph with **bold** and *italic* text.
+This is a paragraph with **bold** and _italic_ text.
 
 ## Code Example
 
@@ -146,6 +147,7 @@ function greet(name) {
   console.log(`Hello, ${name}!`);
 }
 ```
+````
 
 ## Lists
 
@@ -156,7 +158,7 @@ function greet(name) {
 ## Tables
 
 | Feature | Status |
-|---------|--------|
+| ------- | ------ |
 | MDX     | ✅     |
 | SEO     | ✅     |
 
@@ -165,7 +167,8 @@ function greet(name) {
 ![Alt text](image.png)
 
 > This is a blockquote
-```
+
+````
 
 ### 4. Sample Post Template
 
@@ -190,7 +193,7 @@ More detailed information...
 ```javascript
 // Code examples with syntax highlighting
 const example = "Hello World";
-```
+````
 
 ## Conclusion
 
@@ -199,7 +202,8 @@ Wrap up your post with key takeaways.
 ---
 
 **Want to learn more?** Check out [our services](#) or [contact us](#).
-```
+
+````
 
 ---
 
@@ -216,7 +220,7 @@ import { getAllPosts } from "@/lib/blog";
 
 const posts = getAllPosts();
 // Returns: [{ slug, title, date, description, tags, readingTime }, ...]
-```
+````
 
 ### `getPostBySlug(slug: string): BlogPost | null`
 
@@ -293,6 +297,7 @@ const formatted = formatDate("2025-10-09");
 **Route**: `/blog`
 
 **Features**:
+
 - Grid layout of all posts (3 columns on desktop)
 - Post cards with title, description, date, reading time, tags
 - Hover effects and animations
@@ -301,6 +306,7 @@ const formatted = formatDate("2025-10-09");
 - Back to home link
 
 **Customization**:
+
 ```typescript
 // Change grid columns
 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -314,6 +320,7 @@ const formatted = formatDate("2025-10-09");
 **Route**: `/blog/{slug}`
 
 **Features**:
+
 - Breadcrumb navigation (Home > Blog > Post Title)
 - Post header with title, date, reading time, tags
 - Rendered MDX content with custom styling
@@ -341,6 +348,7 @@ const mdxComponents = {
 **Route**: `/blog/{invalid-slug}`
 
 **Features**:
+
 - Custom 404 page for blog posts
 - Branded design with Mok Labs colors
 - Links back to blog and home
@@ -356,12 +364,13 @@ The blog uses Mok Labs brand colors defined in `app/globals.css`:
 
 ```css
 @theme {
-  --color-mok-blue: #0013FF;
-  --color-mok-green: #CBFF63;
+  --color-mok-blue: #0013ff;
+  --color-mok-green: #cbff63;
 }
 ```
 
 **Usage in components**:
+
 - `text-mok-blue` - Blue text
 - `bg-mok-green` - Green background
 - `border-mok-blue` - Blue border
@@ -457,6 +466,7 @@ npm run dev
 ```
 
 Visit:
+
 - http://localhost:3000/blog
 - http://localhost:3000/blog/acessibilidade-digital-pnld
 - http://localhost:3000/blog/epub-acessivel-guia-completo
@@ -468,6 +478,7 @@ npm run build
 ```
 
 Verify:
+
 - All blog routes are pre-rendered
 - No build errors
 - Static pages generated in `.next/`
@@ -481,6 +492,7 @@ Verify:
 The blog uses `generateStaticParams` to pre-render all posts at build time.
 
 **Benefits**:
+
 - ✅ Instant page loads (no server rendering needed)
 - ✅ Better SEO (fully rendered HTML)
 - ✅ Lower hosting costs
@@ -509,6 +521,7 @@ vercel deploy
 No environment variables needed for basic blog functionality.
 
 Optional:
+
 - `NEXT_PUBLIC_GA_TRACKING_ID` - Google Analytics (already set up)
 
 ---
@@ -597,14 +610,18 @@ export async function GET() {
         <title>Mok Labs Blog</title>
         <link>https://moklabs.com.br/blog</link>
         <description>Blog sobre desenvolvimento e acessibilidade</description>
-        ${posts.map((post) => `
+        ${posts
+          .map(
+            (post) => `
           <item>
             <title>${post.title}</title>
             <link>https://moklabs.com.br/blog/${post.slug}</link>
             <description>${post.description}</description>
             <pubDate>${new Date(post.date).toUTCString()}</pubDate>
           </item>
-        `).join("")}
+        `
+          )
+          .join("")}
       </channel>
     </rss>`;
 
@@ -627,6 +644,7 @@ Access at: `/blog/feed.xml`
 **Cause**: Blog post file doesn't exist or slug is incorrect
 
 **Solution**:
+
 1. Check file exists: `content/blog/{slug}.mdx`
 2. Verify slug matches filename (without extension)
 3. Rebuild: `npm run build`
@@ -636,6 +654,7 @@ Access at: `/blog/feed.xml`
 **Cause**: rehype-pretty-code not installed or configured
 
 **Solution**:
+
 ```bash
 npm install rehype-pretty-code shiki
 ```
@@ -645,6 +664,7 @@ npm install rehype-pretty-code shiki
 **Cause**: Missing dependencies or syntax errors
 
 **Solution**:
+
 1. Check all dependencies installed
 2. Validate MDX syntax
 3. Check console for errors
@@ -654,6 +674,7 @@ npm install rehype-pretty-code shiki
 **Cause**: Images not in `public/` folder or incorrect paths
 
 **Solution**:
+
 1. Place images in `public/blog/`
 2. Reference as: `![Alt](/blog/image.png)`
 
@@ -694,6 +715,7 @@ npm install rehype-pretty-code shiki
 **Tags**: Acessibilidade, PNLD, Educação, Inclusão
 
 **Features demonstrated**:
+
 - Code examples (JavaScript)
 - Lists and bullet points
 - Blockquotes
@@ -708,6 +730,7 @@ npm install rehype-pretty-code shiki
 **Tags**: EPUB, Acessibilidade, E-books, Tecnologia
 
 **Features demonstrated**:
+
 - Tables
 - Multiple code blocks (HTML, XML, CSS)
 - Code with syntax highlighting

@@ -11,7 +11,7 @@ export function DeferredCSS() {
       const linkElement = link as HTMLLinkElement;
 
       // Skip if already processed or is a font
-      if (linkElement.dataset.deferred || linkElement.href.includes('fonts')) {
+      if (linkElement.dataset.deferred || linkElement.href.includes("fonts")) {
         return;
       }
 

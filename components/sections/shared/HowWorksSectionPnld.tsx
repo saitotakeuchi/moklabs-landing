@@ -20,8 +20,6 @@ interface HowWorksPnldProps {
 }
 
 const HowWorksPnld = ({ content }: HowWorksPnldProps) => {
-  // Type-safe icon component
-  const WhatsappIcon = Whatsapp as any;
   return (
     <>
       <section className="bg-mok-green py-12 sm:py-24">
@@ -58,7 +56,7 @@ const HowWorksPnld = ({ content }: HowWorksPnldProps) => {
             rel="noopener noreferrer"
             className="inline-flex h-8 sm:h-8 items-center gap-2 rounded-full bg-mok-blue px-4 sm:px-6 text-white text-[14px] sm:text-[16px] font-semibold transition-colors hover:bg-mok-blue/90"
           >
-            <WhatsappIcon className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+            <Whatsapp className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
             <span>{content.cta.button.text}</span>
           </a>
         </div>
@@ -68,3 +66,4 @@ const HowWorksPnld = ({ content }: HowWorksPnldProps) => {
 };
 
 export default HowWorksPnld;
+

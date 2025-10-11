@@ -1,4 +1,5 @@
 # Lighthouse Audit Results
+
 ## Performance, Accessibility, Best Practices, and SEO Scores
 
 **Last Updated:** October 9, 2025
@@ -12,6 +13,7 @@ Since Lighthouse requires a running server and a browser environment, the audit 
 ### Quick Start
 
 1. **Start the production server:**
+
    ```bash
    cd moklabs-landing/nextjs-migration
    npm run build
@@ -56,6 +58,7 @@ lighthouse https://moklabs.com.br --view
 ### 📊 Baseline Audit - [Date: TBD]
 
 **Environment:**
+
 - URL: http://localhost:3000 OR https://moklabs.com.br
 - Device: Desktop / Mobile
 - Network: Simulated / Real
@@ -63,26 +66,27 @@ lighthouse https://moklabs.com.br --view
 
 #### Scores
 
-| Category | Score | Status |
-|----------|-------|--------|
-| Performance | [TBD] | [TBD] |
-| Accessibility | [TBD] | [TBD] |
-| Best Practices | [TBD] | [TBD] |
-| SEO | [TBD] | [TBD] |
+| Category       | Score | Status |
+| -------------- | ----- | ------ |
+| Performance    | [TBD] | [TBD]  |
+| Accessibility  | [TBD] | [TBD]  |
+| Best Practices | [TBD] | [TBD]  |
+| SEO            | [TBD] | [TBD]  |
 
 #### Core Web Vitals
 
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| First Contentful Paint (FCP) | [TBD] | < 1.8s | [TBD] |
-| Largest Contentful Paint (LCP) | [TBD] | < 2.5s | [TBD] |
-| Total Blocking Time (TBT) | [TBD] | < 200ms | [TBD] |
-| Cumulative Layout Shift (CLS) | [TBD] | < 0.1 | [TBD] |
-| Speed Index | [TBD] | < 3.4s | [TBD] |
+| Metric                         | Value | Target  | Status |
+| ------------------------------ | ----- | ------- | ------ |
+| First Contentful Paint (FCP)   | [TBD] | < 1.8s  | [TBD]  |
+| Largest Contentful Paint (LCP) | [TBD] | < 2.5s  | [TBD]  |
+| Total Blocking Time (TBT)      | [TBD] | < 200ms | [TBD]  |
+| Cumulative Layout Shift (CLS)  | [TBD] | < 0.1   | [TBD]  |
+| Speed Index                    | [TBD] | < 3.4s  | [TBD]  |
 
 #### Key Metrics Details
 
 **Performance:**
+
 - [ ] First Contentful Paint: [TBD]s
 - [ ] Largest Contentful Paint: [TBD]s
 - [ ] Time to Interactive: [TBD]s
@@ -91,6 +95,7 @@ lighthouse https://moklabs.com.br --view
 - [ ] Cumulative Layout Shift: [TBD]
 
 **Diagnostics:**
+
 ```
 [To be filled after running audit]
 
@@ -102,6 +107,7 @@ Example:
 ```
 
 **Opportunities:**
+
 ```
 [To be filled after running audit]
 
@@ -154,17 +160,19 @@ Example:
 
 **Priority:** 🔴 HIGH
 
-| Category | Score | Notes |
-|----------|-------|-------|
-| Performance | [TBD] | [Add notes] |
-| Accessibility | [TBD] | [Add notes] |
+| Category       | Score | Notes       |
+| -------------- | ----- | ----------- |
+| Performance    | [TBD] | [Add notes] |
+| Accessibility  | [TBD] | [Add notes] |
 | Best Practices | [TBD] | [Add notes] |
-| SEO | [TBD] | [Add notes] |
+| SEO            | [TBD] | [Add notes] |
 
 **Key Issues:**
+
 - [To be filled]
 
 **Opportunities:**
+
 - [To be filled]
 
 ---
@@ -173,17 +181,19 @@ Example:
 
 **Priority:** 🔴 HIGH
 
-| Category | Score | Notes |
-|----------|-------|-------|
-| Performance | [TBD] | [Add notes] |
-| Accessibility | [TBD] | [Add notes] |
+| Category       | Score | Notes       |
+| -------------- | ----- | ----------- |
+| Performance    | [TBD] | [Add notes] |
+| Accessibility  | [TBD] | [Add notes] |
 | Best Practices | [TBD] | [Add notes] |
-| SEO | [TBD] | [Add notes] |
+| SEO            | [TBD] | [Add notes] |
 
 **Key Issues:**
+
 - [To be filled]
 
 **Opportunities:**
+
 - [To be filled]
 
 ---
@@ -192,17 +202,19 @@ Example:
 
 **Priority:** 🟡 MEDIUM
 
-| Category | Score | Notes |
-|----------|-------|-------|
-| Performance | [TBD] | [Add notes] |
-| Accessibility | [TBD] | [Add notes] |
+| Category       | Score | Notes       |
+| -------------- | ----- | ----------- |
+| Performance    | [TBD] | [Add notes] |
+| Accessibility  | [TBD] | [Add notes] |
 | Best Practices | [TBD] | [Add notes] |
-| SEO | [TBD] | [Add notes] |
+| SEO            | [TBD] | [Add notes] |
 
 **Key Issues:**
+
 - [To be filled]
 
 **Opportunities:**
+
 - [To be filled]
 
 ---
@@ -211,17 +223,19 @@ Example:
 
 **Priority:** 🟡 MEDIUM
 
-| Category | Score | Notes |
-|----------|-------|-------|
-| Performance | [TBD] | [Add notes] |
-| Accessibility | [TBD] | [Add notes] |
+| Category       | Score | Notes       |
+| -------------- | ----- | ----------- |
+| Performance    | [TBD] | [Add notes] |
+| Accessibility  | [TBD] | [Add notes] |
 | Best Practices | [TBD] | [Add notes] |
-| SEO | [TBD] | [Add notes] |
+| SEO            | [TBD] | [Add notes] |
 
 **Key Issues:**
+
 - [To be filled]
 
 **Opportunities:**
+
 - [To be filled]
 
 ---
@@ -291,6 +305,7 @@ Based on expected results:
 Track all audits to measure improvements over time:
 
 #### Audit #1 - Baseline (Date: TBD)
+
 ```
 Performance: [TBD]
 Accessibility: [TBD]
@@ -301,6 +316,7 @@ Changes: Initial audit, no changes
 ```
 
 #### Audit #2 - After Image Optimization (Date: TBD)
+
 ```
 Performance: [TBD]
 Accessibility: [TBD]
@@ -326,18 +342,21 @@ Based on current code analysis, here are the expected scores BEFORE running the 
 ### Expected Performance: 🟡 **70-85**
 
 **Strengths:**
+
 - ✅ Static Site Generation (fast TTFB)
 - ✅ Next.js optimizations (code splitting, etc.)
 - ✅ Modern build pipeline
 - ✅ Compression enabled
 
 **Weaknesses:**
+
 - ⚠️ 18 instances of unoptimized `<img>` tags
 - ⚠️ No image dimensions (potential CLS)
 - ⚠️ 389 kB bundle size (acceptable but could be better)
 - ⚠️ No lazy loading for below-fold images
 
 **Most Likely Issues:**
+
 1. "Properly size images" - HIGH impact
 2. "Serve images in next-gen formats" - MEDIUM impact
 3. "Eliminate render-blocking resources" - MEDIUM impact
@@ -345,12 +364,14 @@ Based on current code analysis, here are the expected scores BEFORE running the 
 ### Expected Accessibility: 🟢 **85-95**
 
 **Strengths:**
+
 - ✅ Semantic HTML structure
 - ✅ Language attributes (lang="pt-BR")
 - ✅ Proper heading hierarchy
 - ✅ Navigation structure
 
 **Potential Issues:**
+
 - ⚠️ Missing alt text on images (needs verification)
 - ⚠️ Color contrast (needs testing)
 - ⚠️ Form labels (needs verification)
@@ -358,6 +379,7 @@ Based on current code analysis, here are the expected scores BEFORE running the 
 ### Expected Best Practices: 🟢 **90-100**
 
 **Strengths:**
+
 - ✅ HTTPS enforced
 - ✅ Security headers configured
 - ✅ No console errors
@@ -365,11 +387,13 @@ Based on current code analysis, here are the expected scores BEFORE running the 
 - ✅ No deprecated APIs
 
 **Potential Issues:**
+
 - Minor: None expected
 
 ### Expected SEO: 🟢 **95-100**
 
 **Strengths:**
+
 - ✅ Meta tags configured
 - ✅ Sitemap and robots.txt
 - ✅ Structured data potential
@@ -378,6 +402,7 @@ Based on current code analysis, here are the expected scores BEFORE running the 
 - ✅ Proper heading structure
 
 **Potential Issues:**
+
 - Minor: None expected
 
 ---
@@ -386,20 +411,20 @@ Based on current code analysis, here are the expected scores BEFORE running the 
 
 After optimization, aim for these scores:
 
-| Category | Current (Expected) | Target | Status |
-|----------|-------------------|--------|--------|
-| Performance | 70-85 | 🎯 **90+** | [ ] Not achieved |
-| Accessibility | 85-95 | 🎯 **95+** | [ ] Not achieved |
-| Best Practices | 90-100 | 🎯 **95+** | [ ] Not achieved |
-| SEO | 95-100 | 🎯 **100** | [ ] Not achieved |
+| Category       | Current (Expected) | Target     | Status           |
+| -------------- | ------------------ | ---------- | ---------------- |
+| Performance    | 70-85              | 🎯 **90+** | [ ] Not achieved |
+| Accessibility  | 85-95              | 🎯 **95+** | [ ] Not achieved |
+| Best Practices | 90-100             | 🎯 **95+** | [ ] Not achieved |
+| SEO            | 95-100             | 🎯 **100** | [ ] Not achieved |
 
 ### Core Web Vitals Targets
 
-| Metric | Target |
-|--------|--------|
-| LCP | < 2.5s |
+| Metric  | Target            |
+| ------- | ----------------- |
+| LCP     | < 2.5s            |
 | FID/INP | < 100ms / < 200ms |
-| CLS | < 0.1 |
+| CLS     | < 0.1             |
 
 ---
 
@@ -437,6 +462,7 @@ lighthouse http://localhost:3000/pnld --view
 **Status:** 📝 **TEMPLATE - Awaiting Manual Audit**
 
 **Next Steps:**
+
 1. Run production build: `npm run build && npm start`
 2. Open Chrome DevTools and run Lighthouse
 3. Fill in this document with actual scores

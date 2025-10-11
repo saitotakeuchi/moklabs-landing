@@ -43,13 +43,13 @@ export default function PrivacyPolicyPage() {
               Esta Política de Privacidade descreve como coletamos, usamos,
               armazenamos, compartilhamos e protegemos os seus dados pessoais
               quando você utiliza nosso site, bem como quais são os seus
-              direitos conforme a legislação aplicável, em especial a Lei
-              Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018 – LGPD).
+              direitos conforme a legislação aplicável, em especial a Lei Geral
+              de Proteção de Dados Pessoais (Lei nº 13.709/2018 – LGPD).
             </p>
             <p className="text-gray-700 leading-relaxed mt-4">
               Ao utilizar nosso site, você concorda com esta política. Se não
-              concordar com algum dos termos aqui descritos, solicitamos que
-              não use nossos serviços.
+              concordar com algum dos termos aqui descritos, solicitamos que não
+              use nossos serviços.
             </p>
           </section>
 
@@ -58,9 +58,8 @@ export default function PrivacyPolicyPage() {
               2. Dados que coletamos
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Podemos coletar diferentes tipos de dados pessoais, dependendo
-              de como você interage conosco. Exemplos de dados que podemos
-              coletar:
+              Podemos coletar diferentes tipos de dados pessoais, dependendo de
+              como você interage conosco. Exemplos de dados que podemos coletar:
             </p>
             <ul className="list-disc list-inside text-gray-700 space-y-2">
               <li>
@@ -82,10 +81,9 @@ export default function PrivacyPolicyPage() {
               </li>
             </ul>
             <p className="text-gray-700 leading-relaxed mt-4">
-              Se houver coleta de dados sensíveis (como dados de saúde,
-              crenças religiosas, orientação sexual, etc.), isso será feito
-              somente com consentimento explícito e nas hipóteses permitidas
-              por lei.
+              Se houver coleta de dados sensíveis (como dados de saúde, crenças
+              religiosas, orientação sexual, etc.), isso será feito somente com
+              consentimento explícito e nas hipóteses permitidas por lei.
             </p>
           </section>
 
@@ -128,9 +126,7 @@ export default function PrivacyPolicyPage() {
               <li>
                 Fornecer, operar, manter e melhorar nosso site e serviços;
               </li>
-              <li>
-                Personalizar sua experiência, mostrar conteúdo relevante;
-              </li>
+              <li>Personalizar sua experiência, mostrar conteúdo relevante;</li>
               <li>
                 Processar comunicações de contato ou solicitações que você nos
                 fizer (ex: suporte, orçamentos, contato comercial);
@@ -142,8 +138,8 @@ export default function PrivacyPolicyPage() {
               <li>Gerenciar contas de usuário, registros, acessos;</li>
               <li>Cumprir obrigações legais ou regulatórias;</li>
               <li>
-                Prevenir fraudes e assegurar a segurança, integridade do site
-                e dos usuários.
+                Prevenir fraudes e assegurar a segurança, integridade do site e
+                dos usuários.
               </li>
             </ul>
           </section>
@@ -157,22 +153,21 @@ export default function PrivacyPolicyPage() {
             </p>
             <ul className="list-disc list-inside text-gray-700 space-y-2">
               <li>
-                Prestadores de serviço (operadores) que nos auxiliam na
-                operação do site: hospedagem, manutenção, análises, marketing,
-                envio de e-mail, etc.;
+                Prestadores de serviço (operadores) que nos auxiliam na operação
+                do site: hospedagem, manutenção, análises, marketing, envio de
+                e-mail, etc.;
               </li>
               <li>
                 Parceiros comerciais, conforme consentimento ou necessidade
                 contratual;
               </li>
               <li>
-                Autoridades públicas, quando exigido por lei ou ordem
-                judicial;
+                Autoridades públicas, quando exigido por lei ou ordem judicial;
               </li>
               <li>
-                Em caso de venda, fusão, aquisição ou reorganização
-                societária, os seus dados poderão fazer parte dos ativos
-                transferidos (com compromisso de manter privacidade).
+                Em caso de venda, fusão, aquisição ou reorganização societária,
+                os seus dados poderão fazer parte dos ativos transferidos (com
+                compromisso de manter privacidade).
               </li>
             </ul>
           </section>
@@ -188,8 +183,7 @@ export default function PrivacyPolicyPage() {
               <li>Garantir funcionamento técnico do site;</li>
               <li>Lembrar preferências suas;</li>
               <li>
-                Realizar análises e monitoramento de uso, para melhorar o
-                site;
+                Realizar análises e monitoramento de uso, para melhorar o site;
               </li>
               <li>
                 Apresentar conteúdo ou anúncios de acordo com seus interesses,
@@ -221,9 +215,8 @@ export default function PrivacyPolicyPage() {
               <li>
                 Mantemos os dados pelo tempo necessário para cumprir as
                 finalidades descritas nesta Política ou conforme exigido por
-                lei. Após esse período, os dados são eliminados ou
-                anonimizados, salvo os que devam ser mantidos por obrigação
-                legal.
+                lei. Após esse período, os dados são eliminados ou anonimizados,
+                salvo os que devam ser mantidos por obrigação legal.
               </li>
             </ul>
           </section>
@@ -237,8 +230,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <ul className="list-disc list-inside text-gray-700 space-y-2">
               <li>
-                Confirmação da existência de tratamento de seus dados
-                pessoais;
+                Confirmação da existência de tratamento de seus dados pessoais;
               </li>
               <li>Acesso aos seus dados;</li>
               <li>
@@ -253,16 +245,15 @@ export default function PrivacyPolicyPage() {
                 produto, se aplicável;
               </li>
               <li>
-                Eliminação dos dados pessoais tratados com o seu
-                consentimento;
+                Eliminação dos dados pessoais tratados com o seu consentimento;
               </li>
               <li>
                 Informação das entidades públicas ou privadas com as quais
                 compartilhamos seus dados;
               </li>
               <li>
-                Informação sobre a possibilidade de não fornecer consentimento
-                e sobre as consequências da negativa;
+                Informação sobre a possibilidade de não fornecer consentimento e
+                sobre as consequências da negativa;
               </li>
               <li>Revogação do consentimento, quando aplicável;</li>
               <li>
@@ -316,10 +307,10 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p className="text-gray-700 leading-relaxed">
               Podemos alterar esta Política de Privacidade de tempos em tempos
-              para refletir mudanças em nossas práticas, serviços ou
-              exigências legais. Quando isso ocorrer, informaremos você por
-              meio do site ou por outros meios apropriados. A nova política
-              entrará em vigor na data indicada na parte superior.
+              para refletir mudanças em nossas práticas, serviços ou exigências
+              legais. Quando isso ocorrer, informaremos você por meio do site ou
+              por outros meios apropriados. A nova política entrará em vigor na
+              data indicada na parte superior.
             </p>
           </section>
 

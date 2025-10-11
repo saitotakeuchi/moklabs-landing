@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 /**
  * Global error boundary
  * Catches errors in the application and displays a friendly error page
  */
 
-import { useEffect } from 'react';
-import Link from 'next/link';
+import { useEffect } from "react";
+import Link from "next/link";
 
 export default function Error({
   error,
@@ -17,8 +17,8 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error caught by error boundary:', error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Error caught by error boundary:", error);
     }
 
     // In production, you might want to log to an error reporting service
@@ -58,7 +58,7 @@ export default function Error({
         </p>
 
         {/* Error Details (only in development) */}
-        {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === "development" && (
           <div className="mb-8 p-4 bg-gray-100 rounded-lg text-left">
             <p className="text-sm font-mono text-gray-800 break-all">
               {error.message}
@@ -91,7 +91,7 @@ export default function Error({
         {/* Contact Support */}
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            Se o problema persistir, entre em contato conosco:{' '}
+            Se o problema persistir, entre em contato conosco:{" "}
             <a
               href="mailto:contato@moklabs.com.br"
               className="text-[#0013FF] hover:underline"

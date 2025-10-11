@@ -59,6 +59,7 @@ This directory contains comprehensive documentation for the Mok Labs Next.js web
 Start here: [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 **Quick deploy to Vercel:**
+
 1. Push code to GitHub
 2. Import to Vercel
 3. Add environment variables
@@ -101,6 +102,7 @@ These documents are kept up to date with the codebase. If you make significant c
 ## 📞 Support
 
 For questions or issues:
+
 - Email: contato@moklabs.com.br
 - Check main [README.md](../README.md)
 

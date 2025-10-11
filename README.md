@@ -151,6 +151,7 @@ npm run build
 ```
 
 This will:
+
 - Build the application for production
 - Generate static pages
 - Optimize assets (JS, CSS, images)
@@ -218,6 +219,7 @@ Click "Deploy" and Vercel will build and deploy your application.
 ### Deploy to Other Platforms
 
 See [DEPLOYMENT.md](./docs/DEPLOYMENT.md) for instructions on deploying to:
+
 - Netlify
 - AWS Amplify
 - DigitalOcean App Platform
@@ -236,22 +238,22 @@ After deployment, you can add a custom domain in your Vercel dashboard:
 
 ### Required Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `RESEND_API_KEY` | Resend API key for email sending | `re_xxx...` |
-| `FROM_EMAIL` | Email address for sending emails | `contato@moklabs.com.br` |
-| `TO_EMAIL` | Email address to receive contact form | `contato@moklabs.com.br` |
+| Variable         | Description                           | Example                  |
+| ---------------- | ------------------------------------- | ------------------------ |
+| `RESEND_API_KEY` | Resend API key for email sending      | `re_xxx...`              |
+| `FROM_EMAIL`     | Email address for sending emails      | `contato@moklabs.com.br` |
+| `TO_EMAIL`       | Email address to receive contact form | `contato@moklabs.com.br` |
 
 ### Optional Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_GA_TRACKING_ID` | Google Analytics tracking ID | - |
-| `NEXT_PUBLIC_SITE_URL` | Base URL of the site | `https://moklabs.com.br` |
-| `NEXT_PUBLIC_SITE_NAME` | Name of the site | `Mok Labs` |
-| `NEXT_PUBLIC_ENABLE_ANALYTICS` | Enable analytics | `true` |
-| `NEXT_PUBLIC_ENABLE_COOKIE_CONSENT` | Enable cookie consent | `true` |
-| `FROM_NAME` | Name for email sender | `Mok Labs` |
+| Variable                            | Description                  | Default                  |
+| ----------------------------------- | ---------------------------- | ------------------------ |
+| `NEXT_PUBLIC_GA_TRACKING_ID`        | Google Analytics tracking ID | -                        |
+| `NEXT_PUBLIC_SITE_URL`              | Base URL of the site         | `https://moklabs.com.br` |
+| `NEXT_PUBLIC_SITE_NAME`             | Name of the site             | `Mok Labs`               |
+| `NEXT_PUBLIC_ENABLE_ANALYTICS`      | Enable analytics             | `true`                   |
+| `NEXT_PUBLIC_ENABLE_COOKIE_CONSENT` | Enable cookie consent        | `true`                   |
+| `FROM_NAME`                         | Name for email sender        | `Mok Labs`               |
 
 ### Environment Files
 
@@ -323,17 +325,17 @@ nextjs-migration/
 
 ## 📜 Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server at localhost:3000 |
-| `npm run build` | Build for production |
-| `npm start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run type-check` | Run TypeScript type checking |
-| `npm run format` | Format code with Prettier |
-| `npm run format:check` | Check code formatting |
-| `npm run export` | Build and export static site |
-| `npm run clean` | Clean build artifacts and cache |
+| Script                 | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `npm run dev`          | Start development server at localhost:3000 |
+| `npm run build`        | Build for production                       |
+| `npm start`            | Start production server                    |
+| `npm run lint`         | Run ESLint                                 |
+| `npm run type-check`   | Run TypeScript type checking               |
+| `npm run format`       | Format code with Prettier                  |
+| `npm run format:check` | Check code formatting                      |
+| `npm run export`       | Build and export static site               |
+| `npm run clean`        | Clean build artifacts and cache            |
 
 ## 🛠️ Tech Stack
 
@@ -411,6 +413,7 @@ nextjs-migration/
 ### Build Errors
 
 **Error: Module not found**
+
 ```bash
 # Clear cache and reinstall
 npm run clean
@@ -419,6 +422,7 @@ npm install
 ```
 
 **Error: Type errors**
+
 ```bash
 # Run type checking to see details
 npm run type-check
@@ -427,11 +431,13 @@ npm run type-check
 ### Runtime Errors
 
 **Contact form not working**
+
 - Check that `RESEND_API_KEY` is set
 - Verify email addresses in environment variables
 - Check console for error messages
 
 **Analytics not tracking**
+
 - Ensure `NEXT_PUBLIC_GA_TRACKING_ID` is set
 - Check that analytics is enabled in production
 - Verify in browser developer tools
@@ -461,6 +467,7 @@ Copyright © 2025 Mok Labs. All rights reserved.
 ## 👥 Contact
 
 **Mok Labs**
+
 - 🌐 Website: [moklabs.com.br](https://moklabs.com.br)
 - 📧 Email: contato@moklabs.com.br
 - 📱 WhatsApp: +55 (41) 99999-9999

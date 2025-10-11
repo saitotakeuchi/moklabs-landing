@@ -1,4 +1,5 @@
 # Lighthouse Audit Guide
+
 ## How to Run and Interpret Lighthouse Audits
 
 **Last Updated:** October 9, 2025
@@ -16,10 +17,13 @@ Lighthouse is an open-source, automated tool for improving the quality of web pa
 ### Method 1: Chrome DevTools (Recommended for Development)
 
 1. **Start the Development Server**
+
    ```bash
    npm run dev
    ```
+
    Or for production build:
+
    ```bash
    npm run build
    npm start
@@ -81,11 +85,11 @@ lighthouse https://moklabs.com.br --preset=mobile --view
 
 ### Score Ranges
 
-| Score | Range | Description |
-|-------|-------|-------------|
-| 🟢 Good | 90-100 | Excellent performance |
-| 🟡 Needs Improvement | 50-89 | Some optimization needed |
-| 🔴 Poor | 0-49 | Significant issues to address |
+| Score                | Range  | Description                   |
+| -------------------- | ------ | ----------------------------- |
+| 🟢 Good              | 90-100 | Excellent performance         |
+| 🟡 Needs Improvement | 50-89  | Some optimization needed      |
+| 🔴 Poor              | 0-49   | Significant issues to address |
 
 ### Performance Metrics
 
@@ -152,6 +156,7 @@ lighthouse https://moklabs.com.br --preset=mobile --view
 Based on the current build configuration:
 
 #### Performance
+
 - **Expected:** 🟡 **70-85**
 - **Issues:**
   - 18 instances of `<img>` instead of `<Image />`
@@ -163,6 +168,7 @@ Based on the current build configuration:
   - Optimize bundle size
 
 #### Accessibility
+
 - **Expected:** 🟢 **85-95**
 - **Strengths:**
   - Semantic HTML
@@ -174,6 +180,7 @@ Based on the current build configuration:
   - ARIA labels (needs review)
 
 #### Best Practices
+
 - **Expected:** 🟢 **90-100**
 - **Strengths:**
   - Security headers configured
@@ -182,6 +189,7 @@ Based on the current build configuration:
   - Modern JavaScript
 
 #### SEO
+
 - **Expected:** 🟢 **95-100**
 - **Strengths:**
   - Meta tags configured
@@ -325,6 +333,7 @@ Document each audit run to track improvements over time:
 ## Audit Log
 
 ### Audit #1 - Baseline (October 9, 2025)
+
 - **URL:** http://localhost:3000
 - **Device:** Desktop
 - **Performance:** 75
@@ -333,11 +342,13 @@ Document each audit run to track improvements over time:
 - **SEO:** 100
 
 **Key Issues:**
+
 - Images not optimized
 - LCP: 3.2s (needs improvement)
 - CLS: 0.15 (needs improvement)
 
 **Action Items:**
+
 1. Migrate to Next.js Image component
 2. Add image dimensions
 3. Optimize hero image
@@ -345,6 +356,7 @@ Document each audit run to track improvements over time:
 ---
 
 ### Audit #2 - After Image Optimization (TBD)
+
 - **URL:** http://localhost:3000
 - **Device:** Desktop
 - **Performance:** [TBD]
@@ -353,11 +365,13 @@ Document each audit run to track improvements over time:
 - **SEO:** [TBD]
 
 **Changes Made:**
+
 1. Migrated all `<img>` to `<Image />`
 2. Added explicit dimensions
 3. Enabled AVIF format
 
 **Results:**
+
 - [To be filled after audit]
 ```
 
@@ -385,7 +399,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: npm ci
@@ -412,16 +426,19 @@ jobs:
 ## Resources
 
 ### Official Documentation
+
 - [Lighthouse Documentation](https://developer.chrome.com/docs/lighthouse)
 - [Web Vitals](https://web.dev/vitals/)
 - [PageSpeed Insights](https://pagespeed.web.dev/)
 
 ### Tools
+
 - [WebPageTest](https://www.webpagetest.org/)
 - [GTmetrix](https://gtmetrix.com/)
 - [Chrome DevTools](https://developer.chrome.com/docs/devtools/)
 
 ### Next.js Optimization Guides
+
 - [Next.js Image Optimization](https://nextjs.org/docs/pages/building-your-application/optimizing/images)
 - [Next.js Font Optimization](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts)
 - [Next.js Performance](https://nextjs.org/docs/pages/building-your-application/optimizing)
@@ -438,6 +455,7 @@ jobs:
 6. **Repeat** until target scores are achieved
 
 **Target Scores:**
+
 - Performance: 🟢 **90+**
 - Accessibility: 🟢 **95+**
 - Best Practices: 🟢 **95+**

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import type { CreateEmailOptions, CreateEmailResponseSuccess } from "resend";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
@@ -7,7 +8,32 @@ const isProd =
   process.env.VERCEL_ENV === "production" ||
   process.env.NODE_ENV === "production";
 
-const simulateSend = (payload: any) => {
+type SimulatedEmailResponse = {
+  id: string;
+  simulated: true;
+};
+
+interface ContactFormPayload {
+  name: string;
+  email: string;
+  message: string;
+}
+
+const isContactFormPayload = (value: unknown): value is ContactFormPayload => {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const { name, email, message } = value as Record<string, unknown>;
+
+  return (
+    typeof name === "string" &&
+    typeof email === "string" &&
+    typeof message === "string"
+  );
+};
+
+const simulateSend = (payload: CreateEmailOptions): SimulatedEmailResponse => {
   console.info(
     "[contact] Simulated email send:",
     JSON.stringify(payload, null, 2)
@@ -43,7 +69,7 @@ export async function POST(request: NextRequest) {
     console.error("RESEND_API_KEY is missing in production environment");
     return NextResponse.json(
       {
-        error: "Configuração de e-mail ausente. Tente novamente mais tarde.",
+        error: "Configuracao de e-mail ausente. Tente novamente mais tarde.",
       },
       { status: 500, headers }
     );
@@ -51,7 +77,17 @@ export async function POST(request: NextRequest) {
 
   try {
     // Parse request body
-    const body = await request.json();
+    const body = (await request.json()) as unknown;
+
+    if (!isContactFormPayload(body)) {
+      return NextResponse.json(
+        {
+          error: "Dados de contato invalidos",
+        },
+        { status: 400, headers }
+      );
+    }
+
     const { name, email, message } = body;
 
     // Validate required fields
@@ -90,11 +126,11 @@ export async function POST(request: NextRequest) {
     const toEmail = process.env.TO_EMAIL || "contato@moklabs.com.br";
     const fromName = process.env.FROM_NAME || "Mok Labs";
 
-    const emailPayload = {
+    const emailPayload: CreateEmailOptions = {
       from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
       subject: `Novo contato de ${name}`,
-      reply_to: [email],
+      replyTo: [email],
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #0013ff;">Novo contato via site</h2>
@@ -121,21 +157,19 @@ export async function POST(request: NextRequest) {
       `,
     };
 
-    const useSimulation = !resend;
+    let result: CreateEmailResponseSuccess | SimulatedEmailResponse;
 
-    let result;
-
-    if (useSimulation) {
+    if (!resend) {
       result = simulateSend(emailPayload);
     } else {
       const { data, error } = await resend.emails.send(emailPayload);
 
-      if (error) {
+      if (error || !data) {
         console.error("Resend error:", error);
         return NextResponse.json(
           {
             error:
-              "Erro ao enviar e-mail. Verifique a configuração do remetente em Resend.",
+              "Erro ao enviar e-mail. Verifique a configuracao do remetente em Resend.",
           },
           { status: 500, headers }
         );
@@ -163,3 +197,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

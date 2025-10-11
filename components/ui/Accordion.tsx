@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,7 +11,13 @@ interface AccordionItemProps {
   onToggle: () => void;
 }
 
-const AccordionItem = ({ number, question, answer, isOpen, onToggle }: AccordionItemProps) => {
+const AccordionItem = ({
+  number,
+  question,
+  answer,
+  isOpen,
+  onToggle,
+}: AccordionItemProps) => {
   const panelId = `accordion-panel-${number}`;
   const headingId = `accordion-heading-${number}`;
 
@@ -35,8 +41,18 @@ const AccordionItem = ({ number, question, answer, isOpen, onToggle }: Accordion
           transition={{ duration: 0.2 }}
           className="mt-1 text-mok-blue"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </motion.span>
       </button>

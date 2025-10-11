@@ -25,7 +25,7 @@ const Container: React.FC<ContainerProps> = ({
     sm: "max-w-screen-sm", // 640px
     md: "max-w-screen-md", // 768px
     lg: "max-w-screen-lg", // 1024px
-    xl: "max-w-[1184px]",  // Custom Mok Labs standard
+    xl: "max-w-[1184px]", // Custom Mok Labs standard
     "2xl": "max-w-screen-2xl", // 1536px
     full: "max-w-full",
   };

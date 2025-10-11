@@ -16,7 +16,13 @@ const config: Config = {
         "mok-green": "#CBFF63",
       },
       fontFamily: {
-        sans: ["var(--font-fira-code)", "Fira Code", "monospace", "ui-monospace", "system-ui"],
+        sans: [
+          "var(--font-fira-code)",
+          "Fira Code",
+          "monospace",
+          "ui-monospace",
+          "system-ui",
+        ],
       },
     },
   },

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 interface HeroButton {
   text: string;
   url: string;
-  variant: 'primary' | 'secondary';
+  variant: "primary" | "secondary";
 }
 
 interface HeroProps {
@@ -45,7 +45,9 @@ const Hero = ({ content }: HeroProps) => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full sm:w-auto">
               {content.buttons?.map((button, index) => {
-                const isExternal = button.url.startsWith('http') || button.url.startsWith('mailto:');
+                const isExternal =
+                  button.url.startsWith("http") ||
+                  button.url.startsWith("mailto:");
                 const buttonClasses = `
                   px-6 py-2 rounded-[24px] text-[16px] font-bold leading-[1.2] text-center whitespace-nowrap
                   ${
@@ -67,11 +69,7 @@ const Hero = ({ content }: HeroProps) => {
                     {button.text}
                   </a>
                 ) : (
-                  <Link
-                    key={index}
-                    href={button.url}
-                    className={buttonClasses}
-                  >
+                  <Link key={index} href={button.url} className={buttonClasses}>
                     {button.text}
                   </Link>
                 );

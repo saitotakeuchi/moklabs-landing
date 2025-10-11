@@ -136,9 +136,10 @@ export function getAllPostSlugs(): string[] {
 /**
  * Get previous and next posts for navigation
  */
-export function getAdjacentPosts(
-  currentSlug: string
-): { previous: BlogPostMetadata | null; next: BlogPostMetadata | null } {
+export function getAdjacentPosts(currentSlug: string): {
+  previous: BlogPostMetadata | null;
+  next: BlogPostMetadata | null;
+} {
   const allPosts = getAllPosts();
   const currentIndex = allPosts.findIndex((post) => post.slug === currentSlug);
 
@@ -148,7 +149,8 @@ export function getAdjacentPosts(
 
   return {
     previous: currentIndex > 0 ? allPosts[currentIndex - 1] : null,
-    next: currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null,
+    next:
+      currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null,
   };
 }
 

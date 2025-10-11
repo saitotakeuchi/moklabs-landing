@@ -56,9 +56,7 @@ export default function BlogPage() {
                 <div className="p-6">
                   {/* Date and Reading Time */}
                   <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-                    <time dateTime={post.date}>
-                      {formatDate(post.date)}
-                    </time>
+                    <time dateTime={post.date}>{formatDate(post.date)}</time>
                     <span>•</span>
                     <span>{post.readingTime}</span>
                   </div>

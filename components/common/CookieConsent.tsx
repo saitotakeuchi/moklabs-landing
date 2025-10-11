@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -29,7 +29,8 @@ const CookieConsent = () => {
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex-1">
           <p className="text-gray-700 text-sm leading-relaxed">
-            Usamos cookies para melhorar sua experiência em nosso site. Ao continuar, você concorda com nossa{" "}
+            Usamos cookies para melhorar sua experiência em nosso site. Ao
+            continuar, você concorda com nossa{" "}
             <Link
               href="/politica-de-privacidade"
               className="text-mok-blue hover:text-mok-blue/80 underline transition-colors"

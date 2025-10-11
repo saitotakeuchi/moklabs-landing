@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -42,13 +42,21 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
     >
       <div className="hidden md:block absolute right-[16px] top-[32px]">
         <div className="w-[100px] h-[100px]">
-          <img src={content.decorativeImages[0].src} alt={content.decorativeImages[0].alt} className="w-full h-full" />
+          <img
+            src={content.decorativeImages[0].src}
+            alt={content.decorativeImages[0].alt}
+            className="w-full h-full"
+          />
         </div>
       </div>
 
       <div className="hidden md:block absolute right-[0] top-[196px]">
         <div className="w-[200px] h-[200px]">
-          <img src={content.decorativeImages[1].src} alt={content.decorativeImages[1].alt} className="w-full h-full" />
+          <img
+            src={content.decorativeImages[1].src}
+            alt={content.decorativeImages[1].alt}
+            className="w-full h-full"
+          />
         </div>
       </div>
 
@@ -65,7 +73,10 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
           {/* Services List */}
           <div className="flex flex-col gap-10 items-center w-full">
             {content.items.map((item, index) => (
-              <div key={index} className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
+              <div
+                key={index}
+                className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]"
+              >
                 {item}
               </div>
             ))}
@@ -98,7 +109,10 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
           {/* Services List */}
           <div className="flex flex-col gap-6 sm:gap-10 items-center w-full">
             {content.items.map((item, index) => (
-              <div key={index} className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]">
+              <div
+                key={index}
+                className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]"
+              >
                 {item}
               </div>
             ))}

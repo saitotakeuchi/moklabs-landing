@@ -3,12 +3,14 @@
 
 /* CSS Variables */
 :root {
-  --color-mok-blue: #0013FF;
-  --color-mok-green: #CBFF63;
+  --color-mok-blue: #0013ff;
+  --color-mok-green: #cbff63;
 }
 
 /* Reset and base styles */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -22,7 +24,8 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-fira-code), 'Fira Code', monospace, ui-monospace, system-ui;
+  font-family:
+    var(--font-fira-code), "Fira Code", monospace, ui-monospace, system-ui;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

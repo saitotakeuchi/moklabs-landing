@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { ContactForm } from '@/components/forms';
+import { motion } from "framer-motion";
+import { ContactForm } from "@/components/forms";
 
 const Contact = () => {
   return (
@@ -20,7 +20,8 @@ const Contact = () => {
               Fale conosco
             </h2>
             <p className="text-sm sm:text-base leading-[1.4]">
-              Use o formulário abaixo para pedir orçamentos, tirar dúvidas e/ou bater um papo!
+              Use o formulário abaixo para pedir orçamentos, tirar dúvidas e/ou
+              bater um papo!
             </p>
           </motion.div>
 

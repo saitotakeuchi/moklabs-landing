@@ -1,4 +1,5 @@
 # Deployment Guide
+
 ## Complete Guide to Deploying Mok Labs Next.js Website
 
 **Last Updated:** October 9, 2025
@@ -214,15 +215,15 @@ In Vercel Dashboard:
 2. Click "Settings" → "Environment Variables"
 3. Add each variable:
 
-| Key | Value | Environment |
-|-----|-------|-------------|
-| `RESEND_API_KEY` | `re_xxx...` | Production, Preview, Development |
-| `FROM_EMAIL` | `contato@moklabs.com.br` | Production, Preview, Development |
-| `TO_EMAIL` | `contato@moklabs.com.br` | Production, Preview, Development |
-| `FROM_NAME` | `Mok Labs` | Production, Preview, Development |
-| `NEXT_PUBLIC_GA_TRACKING_ID` | `G-XXXXXXXXXX` | Production |
-| `NEXT_PUBLIC_SITE_URL` | `https://moklabs.com.br` | Production |
-| `NEXT_PUBLIC_SITE_NAME` | `Mok Labs` | Production |
+| Key                          | Value                    | Environment                      |
+| ---------------------------- | ------------------------ | -------------------------------- |
+| `RESEND_API_KEY`             | `re_xxx...`              | Production, Preview, Development |
+| `FROM_EMAIL`                 | `contato@moklabs.com.br` | Production, Preview, Development |
+| `TO_EMAIL`                   | `contato@moklabs.com.br` | Production, Preview, Development |
+| `FROM_NAME`                  | `Mok Labs`               | Production, Preview, Development |
+| `NEXT_PUBLIC_GA_TRACKING_ID` | `G-XXXXXXXXXX`           | Production                       |
+| `NEXT_PUBLIC_SITE_URL`       | `https://moklabs.com.br` | Production                       |
+| `NEXT_PUBLIC_SITE_NAME`      | `Mok Labs`               | Production                       |
 
 **Using Vercel CLI:**
 
@@ -269,6 +270,7 @@ The `vercel.json` file in the project root configures:
 4. Follow DNS configuration instructions:
 
 **For domain purchased through registrar:**
+
 ```
 Type: A
 Name: @
@@ -466,7 +468,7 @@ frontend:
   artifacts:
     baseDirectory: .next
     files:
-      - '**/*'
+      - "**/*"
   cache:
     paths:
       - node_modules/**/*
@@ -770,7 +772,7 @@ docker logs -f moklabs
 Create `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   web:
@@ -830,18 +832,21 @@ TTL: 3600
 ### Platform-Specific DNS
 
 **Vercel:**
+
 ```
 A Record: @ → 76.76.21.21
 CNAME: www → cname.vercel-dns.com
 ```
 
 **Netlify:**
+
 ```
 A Record: @ → 75.2.60.5
 CNAME: www → [your-site].netlify.app
 ```
 
 **Cloudflare (recommended for DNS):**
+
 1. Add your domain to Cloudflare
 2. Update nameservers at registrar
 3. Set A and CNAME records
@@ -973,11 +978,13 @@ NODE_OPTIONS=--max_old_space_size=4096 npm run build
 ### Deployment Platform Issues
 
 **Vercel:**
+
 - Check [status.vercel.com](https://status.vercel.com)
 - Review deployment logs
 - Contact support via dashboard
 
 **Netlify:**
+
 - Check [status.netlify.com](https://status.netlify.com)
 - Review build logs
 - Contact support

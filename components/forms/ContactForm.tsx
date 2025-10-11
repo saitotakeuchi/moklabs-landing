@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -50,7 +50,9 @@ const ContactForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -96,7 +98,10 @@ const ContactForm = () => {
     } catch (error) {
       console.error("Error submitting form:", error);
       setErrors({
-        submit: error instanceof Error ? error.message : "Erro ao enviar mensagem. Tente novamente.",
+        submit:
+          error instanceof Error
+            ? error.message
+            : "Erro ao enviar mensagem. Tente novamente.",
       });
     } finally {
       setIsSubmitting(false);

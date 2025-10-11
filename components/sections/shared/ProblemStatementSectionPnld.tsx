@@ -19,7 +19,10 @@ const ProblemStatementPnld = ({ content }: ProblemStatementPnldProps) => {
         {/* Problem Cards */}
         <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 items-stretch w-full">
           {content.problems.map((problem, index) => (
-            <div key={index} className="flex-1 bg-mok-blue rounded-[16px] sm:rounded-[24px] px-4 sm:px-6 py-8 sm:py-12 min-h-[140px] sm:h-[170px] flex items-center justify-center">
+            <div
+              key={index}
+              className="flex-1 bg-mok-blue rounded-[16px] sm:rounded-[24px] px-4 sm:px-6 py-8 sm:py-12 min-h-[140px] sm:h-[170px] flex items-center justify-center"
+            >
               <p className="text-[14px] sm:text-[16px] text-white text-center leading-[1.4]">
                 {problem}
               </p>

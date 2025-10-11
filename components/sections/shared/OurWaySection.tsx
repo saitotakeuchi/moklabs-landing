@@ -21,7 +21,7 @@ const OurWay = ({ content }: OurWayProps) => {
 
         <div className="grid gap-12 md:grid-cols-3 md:items-start">
           {content.highlights.map(({ icon, title, description }, index) => {
-            const baseName = icon.replace('.jpg', '').replace('/', '');
+            const baseName = icon.replace(".jpg", "").replace("/", "");
             const isLazyLoaded = index === 2; // Third image (our-way-03)
 
             return (
