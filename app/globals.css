@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-mok-blue: #0013ff;
+    --color-mok-green: #cbff63;
+  }
+
+  /* Smooth scrolling for the entire page */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Reset body margin and set default font */
+  body {
+    margin: 0;
+    font-family:
+      var(--font-fira-code), "Fira Code", monospace, ui-monospace, system-ui;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Ensure consistent box-sizing */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Remove default margins on common elements */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    margin: 0;
+  }
+
+  /* Make images easier to work with */
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Remove built-in form typography styles */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  /* Improve text rendering */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+}
+
+@layer components {
+  /* Custom button styles */
+  .btn-primary {
+    @apply bg-mok-blue text-white px-6 py-2 rounded-full font-bold hover:opacity-90 transition-opacity;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-mok-blue border-2 border-mok-blue px-6 py-2 rounded-full font-bold hover:opacity-90 transition-opacity;
+  }
+
+  .btn-green {
+    @apply bg-mok-green text-mok-blue px-6 py-2 rounded-full font-bold hover:opacity-90 transition-opacity;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100;
+  }
+
+  /* Link styles */
+  .link-primary {
+    @apply text-mok-blue hover:text-mok-blue/80 font-medium transition-colors;
+  }
+
+  /* Container utilities */
+  .container-mok {
+    @apply max-w-[1184px] mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Section utilities */
+  .section-padding {
+    @apply py-12 sm:py-16 md:py-24;
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-gradient-blue {
+    @apply bg-gradient-to-r from-mok-blue to-blue-600 bg-clip-text text-transparent;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Focus visible for accessibility */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mok-blue focus-visible:ring-offset-2;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
