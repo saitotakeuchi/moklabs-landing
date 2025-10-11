@@ -179,13 +179,13 @@ export function getAllTags(): string[] {
 }
 
 /**
- * Format date string to readable format
+ * Format date string to readable format (DD/MM/YY)
  */
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString("pt-BR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
   });
 }
