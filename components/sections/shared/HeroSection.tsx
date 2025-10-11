@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 interface HeroButton {
@@ -96,10 +97,13 @@ const Hero = ({ content }: HeroProps) => {
 
               {/* Character Illustration */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <img
+                <Image
                   src={content.image}
                   alt={content.imageAlt}
-                  className="w-auto h-auto max-w-[90%] max-h-[90%] object-contain"
+                  fill
+                  className="object-contain p-[5%]"
+                  sizes="(max-width: 640px) 300px, (max-width: 768px) 400px, (max-width: 1024px) 500px, 639px"
+                  priority
                 />
               </div>
             </div>
