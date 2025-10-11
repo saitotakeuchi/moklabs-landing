@@ -80,14 +80,31 @@ const nextConfig = {
 
   // Webpack configuration
   webpack: (config, { isServer }) => {
-    // Add custom webpack configurations here if needed
+    // Target modern browsers - skip unnecessary polyfills
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        // Prevent core-js polyfills from being bundled
+        'core-js/modules': false,
+      };
+    }
     return config;
+  },
+
+  // Compiler options for modern browsers
+  compiler: {
+    // Remove console logs in production
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
   },
 
   // Experimental features
   experimental: {
     // Enable optimistic client cache
     optimisticClientCache: true,
+    // Enable CSS optimization
+    optimizeCss: true,
   },
 
   // Production source maps (disable for smaller builds)
