@@ -31,7 +31,7 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
   return (
     <section
       id="servicos"
-      className="py-6 md:py-24 px-0 relative bg-white"
+      className="py-6 md:py-24 px-0 relative bg-white overflow-hidden"
       style={{
         backgroundImage: `
           linear-gradient(to right, #EAFF8F 1px, transparent 1px),

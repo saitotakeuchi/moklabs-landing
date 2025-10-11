@@ -23,7 +23,7 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
   const splashRotate = useTransform(scrollYProgress, [0, 1], [-90, 20]);
 
   return (
-    <section id="servicos" className="py-6 md:py-24 px-0 relative bg-mok-green">
+    <section id="servicos" className="py-6 md:py-24 px-0 relative bg-mok-green overflow-hidden">
       {/* Decorative Stars */}
       <div className="hidden md:block absolute right-[100px] top-[32px]">
         <div className="w-[158px] h-[158px]">
