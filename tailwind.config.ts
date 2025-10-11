@@ -23,6 +23,13 @@ const config: Config = {
           "ui-monospace",
           "system-ui",
         ],
+        inter: [
+          "var(--font-inter)",
+          "Inter",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
       },
     },
   },

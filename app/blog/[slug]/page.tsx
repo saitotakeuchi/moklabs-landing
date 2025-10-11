@@ -298,7 +298,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
           </header>
 
           {/* Post Content */}
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none font-inter">
             <MDXRemote
               source={post.content}
               components={mdxComponents}
