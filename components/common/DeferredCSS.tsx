@@ -20,9 +20,9 @@ export function DeferredCSS() {
       newLink.rel = "preload";
       newLink.as = "style";
       newLink.href = linkElement.href;
-      newLink.onload = function () {
-        this.onload = null;
-        this.rel = "stylesheet";
+      newLink.onload = () => {
+        newLink.onload = null;
+        newLink.rel = "stylesheet";
       };
 
       // Mark as processed

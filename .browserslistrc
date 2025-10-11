@@ -1,0 +1,30 @@
+# Browsers that support ES2020+ features (Baseline 2023)
+# This excludes browsers that need polyfills for:
+# - Array.prototype.at
+# - Array.prototype.flat/flatMap
+# - Object.fromEntries
+# - Object.hasOwn
+# - String.prototype.trimStart/trimEnd
+# - Promise.allSettled
+# - Optional chaining (?.)
+# - Nullish coalescing (??)
+
+# Modern browsers (last 2 major versions)
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions
+
+# Browsers with >0.5% market share
+>0.5%
+
+# Exclude dead browsers
+not dead
+
+# Exclude IE completely
+not IE 11
+not IE_Mob 11
+
+# Exclude old mobile browsers
+not Android <= 4.4.4
+not iOS < 14
