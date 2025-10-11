@@ -1,0 +1,253 @@
+---
+title: "EPUB Acessível: Guia completo para criar e-books inclusivos"
+date: "2025-09-15"
+description: "Aprenda como criar e-books em formato EPUB totalmente acessíveis, seguindo as melhores práticas e atendendo aos padrões WCAG e EPUB Accessibility."
+tags: ["EPUB", "Acessibilidade", "E-books", "Tecnologia"]
+---
+
+O formato **EPUB** (Electronic Publication) é o padrão mais usado para e-books, mas nem todos os EPUBs são criados de forma acessível. Neste guia, vamos explorar como criar e-books verdadeiramente inclusivos.
+
+## O que é EPUB Acessível?
+
+EPUB Acessível é um e-book criado seguindo os padrões de acessibilidade digital, permitindo que pessoas com deficiência possam ler e navegar pelo conteúdo com tecnologias assistivas.
+
+### Principais características:
+
+- Estrutura semântica com HTML5
+- Metadados de acessibilidade
+- Navegação clara e consistente
+- Descrições alternativas para imagens
+- Contraste adequado de cores
+- Tipografia legível
+
+## Por que EPUB e não PDF?
+
+Muitos materiais didáticos ainda são distribuídos em PDF, mas esse formato tem limitações significativas para acessibilidade:
+
+| Aspecto | PDF | EPUB Acessível |
+|---------|-----|----------------|
+| Refluxo de texto | ❌ Limitado | ✅ Total |
+| Leitores de tela | ⚠️ Parcial | ✅ Completo |
+| Ajuste de fonte | ❌ Difícil | ✅ Fácil |
+| Navegação | ⚠️ Básica | ✅ Avançada |
+| Peso do arquivo | ❌ Maior | ✅ Menor |
+
+## Anatomia de um EPUB
+
+Um arquivo EPUB é essencialmente um arquivo ZIP contendo:
+
+```
+meu-livro.epub/
+├── META-INF/
+│   └── container.xml
+├── OEBPS/
+│   ├── content.opf          # Metadados e manifest
+│   ├── toc.ncx              # Índice de navegação
+│   ├── nav.xhtml            # Navegação HTML5
+│   ├── chapter1.xhtml
+│   ├── chapter2.xhtml
+│   ├── styles.css
+│   └── images/
+│       └── cover.jpg
+└── mimetype
+```
+
+## Criando um EPUB Acessível: Passo a Passo
+
+### 1. Estruture o conteúdo semanticamente
+
+Use tags HTML5 apropriadas para estruturar seu conteúdo:
+
+```html
+<section>
+  <h1>Capítulo 1: Introdução</h1>
+
+  <p>Este é o primeiro parágrafo...</p>
+
+  <figure>
+    <img src="diagrama.png" alt="Diagrama mostrando o ciclo da água" />
+    <figcaption>Figura 1: O ciclo da água</figcaption>
+  </figure>
+
+  <aside>
+    <h2>Nota importante</h2>
+    <p>Conteúdo complementar...</p>
+  </aside>
+</section>
+```
+
+### 2. Adicione metadados de acessibilidade
+
+No arquivo `content.opf`, inclua metadados que descrevem os recursos de acessibilidade:
+
+```xml
+<metadata>
+  <meta property="schema:accessibilityFeature">structuralNavigation</meta>
+  <meta property="schema:accessibilityFeature">alternativeText</meta>
+  <meta property="schema:accessibilityHazard">none</meta>
+  <meta property="schema:accessMode">textual</meta>
+  <meta property="schema:accessMode">visual</meta>
+  <meta property="schema:accessModeSufficient">textual</meta>
+</metadata>
+```
+
+### 3. Descreva imagens adequadamente
+
+Imagens decorativas devem ter `alt=""` vazio, mas imagens informativas precisam de descrições detalhadas:
+
+```html
+<!-- Imagem decorativa -->
+<img src="decoracao.png" alt="" role="presentation" />
+
+<!-- Imagem informativa -->
+<img
+  src="grafico-vendas.png"
+  alt="Gráfico de barras mostrando crescimento de vendas de 20% em 2024 comparado a 2023"
+/>
+
+<!-- Imagem complexa com descrição longa -->
+<figure>
+  <img src="mapa-complexo.png" alt="Mapa do Brasil" />
+  <details>
+    <summary>Descrição detalhada do mapa</summary>
+    <p>Mapa político do Brasil mostrando todos os 26 estados e o Distrito Federal...</p>
+  </details>
+</figure>
+```
+
+### 4. Crie navegação acessível
+
+Use landmarks e uma estrutura clara de títulos:
+
+```html
+<nav epub:type="toc" role="doc-toc">
+  <h1>Sumário</h1>
+  <ol>
+    <li><a href="chapter1.xhtml">Capítulo 1: Introdução</a></li>
+    <li><a href="chapter2.xhtml">Capítulo 2: Desenvolvimento</a></li>
+    <li><a href="chapter3.xhtml">Capítulo 3: Conclusão</a></li>
+  </ol>
+</nav>
+```
+
+### 5. Use CSS acessível
+
+Garanta contraste adequado e textos redimensionáveis:
+
+```css
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+  background: #fff;
+}
+
+h1, h2, h3 {
+  color: #0013FF; /* Mok Blue */
+  font-weight: bold;
+  line-height: 1.3;
+}
+
+/* Contraste mínimo de 4.5:1 para texto normal */
+a {
+  color: #0013FF;
+  text-decoration: underline;
+}
+
+/* Foco visível para navegação por teclado */
+a:focus,
+button:focus {
+  outline: 3px solid #0013FF;
+  outline-offset: 2px;
+}
+```
+
+## Ferramentas para criar EPUB Acessível
+
+### Ferramentas profissionais:
+
+1. **Sigil** (gratuito, open-source)
+   - Editor visual WYSIWYG
+   - Suporte a plugins
+   - Validação integrada
+
+2. **Calibre** (gratuito)
+   - Conversão de formatos
+   - Gerenciamento de biblioteca
+   - Edição de metadados
+
+3. **Adobe InDesign** (pago)
+   - Exportação para EPUB 3
+   - Controle total sobre layout
+   - Integração com workflow editorial
+
+4. **Pandoc** (gratuito, linha de comando)
+   - Conversão entre múltiplos formatos
+   - Automação via scripts
+   - Altamente customizável
+
+## Validação e testes
+
+### Validadores automáticos:
+
+```bash
+# EPUBCheck - validador oficial
+java -jar epubcheck.jar meu-livro.epub
+
+# Ace by DAISY - validação de acessibilidade
+ace -o report meu-livro.epub
+```
+
+### Testes manuais essenciais:
+
+- ✅ Teste com leitores de tela (NVDA, JAWS, VoiceOver)
+- ✅ Navegação apenas por teclado
+- ✅ Redimensionamento de fonte (até 200%)
+- ✅ Modo de alto contraste
+- ✅ Leitura em diferentes dispositivos
+
+## Checklist de acessibilidade EPUB
+
+Antes de publicar seu EPUB, verifique:
+
+- [ ] Todos os títulos estão em ordem hierárquica (h1, h2, h3...)
+- [ ] Todas as imagens informativas têm texto alternativo
+- [ ] Imagens decorativas têm alt vazio
+- [ ] Existe navegação por sumário (TOC)
+- [ ] Metadados de acessibilidade estão presentes
+- [ ] Contraste de cores atende WCAG 2.1 AA (4.5:1)
+- [ ] Links têm texto descritivo (não "clique aqui")
+- [ ] Tabelas têm cabeçalhos apropriados
+- [ ] Idioma do documento está declarado
+- [ ] Arquivo passou na validação EPUBCheck
+- [ ] Testado com pelo menos um leitor de tela
+
+## Benefícios além da acessibilidade
+
+EPUBs bem estruturados trazem benefícios adicionais:
+
+1. **SEO para e-books**: Melhor descoberta em plataformas
+2. **Compatibilidade**: Funciona em múltiplos dispositivos
+3. **Experiência de leitura**: Interface adaptável ao usuário
+4. **Sustentabilidade**: Arquivos menores, menor consumo de dados
+5. **Manutenção**: Mais fácil atualizar e corrigir
+
+## Recursos adicionais
+
+Para aprender mais sobre EPUB acessível:
+
+- [EPUB Accessibility Guidelines](https://www.w3.org/TR/epub-a11y/) - W3C
+- [DAISY Consortium](https://daisy.org/) - Organização referência em acessibilidade
+- [Inclusive Publishing](https://inclusivepublishing.org/) - Melhores práticas
+- [WCAG 2.1](https://www.w3.org/WAI/WCAG21/quickref/) - Diretrizes de acessibilidade
+
+---
+
+## Conclusão
+
+Criar EPUBs acessíveis é fundamental para garantir que o conhecimento chegue a todos, independentemente de suas capacidades. Embora exija atenção aos detalhes, o processo se torna natural com prática.
+
+> **"Um EPUB acessível não é apenas um e-book melhor para pessoas com deficiência, é um e-book melhor para todos."**
+
+**Precisa de ajuda para tornar seus e-books acessíveis?** A Mok Labs é especializada em conversão de materiais para EPUB acessível conforme padrões PNLD. [Entre em contato conosco](/contato)!

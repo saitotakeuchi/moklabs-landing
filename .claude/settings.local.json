@@ -5,7 +5,11 @@
       "mcp__figma-dev-mode-mcp-server__get_code",
       "mcp__figma-dev-mode-mcp-server__get_screenshot",
       "Bash(npm run dev:*)",
-      "mcp__figma-dev-mode-mcp-server__get_metadata"
+      "mcp__figma-dev-mode-mcp-server__get_metadata",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
