@@ -126,6 +126,14 @@ const Header = () => {
               >
                 Contato
               </Link>
+              <Link
+                href="/blog"
+                className={`font-small hover:text-mok-green/80 transition-colors cursor-pointer text-sm sm:text-base ${
+                  pathname.startsWith("/blog") ? "text-mok-green" : "text-mok-green/60"
+                }`}
+              >
+                Blog
+              </Link>
             </nav>
 
             {/* PNLD Button - Highlighted */}
@@ -196,6 +204,15 @@ const Header = () => {
                 }`}
               >
                 Contato
+              </Link>
+              <Link
+                href="/blog"
+                className={`font-medium hover:bg-black/10 transition-all cursor-pointer text-base py-3 px-2 rounded ${
+                  pathname.startsWith("/blog") ? "text-mok-blue" : "text-mok-blue/60"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Blog
               </Link>
 
               {/* PNLD Button - Highlighted for Mobile */}
