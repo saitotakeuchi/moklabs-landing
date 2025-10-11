@@ -88,6 +88,8 @@ const nextConfig = {
   experimental: {
     // Enable optimistic client cache
     optimisticClientCache: true,
+    // Enable CSS optimization
+    optimizeCss: true,
   },
 
   // Production source maps (disable for smaller builds)
