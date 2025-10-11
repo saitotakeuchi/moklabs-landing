@@ -118,7 +118,7 @@ const mdxComponents = {
   ),
   blockquote: (props: ComponentPropsWithoutRef<"blockquote">) => (
     <blockquote
-      className="border-l-4 border-mok-blue bg-mok-green/10 pl-4 py-2 my-4 italic"
+      className="border-l-4 border-mok-blue bg-mok-green/10 pl-4 py-2 my-4 italic [&>p]:mb-0"
       {...props}
     />
   ),
