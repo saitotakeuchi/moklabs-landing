@@ -7,7 +7,7 @@ import {
   HowWorksSectionPnld,
   AnimatedPanelSectionPnld,
   OurWaySection,
-  BlogSection,
+  BlogSectionList,
 } from "@/components/sections/shared";
 import { pnldContent } from "@/content";
 import { seoConfig } from "@/config/seoConfig";
@@ -43,7 +43,7 @@ export default function PnldPage() {
       <OurWaySection content={pnldContent.ourWay} />
       <FAQ content={pnldContent.faq} />
       <Contact />
-      <BlogSection filterTag="PNLD" />
+      <BlogSectionList filterTag="PNLD" />
     </main>
   );
 }

@@ -7,7 +7,7 @@ import {
   HowWorksSection,
   OurWaySection,
   AnimatedPanelSection,
-  BlogSection,
+  BlogSectionList,
 } from "@/components/sections/shared";
 import { mainContent } from "@/content";
 import { seoConfig } from "@/config/seoConfig";
@@ -43,7 +43,7 @@ export default function Home() {
       <AnimatedPanelSection content={mainContent.animatedPanel} />
       <FAQ content={mainContent.faq} />
       <Contact />
-      <BlogSection />
+      <BlogSectionList />
     </main>
   );
 }
