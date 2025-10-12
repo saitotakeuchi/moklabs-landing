@@ -106,7 +106,7 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#0013FF" />
       </head>
-      <body className={`${firaCode.variable} antialiased`}>
+      <body className={`${firaCode.variable} ${inter.variable} antialiased`}>
         <GoogleAnalytics />
         <div className="min-h-screen bg-white">
           <div className="pt-[60px] sm:pt-[84px] md:pt-[98px]">
