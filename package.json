@@ -4,16 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:tina": "tinacms dev -c \"next dev\"",
     "build": "next build",
+    "build:tina": "tinacms build && next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "export": "next build && next export",
-    "clean": "rm -rf .next out node_modules/.cache"
+    "clean": "rm -rf .next out node_modules/.cache",
+    "tina:init": "tinacms init"
   },
   "dependencies": {
+    "@tinacms/cli": "^1.11.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "framer-motion": "^12.23.12",
@@ -28,7 +32,8 @@
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "resend": "^6.1.0",
-    "shiki": "^3.13.0"
+    "shiki": "^3.13.0",
+    "tinacms": "^2.9.0"
   },
   "devDependencies": {
     "@types/node": "^20",

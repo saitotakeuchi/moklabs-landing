@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fira_Code } from "next/font/google";
+import { Fira_Code, Inter } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/sections";
 import {
@@ -13,6 +13,14 @@ const firaCode = Fira_Code({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-fira-code",
+  display: "swap",
+  preload: true,
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
   display: "swap",
   preload: true,
 });
@@ -98,7 +106,7 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#0013FF" />
       </head>
-      <body className={`${firaCode.variable} antialiased`}>
+      <body className={`${firaCode.variable} ${inter.variable} antialiased`}>
         <GoogleAnalytics />
         <div className="min-h-screen bg-white">
           <div className="pt-[60px] sm:pt-[84px] md:pt-[98px]">

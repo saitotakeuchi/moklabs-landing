@@ -119,7 +119,7 @@ const mdxComponents = {
   ),
   blockquote: (props: ComponentPropsWithoutRef<"blockquote">) => (
     <blockquote
-      className="border-l-4 border-mok-blue bg-mok-green/10 pl-4 py-2 my-4 italic"
+      className="border-l-4 border-mok-blue bg-mok-green/10 pl-4 py-2 my-4 italic [&>p]:mb-0"
       {...props}
     />
   ),
@@ -308,7 +308,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
           </header>
 
           {/* Post Content */}
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none font-inter">
             <MDXRemote
               source={post.content}
               components={mdxComponents}

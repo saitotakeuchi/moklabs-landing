@@ -51,14 +51,12 @@ export default function BlogPage() {
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="group bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-mok-blue/30"
+                className="group bg-mok-green rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-mok-green hover:border-mok-blue/30"
               >
                 <div className="p-6">
-                  {/* Date and Reading Time */}
-                  <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+                  {/* Date */}
+                  <div className="text-sm text-gray-700 mb-3">
                     <time dateTime={post.date}>{formatDate(post.date)}</time>
-                    <span>•</span>
-                    <span>{post.readingTime}</span>
                   </div>
 
                   {/* Title */}
@@ -77,7 +75,7 @@ export default function BlogPage() {
                       {post.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-3 py-1 bg-mok-green/20 text-mok-blue text-xs font-medium rounded-full"
+                          className="px-3 py-1 bg-white text-mok-blue text-xs font-medium rounded-full"
                         >
                           {tag}
                         </span>
