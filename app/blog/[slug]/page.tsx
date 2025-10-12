@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import type { ComponentPropsWithoutRef } from "react";
@@ -134,8 +135,17 @@ const mdxComponents = {
       {...props}
     />
   ),
-  img: ({ alt, ...rest }: ComponentPropsWithoutRef<"img">) => (
-    <img className="rounded-lg my-6 w-full" alt={alt ?? ""} {...rest} />
+  img: ({ alt, src, width, height, ...rest }: ComponentPropsWithoutRef<"img">) => (
+    <span className="block relative w-full h-auto my-6">
+      <Image
+        src={src ?? ""}
+        alt={alt ?? ""}
+        width={typeof width === 'number' ? width : 1200}
+        height={typeof height === 'number' ? height : 675}
+        className="rounded-lg w-full h-auto"
+        {...rest}
+      />
+    </span>
   ),
   hr: (props: ComponentPropsWithoutRef<"hr">) => (
     <hr className="my-8 border-gray-300" {...props} />

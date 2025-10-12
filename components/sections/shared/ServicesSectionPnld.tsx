@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
@@ -41,21 +42,23 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
       }}
     >
       <div className="hidden md:block absolute right-[16px] top-[32px]">
-        <div className="w-[100px] h-[100px]">
-          <img
+        <div className="w-[100px] h-[100px] relative">
+          <Image
             src={content.decorativeImages[0].src}
             alt={content.decorativeImages[0].alt}
-            className="w-full h-full"
+            fill
+            className="object-contain"
           />
         </div>
       </div>
 
       <div className="hidden md:block absolute right-[0] top-[196px]">
-        <div className="w-[200px] h-[200px]">
-          <img
+        <div className="w-[200px] h-[200px] relative">
+          <Image
             src={content.decorativeImages[1].src}
             alt={content.decorativeImages[1].alt}
-            className="w-full h-full"
+            fill
+            className="object-contain"
           />
         </div>
       </div>
@@ -91,7 +94,7 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
             className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] relative"
             style={{ rotate: splashRotate }}
           >
-            <img src={content.splashImage} alt="" className="w-full h-full" />
+            <Image src={content.splashImage} alt="" fill className="object-contain" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[10px] sm:text-[14px] font-bold text-center leading-[1.2] max-w-[90px] sm:max-w-[120px]">
                 {content.splashText}
@@ -123,10 +126,11 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
             {/* Sem Mok Labs */}
             <div className="flex flex-col gap-1 sm:gap-2 items-center w-[50px] sm:w-[60px]">
               <div className="w-[32px] h-[32px] sm:w-[40px] sm:h-[40px] relative">
-                <img
+                <Image
                   src="/sem-mok.svg"
                   alt="Sem Mok Labs"
-                  className="w-full h-full"
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="text-[8px] sm:text-[10px] text-black text-center leading-[1.4]">
@@ -156,10 +160,11 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
             {/* Com Mok Labs */}
             <div className="flex flex-col gap-1 sm:gap-2 items-center w-[50px] sm:w-[60px]">
               <div className="w-[32px] h-[32px] sm:w-[40px] sm:h-[40px] relative">
-                <img
+                <Image
                   src="/com-mok.svg"
                   alt="Com Mok Labs"
-                  className="w-full h-full"
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="text-[8px] sm:text-[10px] text-black text-center leading-[1.4]">
@@ -175,7 +180,7 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
             className="w-[180px] h-[180px] lg:w-[240px] lg:h-[240px] relative"
             style={{ rotate: splashRotate }}
           >
-            <img src={content.splashImage} alt="" className="w-full h-full" />
+            <Image src={content.splashImage} alt="" fill className="object-contain" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[18px] lg:text-[24px] font-bold text-center leading-[1.2] max-w-[140px] lg:max-w-[191px]">
                 {content.splashText}
@@ -186,11 +191,12 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
 
         {/* Decorative Stars - Full page width */}
         <div className="hidden md:block absolute left-[30px] top-[40px] z-0">
-          <div className="w-[111px] h-[111px] transform rotate-[15deg]">
-            <img
+          <div className="w-[111px] h-[111px] transform rotate-[15deg] relative">
+            <Image
               src="/services-green-star.svg"
               alt=""
-              className="w-full h-full"
+              fill
+              className="object-contain"
             />
           </div>
         </div>
@@ -201,10 +207,11 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
             {/* Sem Mok Labs */}
             <div className="flex flex-col gap-1 lg:gap-2 items-center w-[60px] lg:w-[80px]">
               <div className="w-[42px] h-[42px] lg:w-[57px] lg:h-[57px] relative">
-                <img
+                <Image
                   src="/sem-mok.svg"
                   alt="Sem Mok Labs"
-                  className="w-full h-full"
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="text-[10px] lg:text-[12px] text-black text-center leading-[1.4]">
@@ -234,10 +241,11 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
             {/* Com Mok Labs */}
             <div className="flex flex-col gap-1 lg:gap-2 items-center w-[60px] lg:w-[80px]">
               <div className="w-[42px] h-[42px] lg:w-[57px] lg:h-[57px] relative">
-                <img
+                <Image
                   src="/com-mok.svg"
                   alt="Com Mok Labs"
-                  className="w-full h-full"
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="text-[10px] lg:text-[12px] text-black text-center leading-[1.4]">

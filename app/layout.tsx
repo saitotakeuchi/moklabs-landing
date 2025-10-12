@@ -4,7 +4,6 @@ import "./globals.css";
 import { Header, Footer } from "@/components/sections";
 import {
   CookieConsent,
-  DeferredCSS,
   GoogleAnalytics,
   VercelAnalytics,
 } from "@/components/common";
@@ -106,15 +105,8 @@ export default function RootLayout({
     <html lang="pt-BR">
       <head>
         <meta name="theme-color" content="#0013FF" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
       </head>
-      <body className={`${firaCode.variable} ${inter.variable} antialiased`}>
-        <DeferredCSS />
+      <body className={`${firaCode.variable} antialiased`}>
         <GoogleAnalytics />
         <div className="min-h-screen bg-white">
           <div className="pt-[60px] sm:pt-[84px] md:pt-[98px]">
