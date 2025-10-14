@@ -68,6 +68,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.15.x
+
       - name: Build application
         run: npm run build
         env:
@@ -75,13 +78,4 @@ jobs:
           NEXT_PUBLIC_SITE_NAME: Mok Labs
 
       - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v10
-        with:
-          urls: |
-            http://localhost:3000
-            http://localhost:3000/pnld
-            http://localhost:3000/blog
-          uploadArtifacts: true
-          temporaryPublicStorage: true
-          startServerCommand: npm run start
-          startServerReadyPattern: "Ready"
+        run: lhci autorun
