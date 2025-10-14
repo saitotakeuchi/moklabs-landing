@@ -1,8 +1,13 @@
 name: Preview Deployment
 
+# Disabled: Vercel already auto-deploys PRs via GitHub integration
+# To re-enable: uncomment the 'on:' section below and add required secrets
+# Required secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+
 on:
-  pull_request:
-    branches: [main]
+  # pull_request:
+  #   branches: [main]
+  workflow_dispatch: # Manual trigger only
 
 jobs:
   preview:
