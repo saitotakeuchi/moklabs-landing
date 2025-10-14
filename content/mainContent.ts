@@ -6,7 +6,7 @@ export const mainContent = {
     buttons: [
       {
         text: "Vamos conversar!",
-        url: "https://wa.me/5541992694663",
+        url: "https://wa.me/5541936182622",
         variant: "primary" as const,
       },
       {
@@ -65,7 +65,7 @@ export const mainContent = {
       text: "Vamos conversar?",
       button: {
         text: "Falar no WhatsApp",
-        url: "https://wa.me/5541992694663",
+        url: "https://wa.me/5541936182622",
       },
     },
   },
