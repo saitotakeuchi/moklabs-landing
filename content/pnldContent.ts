@@ -70,6 +70,12 @@ export const pnldContent = {
     },
   },
 
+  ctaBanner: {
+    text: "Pronto para começar seu projeto PNLD?",
+    buttonText: "Vamos conversar!",
+    buttonUrl: "https://wa.me/5541936182622",
+  },
+
   ourWay: {
     title: "Nosso jeito",
     highlights: [
