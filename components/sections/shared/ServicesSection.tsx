@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
@@ -23,23 +24,41 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
   const splashRotate = useTransform(scrollYProgress, [0, 1], [-90, 20]);
 
   return (
-    <section id="servicos" className="py-6 md:py-24 px-0 relative bg-mok-green">
+    <section
+      id="servicos"
+      className="py-6 md:py-24 px-0 relative bg-mok-green overflow-hidden"
+    >
       {/* Decorative Stars */}
       <div className="hidden md:block absolute right-[100px] top-[32px]">
-        <div className="w-[158px] h-[158px]">
-          <img src="/services-blue-star.svg" alt="" className="w-full h-full" />
+        <div className="w-[158px] h-[158px] relative">
+          <Image
+            src="/services-blue-star.svg"
+            alt=""
+            fill
+            className="object-contain"
+          />
         </div>
       </div>
 
       <div className="hidden md:block absolute left-[70px] top-[200px]">
-        <div className="w-[137px] h-[137px]">
-          <img src="/services-blue-star.svg" alt="" className="w-full h-full" />
+        <div className="w-[137px] h-[137px] relative">
+          <Image
+            src="/services-blue-star.svg"
+            alt=""
+            fill
+            className="object-contain"
+          />
         </div>
       </div>
 
       <div className="hidden md:block absolute right-[-50px] bottom-[100px]">
-        <div className="w-[294px] h-[294px]">
-          <img src="/services-blue-star.svg" alt="" className="w-full h-full" />
+        <div className="w-[294px] h-[294px] relative">
+          <Image
+            src="/services-blue-star.svg"
+            alt=""
+            fill
+            className="object-contain"
+          />
         </div>
       </div>
 
@@ -74,7 +93,12 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
             className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] relative"
             style={{ rotate: splashRotate }}
           >
-            <img src={content.splashImage} alt="" className="w-full h-full" />
+            <Image
+              src={content.splashImage}
+              alt=""
+              fill
+              className="object-contain"
+            />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[10px] sm:text-[14px] font-bold text-center leading-[1.2] max-w-[90px] sm:max-w-[120px]">
                 {content.splashText}
@@ -106,10 +130,11 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
             {/* Sem Mok Labs */}
             <div className="flex flex-col gap-1 sm:gap-2 items-center w-[50px] sm:w-[60px]">
               <div className="w-[32px] h-[32px] sm:w-[40px] sm:h-[40px] relative">
-                <img
+                <Image
                   src="/sem-mok.svg"
                   alt="Sem Mok Labs"
-                  className="w-full h-full"
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="text-[8px] sm:text-[10px] text-black text-center leading-[1.4]">
@@ -139,10 +164,11 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
             {/* Com Mok Labs */}
             <div className="flex flex-col gap-1 sm:gap-2 items-center w-[50px] sm:w-[60px]">
               <div className="w-[32px] h-[32px] sm:w-[40px] sm:h-[40px] relative">
-                <img
+                <Image
                   src="/com-mok.svg"
                   alt="Com Mok Labs"
-                  className="w-full h-full"
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="text-[8px] sm:text-[10px] text-black text-center leading-[1.4]">
@@ -158,10 +184,11 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
             className="w-[150px] h-[150px] lg:w-[240px] lg:h-[240px] relative"
             style={{ rotate: splashRotate }}
           >
-            <img
+            <Image
               src={content.splashImage}
               alt=""
-              className="w-full h-full absolute inset-0"
+              fill
+              className="object-contain"
             />
             <div className="absolute inset-0 flex items-center justify-center px-4 z-10">
               <p className="text-mok-blue text-[12px] lg:text-[18px] font-bold text-center leading-[1.2] max-w-[100px] lg:max-w-[160px] break-words">

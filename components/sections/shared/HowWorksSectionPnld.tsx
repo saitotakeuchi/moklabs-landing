@@ -66,4 +66,3 @@ const HowWorksPnld = ({ content }: HowWorksPnldProps) => {
 };
 
 export default HowWorksPnld;
-

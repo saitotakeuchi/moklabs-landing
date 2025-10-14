@@ -49,3 +49,6 @@ pnpm-lock.yaml
 
 # Test coverage
 coverage/
+
+# TinaCMS generated files
+.tina/__generated__/

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import type { ComponentPropsWithoutRef } from "react";
@@ -118,7 +119,7 @@ const mdxComponents = {
   ),
   blockquote: (props: ComponentPropsWithoutRef<"blockquote">) => (
     <blockquote
-      className="border-l-4 border-mok-blue bg-mok-green/10 pl-4 py-2 my-4 italic"
+      className="border-l-4 border-mok-blue bg-mok-green/10 pl-4 py-2 my-4 italic [&>p]:mb-0"
       {...props}
     />
   ),
@@ -134,8 +135,23 @@ const mdxComponents = {
       {...props}
     />
   ),
-  img: ({ alt, ...rest }: ComponentPropsWithoutRef<"img">) => (
-    <img className="rounded-lg my-6 w-full" alt={alt ?? ""} {...rest} />
+  img: ({
+    alt,
+    src,
+    width,
+    height,
+    ...rest
+  }: ComponentPropsWithoutRef<"img">) => (
+    <span className="block relative w-full h-auto my-6">
+      <Image
+        src={src ?? ""}
+        alt={alt ?? ""}
+        width={typeof width === "number" ? width : 1200}
+        height={typeof height === "number" ? height : 675}
+        className="rounded-lg w-full h-auto"
+        {...rest}
+      />
+    </span>
   ),
   hr: (props: ComponentPropsWithoutRef<"hr">) => (
     <hr className="my-8 border-gray-300" {...props} />
@@ -298,7 +314,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
           </header>
 
           {/* Post Content */}
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none font-inter">
             <MDXRemote
               source={post.content}
               components={mdxComponents}
