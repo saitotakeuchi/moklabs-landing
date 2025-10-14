@@ -83,3 +83,5 @@ jobs:
             http://localhost:3000/blog
           uploadArtifacts: true
           temporaryPublicStorage: true
+          startServerCommand: npm run start
+          startServerReadyPattern: "Ready"
