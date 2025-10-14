@@ -94,7 +94,12 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
             className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] relative"
             style={{ rotate: splashRotate }}
           >
-            <Image src={content.splashImage} alt="" fill className="object-contain" />
+            <Image
+              src={content.splashImage}
+              alt=""
+              fill
+              className="object-contain"
+            />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[10px] sm:text-[14px] font-bold text-center leading-[1.2] max-w-[90px] sm:max-w-[120px]">
                 {content.splashText}
@@ -180,7 +185,12 @@ const ServicesPnld = ({ content }: ServicesPnldProps) => {
             className="w-[180px] h-[180px] lg:w-[240px] lg:h-[240px] relative"
             style={{ rotate: splashRotate }}
           >
-            <Image src={content.splashImage} alt="" fill className="object-contain" />
+            <Image
+              src={content.splashImage}
+              alt=""
+              fill
+              className="object-contain"
+            />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[18px] lg:text-[24px] font-bold text-center leading-[1.2] max-w-[140px] lg:max-w-[191px]">
                 {content.splashText}

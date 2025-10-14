@@ -27,7 +27,8 @@ const BlogSection = ({ filterTag }: BlogSectionProps) => {
             Blog
           </h2>
           <p className="text-gray-600 text-[16px] leading-[1.6] max-w-[600px] mx-auto">
-            Fique por dentro das novidades e melhores práticas em acessibilidade digital
+            Fique por dentro das novidades e melhores práticas em acessibilidade
+            digital
           </p>
         </div>
 

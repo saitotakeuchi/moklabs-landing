@@ -27,12 +27,14 @@ export default function AdminPage() {
             </li>
             <li>2. Get your Client ID and Token</li>
             <li>
-              3. Add them to <code className="bg-gray-200 px-2 py-1 rounded">
-.env.local</code>
+              3. Add them to{" "}
+              <code className="bg-gray-200 px-2 py-1 rounded">.env.local</code>
             </li>
             <li>
-              4. Run <code className="bg-gray-200 px-2 py-1 rounded">
-npm run dev:tina</code>
+              4. Run{" "}
+              <code className="bg-gray-200 px-2 py-1 rounded">
+                npm run dev:tina
+              </code>
             </li>
           </ol>
         </div>

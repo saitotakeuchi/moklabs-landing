@@ -24,23 +24,41 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
   const splashRotate = useTransform(scrollYProgress, [0, 1], [-90, 20]);
 
   return (
-    <section id="servicos" className="py-6 md:py-24 px-0 relative bg-mok-green overflow-hidden">
+    <section
+      id="servicos"
+      className="py-6 md:py-24 px-0 relative bg-mok-green overflow-hidden"
+    >
       {/* Decorative Stars */}
       <div className="hidden md:block absolute right-[100px] top-[32px]">
         <div className="w-[158px] h-[158px] relative">
-          <Image src="/services-blue-star.svg" alt="" fill className="object-contain" />
+          <Image
+            src="/services-blue-star.svg"
+            alt=""
+            fill
+            className="object-contain"
+          />
         </div>
       </div>
 
       <div className="hidden md:block absolute left-[70px] top-[200px]">
         <div className="w-[137px] h-[137px] relative">
-          <Image src="/services-blue-star.svg" alt="" fill className="object-contain" />
+          <Image
+            src="/services-blue-star.svg"
+            alt=""
+            fill
+            className="object-contain"
+          />
         </div>
       </div>
 
       <div className="hidden md:block absolute right-[-50px] bottom-[100px]">
         <div className="w-[294px] h-[294px] relative">
-          <Image src="/services-blue-star.svg" alt="" fill className="object-contain" />
+          <Image
+            src="/services-blue-star.svg"
+            alt=""
+            fill
+            className="object-contain"
+          />
         </div>
       </div>
 
@@ -75,7 +93,12 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
             className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] relative"
             style={{ rotate: splashRotate }}
           >
-            <Image src={content.splashImage} alt="" fill className="object-contain" />
+            <Image
+              src={content.splashImage}
+              alt=""
+              fill
+              className="object-contain"
+            />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-white text-[10px] sm:text-[14px] font-bold text-center leading-[1.2] max-w-[90px] sm:max-w-[120px]">
                 {content.splashText}

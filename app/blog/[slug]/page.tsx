@@ -135,13 +135,19 @@ const mdxComponents = {
       {...props}
     />
   ),
-  img: ({ alt, src, width, height, ...rest }: ComponentPropsWithoutRef<"img">) => (
+  img: ({
+    alt,
+    src,
+    width,
+    height,
+    ...rest
+  }: ComponentPropsWithoutRef<"img">) => (
     <span className="block relative w-full h-auto my-6">
       <Image
         src={src ?? ""}
         alt={alt ?? ""}
-        width={typeof width === 'number' ? width : 1200}
-        height={typeof height === 'number' ? height : 675}
+        width={typeof width === "number" ? width : 1200}
+        height={typeof height === "number" ? height : 675}
         className="rounded-lg w-full h-auto"
         {...rest}
       />

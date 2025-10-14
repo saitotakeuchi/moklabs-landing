@@ -39,6 +39,7 @@ The blog system supports two methods of creating posts:
 ### Setup
 
 1. Add environment variables to `.env.local`:
+
    ```env
    WEBHOOK_SECRET=your-secure-random-string-here
    ```
@@ -53,12 +54,14 @@ The blog system supports two methods of creating posts:
 **URL**: `POST https://moklabs.com.br/api/blog/webhook`
 
 **Headers**:
+
 ```
 Authorization: Bearer YOUR_WEBHOOK_SECRET
 Content-Type: application/json
 ```
 
 **Request Body**:
+
 ```json
 {
   "content": "---\ntitle: \"Your Post Title\"\ndate: \"2025-01-15\"\ndescription: \"Your post description\"\ntags: [\"Tag1\", \"Tag2\"]\n---\n\n# Your Content Here\n\nPost content in Markdown/MDX format..."
@@ -79,11 +82,11 @@ curl -X POST https://moklabs.com.br/api/blog/webhook \
 ### Example: Creating a Post with Node.js
 
 ```javascript
-const response = await fetch('https://moklabs.com.br/api/blog/webhook', {
-  method: 'POST',
+const response = await fetch("https://moklabs.com.br/api/blog/webhook", {
+  method: "POST",
   headers: {
-    'Authorization': `Bearer ${process.env.WEBHOOK_SECRET}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${process.env.WEBHOOK_SECRET}`,
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
     content: `---
@@ -95,8 +98,8 @@ tags: ["Tag1", "Tag2"]
 
 # Content
 
-Your post content here...`
-  })
+Your post content here...`,
+  }),
 });
 
 const result = await response.json();
@@ -138,6 +141,7 @@ print(response.json())
 ## Response Format
 
 ### Success Response (201)
+
 ```json
 {
   "success": true,
@@ -152,6 +156,7 @@ print(response.json())
 ### Error Responses
 
 **401 Unauthorized**
+
 ```json
 {
   "error": "Unauthorized: Invalid or missing token"
@@ -159,6 +164,7 @@ print(response.json())
 ```
 
 **400 Bad Request**
+
 ```json
 {
   "error": "Invalid frontmatter",
@@ -167,6 +173,7 @@ print(response.json())
 ```
 
 **409 Conflict**
+
 ```json
 {
   "error": "A post with this title already exists",
@@ -180,10 +187,10 @@ print(response.json())
 
 ```yaml
 ---
-title: "Post Title"           # Required: String
-date: "YYYY-MM-DD"            # Required: Date format
-description: "Description"    # Required: String
-tags: ["Tag1", "Tag2"]       # Required: Array of strings
+title: "Post Title" # Required: String
+date: "YYYY-MM-DD" # Required: Date format
+description: "Description" # Required: String
+tags: ["Tag1", "Tag2"] # Required: Array of strings
 ---
 ```
 
@@ -253,6 +260,7 @@ curl https://moklabs.com.br/api/blog/webhook
 ```
 
 Response:
+
 ```json
 {
   "status": "ok",
@@ -266,29 +274,31 @@ Response:
 ### Using with OpenAI API
 
 ```javascript
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
 const openai = new OpenAI();
 
 async function generateBlogPost(topic) {
   const completion = await openai.chat.completions.create({
     model: "gpt-4",
-    messages: [{
-      role: "user",
-      content: `Generate a blog post about ${topic} in MDX format with frontmatter`
-    }]
+    messages: [
+      {
+        role: "user",
+        content: `Generate a blog post about ${topic} in MDX format with frontmatter`,
+      },
+    ],
   });
 
   const mdxContent = completion.choices[0].message.content;
 
   // Send to webhook
-  await fetch('https://moklabs.com.br/api/blog/webhook', {
-    method: 'POST',
+  await fetch("https://moklabs.com.br/api/blog/webhook", {
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${process.env.WEBHOOK_SECRET}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${process.env.WEBHOOK_SECRET}`,
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ content: mdxContent })
+    body: JSON.stringify({ content: mdxContent }),
   });
 }
 ```
