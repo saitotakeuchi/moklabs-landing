@@ -9,7 +9,14 @@
       "Bash(npx create-next-app:*)",
       "Bash(npm install:*)",
       "Bash(npx tsc:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(rm:*)",
+      "Bash(npm run format)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(npm run format:check:*)",
+      "Bash(cat:*)",
+      "Bash(git ls-tree:*)"
     ],
     "deny": [],
     "ask": []

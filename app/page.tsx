@@ -5,6 +5,7 @@ import {
   ProblemStatementSection,
   ServicesSection,
   HowWorksSection,
+  CTASection,
   OurWaySection,
   AnimatedPanelSection,
   BlogSectionList,
@@ -39,6 +40,11 @@ export default function Home() {
       <ProblemStatementSection content={mainContent.problemStatement} />
       <ServicesSection content={mainContent.services} />
       <HowWorksSection content={mainContent.howWorks} />
+      <CTASection
+        text={mainContent.ctaBanner.text}
+        buttonText={mainContent.ctaBanner.buttonText}
+        buttonUrl={mainContent.ctaBanner.buttonUrl}
+      />
       <OurWaySection content={mainContent.ourWay} />
       <AnimatedPanelSection content={mainContent.animatedPanel} />
       <FAQ content={mainContent.faq} />
