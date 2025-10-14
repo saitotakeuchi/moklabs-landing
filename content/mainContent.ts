@@ -70,6 +70,12 @@ export const mainContent = {
     },
   },
 
+  ctaBanner: {
+    text: "Pronto para tirar sua ideia do papel?",
+    buttonText: "Vamos conversar!",
+    buttonUrl: "https://wa.me/5541936182622",
+  },
+
   ourWay: {
     title: "Por que escolher o Mok Labs?",
     highlights: [

@@ -87,7 +87,7 @@ const SEOHead = ({
         "Especialistas em soluções digitais para educação. Desenvolvemos objetos educacionais digitais, plataformas LMS, materiais para PNLD e projetos de IA aplicados à educação.",
       contactPoint: {
         "@type": "ContactPoint",
-        telephone: "+55-41-99269-4663",
+        telephone: "+55-41-93618-2622",
         contactType: "customer service",
         availableLanguage: ["Portuguese", "pt-BR"],
         areaServed: "BR",

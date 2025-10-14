@@ -2,6 +2,7 @@ export { default as AnimatedPanelSection } from "./AnimatedPanelSection";
 export { default as AnimatedPanelSectionPnld } from "./AnimatedPanelSectionPnld";
 export { default as BlogSection } from "./BlogSection";
 export { default as BlogSectionList } from "./BlogSectionList";
+export { default as CTASection } from "./CTASection";
 export { default as HeroSection } from "./HeroSection";
 export { default as HeroSectionMain } from "./HeroSectionMain";
 export { default as HeroSectionPnld } from "./HeroSectionPnld";

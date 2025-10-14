@@ -5,6 +5,7 @@ import {
   ProblemStatementSectionPnld,
   ServicesSectionPnld,
   HowWorksSectionPnld,
+  CTASection,
   AnimatedPanelSectionPnld,
   OurWaySection,
   BlogSectionList,
@@ -40,6 +41,11 @@ export default function PnldPage() {
       <ServicesSectionPnld content={pnldContent.services} />
       <AnimatedPanelSectionPnld content={pnldContent.animatedPanel} />
       <HowWorksSectionPnld content={pnldContent.howWorks} />
+      <CTASection
+        text={pnldContent.ctaBanner.text}
+        buttonText={pnldContent.ctaBanner.buttonText}
+        buttonUrl={pnldContent.ctaBanner.buttonUrl}
+      />
       <OurWaySection content={pnldContent.ourWay} />
       <FAQ content={pnldContent.faq} />
       <Contact />
