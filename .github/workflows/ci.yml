@@ -47,12 +47,20 @@ jobs:
           NEXT_PUBLIC_SITE_URL: https://moklabs.com.br
           NEXT_PUBLIC_SITE_NAME: Mok Labs
 
-      - name: Upload build artifacts
+      - name: Upload web app build artifacts
         if: matrix.node-version == '18.x'
         uses: actions/upload-artifact@v4
         with:
-          name: build
+          name: build-web
           path: apps/web/.next
+          retention-days: 7
+
+      - name: Upload pnld-chat app build artifacts
+        if: matrix.node-version == '18.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-pnld-chat
+          path: apps/pnld-chat/.next
           retention-days: 7
 
   lighthouse:
