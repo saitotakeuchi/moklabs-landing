@@ -6,29 +6,21 @@ After the monorepo migration, Vercel was deploying cached/old content because th
 
 ## Changes Made
 
-### 1. ✅ Created Root-Level `vercel.json`
+### 1. ✅ Updated `apps/web/vercel.json`
 
-- **Location:** `moklabs-landing/vercel.json`
-- **Purpose:** Configures Vercel to build from the monorepo root using Turborepo filters
+- **Added:** Monorepo-aware build commands that navigate to root and use Turborepo filters
+- **Kept:** App-specific headers and security settings
 - **Key settings:**
   ```json
   {
-    "buildCommand": "pnpm run build --filter=@moklabs/web",
-    "devCommand": "pnpm run dev --filter=@moklabs/web",
-    "installCommand": "pnpm install",
-    "framework": "nextjs",
-    "outputDirectory": "apps/web/.next",
-    "regions": ["gru1"]
+    "buildCommand": "cd ../.. && pnpm run build --filter=@moklabs/web",
+    "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
+    "framework": "nextjs"
   }
   ```
+- **How it works:** When Root Directory is set to `apps/web`, these commands navigate back to monorepo root to run the build
 
-### 2. ✅ Updated `apps/web/vercel.json`
-
-- **Removed:** Build-related configuration (moved to root)
-- **Kept:** App-specific headers and security settings
-- **Purpose:** Avoid configuration conflicts
-
-### 3. ✅ Fixed pnpm Version Mismatch
+### 2. ✅ Fixed pnpm Version Mismatch
 
 Updated all GitHub Actions workflows to use `pnpm@10.18.3` (matching `package.json`):
 
@@ -47,15 +39,14 @@ Updated all GitHub Actions workflows to use `pnpm@10.18.3` (matching `package.js
 1. **Go to:** Vercel Dashboard → Your Project → Settings → General
 
 2. **Root Directory:**
-   - Set to: **`.`** (dot - meaning monorepo root)
-   - OR leave **blank** (defaults to root)
-   - ❌ Do NOT set to `apps/web`
+   - Set to: **`apps/web`**
+   - This tells Vercel to treat `apps/web` as the project root
 
 3. **Build & Development Settings:**
    - Framework Preset: **Next.js**
-   - Build Command: **Override** with `pnpm run build --filter=@moklabs/web`
-   - Output Directory: `apps/web/.next`
-   - Install Command: `pnpm install`
+   - Build Command: **Override** with `cd ../.. && pnpm run build --filter=@moklabs/web`
+   - Install Command: **Override** with `cd ../.. && pnpm install --frozen-lockfile`
+   - Output Directory: Leave as default (`.next`)
 
 4. **Node.js Version:**
    - Set to: **20.x** (for consistency)
@@ -111,22 +102,23 @@ Updated all GitHub Actions workflows to use `pnpm@10.18.3` (matching `package.js
 
 ### Common Issues:
 
-- **"Cannot find module '@moklabs/ui'"** → Root Directory is set to `apps/web` instead of root
+- **"Cannot find module '@moklabs/ui'"** → Build commands not navigating to monorepo root
+- **"No Next.js version detected"** → Root Directory is NOT set to `apps/web`
 - **Old content showing** → Build cache issue, clear cache and redeploy
 - **Build fails silently** → Check install command is using pnpm, not npm
+- **pnpm workspace errors** → Ensure Root Directory is `apps/web` so build commands can navigate to root
 
 ## Architecture
 
 ```
-moklabs-landing/                  ← Vercel Root Directory (set to ".")
-├── vercel.json                   ← Build configuration
+moklabs-landing/                  ← Monorepo root
 ├── pnpm-workspace.yaml           ← Workspace definition
 ├── turbo.json                    ← Turborepo config
 ├── package.json                  ← Root package.json
 ├── apps/
-│   └── web/
-│       ├── vercel.json           ← App-specific config (headers only)
-│       ├── package.json          ← @moklabs/web
+│   └── web/                      ← Vercel Root Directory (set to "apps/web")
+│       ├── vercel.json           ← Build & deployment config
+│       ├── package.json          ← @moklabs/web (has Next.js)
 │       ├── next.config.mjs
 │       └── .next/                ← Build output
 └── packages/
@@ -134,6 +126,12 @@ moklabs-landing/                  ← Vercel Root Directory (set to ".")
     ├── config/
     └── database/
 ```
+
+**How it works:**
+1. Vercel's Root Directory is set to `apps/web`
+2. Build commands in `vercel.json` use `cd ../..` to navigate to monorepo root
+3. From root, Turborepo builds all dependencies and the web app
+4. Output goes to `apps/web/.next` (relative to Root Directory)
 
 ## Next Steps
 
