@@ -1,0 +1,28 @@
+{
+  "name": "@moklabs/pnld-chat",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start --port 3001",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@moklabs/ui": "workspace:*",
+    "@moklabs/database": "workspace:*",
+    "@moklabs/config": "workspace:*",
+    "next": "14.2.33",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.33",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,3 @@
+import React from 'react';
+declare const ScreenPage: () => React.JSX.Element;
+export default ScreenPage;

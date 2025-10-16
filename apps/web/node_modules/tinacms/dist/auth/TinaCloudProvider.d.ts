@@ -1,0 +1,36 @@
+import { MediaStore, StaticMedia, TinaCMS } from '@tinacms/toolkit';
+import React from 'react';
+import { Client, TinaIOConfig } from '../internalClient';
+import { CreateClientProps } from '../utils';
+export interface TinaCloudMediaStoreClass {
+    new (client: Client): MediaStore;
+}
+export interface TinaCloudAuthWallProps {
+    cms?: TinaCMS;
+    children: React.ReactNode;
+    tinaioConfig?: TinaIOConfig;
+    getModalActions?: (args: {
+        closeModal: () => void;
+    }) => {
+        name: string;
+        action: () => Promise<void>;
+        primary: boolean;
+    }[];
+    mediaStore?: TinaCloudMediaStoreClass | (() => Promise<TinaCloudMediaStoreClass>);
+}
+/**
+ * Provides the ability to setup your CMS and media while also providing an authentication wall so Tina is not enabled without a valid user session.
+ *
+ * Note: this will not restrict access for local filesystem clients
+ */
+export declare const TinaCloudProvider: (props: TinaCloudAuthWallProps & CreateClientProps & {
+    cmsCallback?: (cms: TinaCMS) => TinaCMS;
+    staticMedia: StaticMedia;
+}) => React.JSX.Element;
+/**
+ * @deprecated Please use `TinaCloudProvider` instead
+ */
+export declare const TinaCloudAuthWall: (props: TinaCloudAuthWallProps & CreateClientProps & {
+    cmsCallback?: (cms: TinaCMS) => TinaCMS;
+    staticMedia: StaticMedia;
+}) => React.JSX.Element;
