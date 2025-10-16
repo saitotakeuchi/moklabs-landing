@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm install && pnpm run build --filter=web",
-  "devCommand": "pnpm run dev --filter=web",
+  "buildCommand": "pnpm install && pnpm run build --filter=@moklabs/web",
+  "devCommand": "pnpm run dev --filter=@moklabs/web",
   "installCommand": "pnpm install",
   "framework": "nextjs",
   "regions": ["gru1"],
