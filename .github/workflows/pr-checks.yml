@@ -47,26 +47,12 @@ jobs:
             echo "Build failed: apps/web/.next directory not found"
             exit 1
           fi
-          echo "✓ apps/web build successful! .next directory exists"
+          echo "✓ apps/web build successful! (includes /pnld-chat routes)"
           ls -la apps/web/.next/
-          
-          if [ ! -d "apps/pnld-chat/.next" ]; then
-            echo "Build failed: apps/pnld-chat/.next directory not found"
-            exit 1
-          fi
-          echo "✓ apps/pnld-chat build successful! .next directory exists"
-          ls -la apps/pnld-chat/.next/
 
       - name: Upload web app build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-web
           path: apps/web/.next/
-          retention-days: 7
-
-      - name: Upload pnld-chat app build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-pnld-chat
-          path: apps/pnld-chat/.next/
           retention-days: 7

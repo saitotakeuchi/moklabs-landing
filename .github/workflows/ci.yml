@@ -54,14 +54,7 @@ jobs:
           name: build-web
           path: apps/web/.next
           retention-days: 7
-
-      - name: Upload pnld-chat app build artifacts
-        if: matrix.node-version == '18.x'
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-pnld-chat
-          path: apps/pnld-chat/.next
-          retention-days: 7
+          # Note: Includes /pnld-chat routes integrated into web app
 
   lighthouse:
     runs-on: ubuntu-latest
