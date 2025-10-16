@@ -2,6 +2,13 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
+import yaml from "js-yaml";
+
+// Configure gray-matter to use js-yaml v4 API
+matter.engines.yaml = {
+  parse: (str: string) => yaml.load(str) as Record<string, unknown>,
+  stringify: (obj: Record<string, unknown>) => yaml.dump(obj),
+};
 
 const postsDirectory = path.join(process.cwd(), "content/blog");
 
