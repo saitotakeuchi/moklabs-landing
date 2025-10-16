@@ -61,13 +61,6 @@ export const pnldContent = {
         description: "→ Arquivos revisados e prontos para inscrição.",
       },
     ],
-    cta: {
-      text: "Pronto para começar?",
-      button: {
-        text: "Falar no WhatsApp",
-        url: "https://wa.me/5541936182622",
-      },
-    },
   },
 
   ctaBanner: {
