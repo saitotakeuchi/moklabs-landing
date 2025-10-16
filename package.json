@@ -1,51 +1,20 @@
 {
-  "name": "nextjs-migration",
-  "version": "0.1.0",
+  "name": "moklabs-monorepo",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:tina": "tinacms dev -c \"next dev\"",
-    "build": "next build",
-    "build:tina": "tinacms build && next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "export": "next build && next export",
-    "clean": "rm -rf .next out node_modules/.cache",
-    "tina:init": "tinacms init"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "format": "turbo run format",
+    "format:check": "turbo run format:check"
   },
-  "dependencies": {
-    "@tinacms/cli": "^1.11.0",
-    "@vercel/analytics": "^1.5.0",
-    "@vercel/speed-insights": "^1.2.0",
-    "framer-motion": "^12.23.12",
-    "gray-matter": "^4.0.3",
-    "iconoir-react": "^7.11.0",
-    "next": "14.2.33",
-    "next-mdx-remote": "^5.0.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "reading-time": "^1.5.0",
-    "rehype-pretty-code": "^0.14.1",
-    "remark": "^15.0.1",
-    "remark-gfm": "^4.0.1",
-    "resend": "^6.1.0",
-    "shiki": "^3.13.0",
-    "tinacms": "^2.9.0"
-  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "critters": "^0.0.23",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.33",
-    "postcss": "^8",
-    "prettier": "^3.3.3",
-    "sharp": "^0.34.4",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
-  }
+    "turbo": "^2.3.3"
+  },
+  "packageManager": "pnpm@9.15.0"
 }
