@@ -47,12 +47,12 @@ jobs:
             echo "Build failed: apps/web/.next directory not found"
             exit 1
           fi
-          echo "Build successful! apps/web/.next directory exists"
+          echo "✓ apps/web build successful! (includes /pnld-chat routes)"
           ls -la apps/web/.next/
 
-      - name: Upload build artifacts
+      - name: Upload web app build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-output
+          name: build-web
           path: apps/web/.next/
           retention-days: 7

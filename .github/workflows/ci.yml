@@ -47,13 +47,14 @@ jobs:
           NEXT_PUBLIC_SITE_URL: https://moklabs.com.br
           NEXT_PUBLIC_SITE_NAME: Mok Labs
 
-      - name: Upload build artifacts
+      - name: Upload web app build artifacts
         if: matrix.node-version == '18.x'
         uses: actions/upload-artifact@v4
         with:
-          name: build
+          name: build-web
           path: apps/web/.next
           retention-days: 7
+          # Note: Includes /pnld-chat routes integrated into web app
 
   lighthouse:
     runs-on: ubuntu-latest

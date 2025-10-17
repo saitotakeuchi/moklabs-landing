@@ -61,13 +61,6 @@ export const mainContent = {
           "experiências digitais revisadas e entregues no formato certo.",
       },
     ],
-    cta: {
-      text: "Vamos conversar?",
-      button: {
-        text: "Falar no WhatsApp",
-        url: "https://wa.me/5541936182622",
-      },
-    },
   },
 
   ctaBanner: {
