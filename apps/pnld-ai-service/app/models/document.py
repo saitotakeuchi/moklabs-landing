@@ -38,6 +38,19 @@ class Document(BaseModel):
     updated_at: datetime
 
 
+class PageChunk(BaseModel):
+    """Model representing a chunk of text from a specific page."""
+
+    page_number: int = Field(..., description="Page number in the source document")
+    content: str = Field(..., min_length=1, description="Text content of the chunk")
+    chunk_index: int = Field(
+        default=0, description="Index of chunk within the page (for multi-chunk pages)"
+    )
+    metadata: Optional[Dict[str, Any]] = Field(
+        None, description="Additional chunk metadata (section, paragraph, etc.)"
+    )
+
+
 class DocumentEmbedding(BaseModel):
     """Document embedding chunk model."""
 
@@ -45,4 +58,7 @@ class DocumentEmbedding(BaseModel):
     document_id: str
     content: str
     embedding: Optional[list[float]] = None
+    page_number: Optional[int] = Field(None, description="Source page number for citation")
+    chunk_index: Optional[int] = Field(None, description="Index within page")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional chunk metadata")
     created_at: datetime
