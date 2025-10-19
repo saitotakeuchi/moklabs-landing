@@ -24,6 +24,9 @@ export interface DocumentSource {
   title: string;
   content_excerpt: string;
   relevance_score: number;
+  page_number?: number;
+  chunk_index?: number;
+  edital_id?: string;
 }
 
 export interface ChatResponse {

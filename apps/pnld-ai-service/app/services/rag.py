@@ -33,10 +33,12 @@ async def generate_rag_response(
         Tuple of (response_text, source_documents)
     """
     # Step 1: Retrieve relevant documents
+    # Using lower threshold (0.5) to be more permissive during initial testing
     similar_docs = await search_similar_documents(
         query=query,
         edital_id=edital_id,
         limit=5,
+        similarity_threshold=0.5,
     )
 
     # Step 2: Build context from retrieved documents
@@ -56,13 +58,13 @@ async def generate_rag_response(
 
 def build_context(documents: List[dict]) -> str:
     """
-    Build context string from retrieved documents.
+    Build context string from retrieved documents with page citations.
 
     Args:
         documents: List of document chunks with content and metadata
 
     Returns:
-        Formatted context string
+        Formatted context string with page references
     """
     if not documents:
         return "No relevant documents found."
@@ -70,7 +72,16 @@ def build_context(documents: List[dict]) -> str:
     context_parts = []
     for i, doc in enumerate(documents, 1):
         content = doc.get("content", "")
-        context_parts.append(f"[Document {i}]\n{content}\n")
+        title = doc.get("document_title", "Unknown")
+        page_number = doc.get("page_number")
+
+        # Build citation header
+        citation = f"[Document {i}: {title}"
+        if page_number is not None:
+            citation += f", Page {page_number}"
+        citation += "]"
+
+        context_parts.append(f"{citation}\n{content}\n")
 
     return "\n".join(context_parts)
 
@@ -100,6 +111,8 @@ async def generate_llm_response(
     # Build system message with context
     system_message = f"""You are a helpful assistant that answers questions about PNLD (Programa Nacional do Livro Didático) editals.
 Use the following context to answer the user's question. If the context doesn't contain relevant information, say so.
+
+When citing information, always reference the page number if available (e.g., "According to page 5 of the document...").
 
 Context:
 {context}

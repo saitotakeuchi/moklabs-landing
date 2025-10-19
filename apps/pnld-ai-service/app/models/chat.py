@@ -34,6 +34,9 @@ class DocumentSource(BaseModel):
     title: str
     content_excerpt: str
     relevance_score: float
+    page_number: Optional[int] = Field(None, description="Page number for citation")
+    chunk_index: Optional[int] = Field(None, description="Chunk index within page")
+    edital_id: Optional[str] = Field(None, description="Associated edital ID")
 
 
 class ChatResponse(BaseModel):

@@ -21,7 +21,7 @@ async def search_similar_documents(
         similarity_threshold: Minimum similarity score (0-1)
 
     Returns:
-        List of similar document chunks with metadata
+        List of similar document chunks with metadata including page numbers
     """
     # Generate embedding for the query
     query_embedding = await generate_embedding(query)
@@ -29,21 +29,45 @@ async def search_similar_documents(
     # Get Supabase client
     client = get_supabase_client()
 
-    # TODO: Implement actual vector search using pgvector
-    # This requires using Supabase's RPC function for vector similarity
-    # Example:
-    # response = client.rpc(
-    #     'match_documents',
-    #     {
-    #         'query_embedding': query_embedding,
-    #         'match_threshold': similarity_threshold,
-    #         'match_count': limit,
-    #         'edital_filter': edital_id
-    #     }
-    # ).execute()
+    # Perform vector similarity search using the match_documents RPC function
+    try:
+        response = client.rpc(
+            "match_documents",
+            {
+                "query_embedding": query_embedding,
+                "match_threshold": similarity_threshold,
+                "match_count": limit,
+                "edital_filter": edital_id,
+            },
+        ).execute()
 
-    # Placeholder return
-    return []
+        # Log search results for debugging
+        print(f"Vector search: query='{query[:50]}...', edital_id={edital_id}, threshold={similarity_threshold}")
+        print(f"Vector search returned: {len(response.data) if response.data else 0} results")
+
+    except Exception as e:
+        print(f"Vector search error: {str(e)}")
+        raise
+
+    # Transform results to include all metadata
+    results = []
+    if response.data:
+        for item in response.data:
+            results.append(
+                {
+                    "id": item.get("id"),
+                    "document_id": item.get("document_id"),
+                    "content": item.get("content"),
+                    "similarity": item.get("similarity"),
+                    "document_title": item.get("document_title"),
+                    "edital_id": item.get("edital_id"),
+                    "page_number": item.get("page_number"),
+                    "chunk_index": item.get("chunk_index"),
+                    "metadata": item.get("chunk_metadata", {}),
+                }
+            )
+
+    return results
 
 
 async def index_document_embeddings(
