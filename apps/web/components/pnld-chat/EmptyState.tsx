@@ -55,7 +55,7 @@ export function EmptyState({ selectedEdital, onSuggestedQuestionClick }: EmptySt
                 onClick={() => onSuggestedQuestionClick(question)}
                 className="bg-white border-2 border-[#0013ff] rounded-[24px] px-4 py-4
                            hover:bg-[#0013ff] hover:text-white transition-colors
-                           font-['Inter'] text-base leading-[1.4] text-[#0013ff]"
+                           font-inter text-base leading-[1.4] text-[#0013ff]"
               >
                 &quot;{question}&quot;
               </button>
