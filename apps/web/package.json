@@ -17,9 +17,7 @@
     "tina:init": "tinacms init"
   },
   "dependencies": {
-    "@moklabs/config": "workspace:*",
-    "@moklabs/database": "workspace:*",
-    "@moklabs/ui": "workspace:*",
+    "@moklabs/pnld-types": "workspace:*",
     "@tinacms/cli": "^1.11.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
