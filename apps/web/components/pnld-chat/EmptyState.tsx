@@ -16,13 +16,21 @@ const SUGGESTED_QUESTIONS = [
 export function EmptyState({ selectedEdital, onSuggestedQuestionClick }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center gap-8 py-12 px-4">
-      {/* Logo */}
-      <div className="relative w-[240px] h-[40px]">
+      {/* Avatar */}
+      <div className="relative w-[180px] h-[180px]">
         <Image
-          src="/figma-assets/ef0506ed016aa13598712c377a66cc7c5637ea0e.svg"
-          alt="Mok Labs Logo"
-          fill
-          className="object-contain"
+          src="/figma-assets/eefa2557611fd660f2cce9c627ec7249b4224f49.png"
+          alt="Copiloto Avatar"
+          width={180}
+          height={180}
+          className="absolute top-0 left-0"
+        />
+        <Image
+          src="/figma-assets/c7949993cbf057cec7d1d2befb18dbc9246bc768.png"
+          alt="Copiloto Avatar Inner"
+          width={156}
+          height={156}
+          className="absolute top-[13px] left-[13px]"
         />
       </div>
 

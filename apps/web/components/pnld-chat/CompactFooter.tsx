@@ -15,7 +15,7 @@ export function CompactFooter() {
           <div className="flex items-center gap-6">
             <div className="relative w-[140px] h-[22px]">
               <Image
-                src="/figma-assets/ef0506ed016aa13598712c377a66cc7c5637ea0e.svg"
+                src="/logo-moklabs.svg"
                 alt="Mok Labs"
                 fill
                 className="object-contain"

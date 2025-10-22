@@ -24,7 +24,7 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
           <div className="flex items-center gap-4">
             <div className="relative w-[180px] h-[28px]">
               <Image
-                src="/figma-assets/ef0506ed016aa13598712c377a66cc7c5637ea0e.svg"
+                src="/logo-moklabs.svg"
                 alt="Mok Labs Logo"
                 fill
                 className="object-contain"
