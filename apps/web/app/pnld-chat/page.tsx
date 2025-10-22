@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Header, ChatInterface } from '@/components/pnld-chat';
+import { Header, ChatInterface, CompactFooter } from '@/components/pnld-chat';
 
 // Mock data for available editais - will be replaced with real data from API
 const MOCK_EDITAIS = [
@@ -28,20 +28,25 @@ export default function PNLDChatPage() {
   }, [selectedEdital]);
 
   return (
-    <div className="flex flex-col h-screen w-full">
+    <div className="flex flex-col h-screen w-full overflow-hidden">
+      {/* Header - fixed height */}
       <Header
         selectedEdital={selectedEdital}
         onEditalSelect={handleEditalSelect}
         availableEditais={MOCK_EDITAIS}
       />
 
-      <div className="flex-1 overflow-hidden">
+      {/* Chat - flexible height */}
+      <div className="flex-1 min-h-0 overflow-hidden">
         <ChatInterface
           selectedEdital={selectedEdital}
           onEditalSelect={handleEditalSelect}
           onSendMessage={handleSendMessage}
         />
       </div>
+
+      {/* Footer - fixed height */}
+      <CompactFooter />
     </div>
   );
 }

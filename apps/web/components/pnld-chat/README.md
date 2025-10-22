@@ -19,7 +19,7 @@ Main orchestrator component that manages the chat state and coordinates all sub-
 - Full-height responsive layout
 
 ### Header
-Top navigation bar with branding and edital selector.
+Top navigation bar with branding and edital selector (no menu).
 
 **Props:**
 - `selectedEdital`: Current edital selection
@@ -27,8 +27,8 @@ Top navigation bar with branding and edital selector.
 - `availableEditais`: Array of available editais
 
 **Features:**
-- MokLabs branding with logo
-- Dropdown edital selector
+- MokLabs branding with logo + "| Copiloto PNLD" title
+- Dropdown edital selector (replaces menu on right side)
 - Responsive design (mobile/desktop)
 - Keyboard accessible
 
@@ -114,6 +114,17 @@ Displays document sources with citations.
 - Chunk index information
 - Responsive cards
 
+### CompactFooter
+Simplified footer with contact icons and privacy policy link.
+
+**Features:**
+- White background (contrasts with blue chat input)
+- Contact icons only (WhatsApp, Email, Instagram)
+- Privacy policy link
+- Copyright notice
+- Compact single-row layout
+- Responsive design
+
 ## Design System
 
 ### Colors
@@ -122,7 +133,7 @@ Displays document sources with citations.
 - White: `#ffffff`
 - Gray variants for borders/backgrounds
 
-### Typography (Fira Mono)
+### Typography (Fira Code)
 - **H2 (24px, Bold)**: Headings, line-height 1.2
 - **Body P1 (16px, Regular)**: Body text, line-height 1.4
 - **Button (16px, Bold)**: Buttons, line-height 1.2
@@ -162,23 +173,26 @@ This implementation includes UI components only. The next ticket will add:
 ## Usage Example
 
 ```tsx
-import { ChatInterface, Header } from '@/components/pnld-chat';
+import { ChatInterface, Header, CompactFooter } from '@/components/pnld-chat';
 
 export default function ChatPage() {
   const [selectedEdital, setSelectedEdital] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Header
         selectedEdital={selectedEdital}
         onEditalSelect={setSelectedEdital}
         availableEditais={EDITAIS}
       />
-      <ChatInterface
-        selectedEdital={selectedEdital}
-        onEditalSelect={setSelectedEdital}
-        onSendMessage={handleSend}
-      />
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <ChatInterface
+          selectedEdital={selectedEdital}
+          onEditalSelect={setSelectedEdital}
+          onSendMessage={handleSend}
+        />
+      </div>
+      <CompactFooter />
     </div>
   );
 }

@@ -6,5 +6,6 @@ export { MessageInput } from './MessageInput';
 export { EmptyState } from './EmptyState';
 export { TypingIndicator } from './TypingIndicator';
 export { SourceCitation } from './SourceCitation';
+export { CompactFooter } from './CompactFooter';
 
 export type { MessageProps, MessageSource } from './Message';
