@@ -46,3 +46,14 @@ class ChatResponse(BaseModel):
     message: ChatMessage
     sources: List[DocumentSource] = Field(default_factory=list)
     metadata: Optional[dict] = None
+
+
+class ConversationHistory(BaseModel):
+    """Full conversation history with metadata."""
+
+    conversation_id: str = Field(..., description="Unique conversation identifier")
+    edital_id: Optional[str] = Field(None, description="Associated edital ID")
+    messages: List[ChatMessage] = Field(..., description="All messages in chronological order")
+    created_at: datetime = Field(..., description="Conversation creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
+    metadata: Optional[dict] = Field(None, description="Additional conversation metadata")
