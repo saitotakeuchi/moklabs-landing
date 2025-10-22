@@ -54,7 +54,7 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
 
         {/* Timestamp */}
         {timestamp && (
-          <span className="text-xs text-gray-500 px-2 font-['Fira_Code']">
+          <span className="text-xs text-gray-500 px-2 font-sans">
             {timestamp.toLocaleTimeString('pt-BR', {
               hour: '2-digit',
               minute: '2-digit'

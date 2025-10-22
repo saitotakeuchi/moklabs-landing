@@ -20,13 +20,13 @@ export function SourceCitation({ sources }: SourceCitationProps) {
   return (
     <div className="bg-gray-50 border border-gray-200 rounded-[16px] p-4 text-sm">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="font-['Fira_Code'] font-bold text-[#0013ff] text-sm">
+        <h4 className="font-sans font-bold text-[#0013ff] text-sm">
           📄 Fontes Oficiais ({sources.length})
         </h4>
         {sources.length > 3 && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="text-[#0013ff] hover:underline text-xs font-['Fira_Code']"
+            className="text-[#0013ff] hover:underline text-xs font-sans"
           >
             {expanded ? 'Ver menos' : `Ver todas (${sources.length})`}
           </button>
@@ -40,12 +40,12 @@ export function SourceCitation({ sources }: SourceCitationProps) {
             className="bg-white border border-gray-200 rounded-[12px] p-3"
           >
             <div className="flex items-start justify-between gap-2 mb-2">
-              <p className="font-['Fira_Code'] font-semibold text-[#0013ff] text-sm flex-1">
+              <p className="font-sans font-semibold text-[#0013ff] text-sm flex-1">
                 {source.title}
               </p>
               {source.page_number && (
                 <span className="bg-[#0013ff] text-white text-xs px-2 py-1 rounded-full
-                                 font-['Fira_Code'] whitespace-nowrap">
+                                 font-sans whitespace-nowrap">
                   Pág. {source.page_number}
                 </span>
               )}
@@ -55,7 +55,7 @@ export function SourceCitation({ sources }: SourceCitationProps) {
               {source.content_excerpt}
             </p>
 
-            <div className="flex items-center gap-2 text-xs text-gray-500 font-['Fira_Code']">
+            <div className="flex items-center gap-2 text-xs text-gray-500 font-sans">
               <span>Relevância: {Math.round(source.relevance_score * 100)}%</span>
               {source.chunk_index !== undefined && (
                 <span>• Trecho {source.chunk_index + 1}</span>

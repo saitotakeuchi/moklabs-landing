@@ -20,7 +20,7 @@ export function TypingIndicator() {
                 style={{ animationDelay: '300ms', animationDuration: '1s' }}
               />
             </div>
-            <span className="text-[#0013ff] text-sm font-['Fira_Code'] ml-2">
+            <span className="text-[#0013ff] text-sm font-sans ml-2">
               Copiloto está digitando...
             </span>
           </div>

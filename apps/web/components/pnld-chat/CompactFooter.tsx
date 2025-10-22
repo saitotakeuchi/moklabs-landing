@@ -44,12 +44,12 @@ export function CompactFooter() {
           <div className="flex items-center gap-4 text-xs text-gray-600">
             <Link
               href="/politica-de-privacidade"
-              className="font-['Fira_Code'] hover:text-[#0013ff] transition-colors"
+              className="font-sans hover:text-[#0013ff] transition-colors"
             >
               Política de Privacidade
             </Link>
             <span className="hidden sm:inline">•</span>
-            <span className="font-['Fira_Code']">
+            <span className="font-sans">
               © {currentYear} Mok Labs
             </span>
           </div>

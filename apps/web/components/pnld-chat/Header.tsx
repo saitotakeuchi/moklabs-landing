@@ -30,7 +30,7 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
                 className="object-contain"
               />
             </div>
-            <p className="font-['Fira_Code'] font-bold text-xl leading-[1.2]
+            <p className="font-sans font-bold text-xl leading-[1.2]
                           text-[#cbff63] whitespace-nowrap hidden md:block">
               | Copiloto PNLD
             </p>
@@ -46,7 +46,7 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
               aria-label="Selecionar edital"
               aria-expanded={isDropdownOpen}
             >
-              <span className="font-['Fira_Code'] text-sm md:text-base leading-[1.4]
+              <span className="font-sans text-sm md:text-base leading-[1.4]
                               text-[#0013ff] truncate">
                 {selectedEditalName}
               </span>
@@ -74,7 +74,7 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
                                 shadow-lg max-h-[300px] overflow-y-auto">
                   {availableEditais.length === 0 ? (
                     <div className="px-4 py-3 text-center text-gray-500
-                                    font-['Fira_Code'] text-sm">
+                                    font-sans text-sm">
                       Nenhum edital disponível
                     </div>
                   ) : (
@@ -86,7 +86,7 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
                           setIsDropdownOpen(false);
                         }}
                         className={`
-                          w-full px-4 py-3 text-left font-['Fira_Code'] text-sm md:text-base
+                          w-full px-4 py-3 text-left font-sans text-sm md:text-base
                           hover:bg-[#0013ff] hover:text-white transition-colors
                           ${selectedEdital === edital.id
                             ? 'bg-[#cbff63] text-[#0013ff]'

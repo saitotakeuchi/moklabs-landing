@@ -54,7 +54,7 @@ export function MessageInput({
           type="submit"
           disabled={disabled || !message.trim()}
           className="bg-[#ccff73] rounded-[24px] px-6 py-[15px] h-[54px]
-                     font-['Fira_Code'] font-bold text-base leading-[1.2] text-[#0013ff]
+                     font-sans font-bold text-base leading-[1.2] text-[#0013ff]
                      whitespace-nowrap
                      disabled:opacity-50 disabled:cursor-not-allowed
                      hover:bg-[#b8e860] active:bg-[#a4d54d] transition-colors
@@ -66,7 +66,7 @@ export function MessageInput({
       </div>
 
       {/* Disclaimer */}
-      <p className="font-['Fira_Code'] text-xs leading-[1.4] text-white text-center mt-4">
+      <p className="font-sans text-xs leading-[1.4] text-white text-center mt-4">
         As respostas são baseadas em documentos oficiais do FNDE. Nenhum conteúdo é gerado fora das fontes do edital.
       </p>
     </form>
