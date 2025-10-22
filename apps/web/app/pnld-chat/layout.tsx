@@ -10,5 +10,9 @@ export default function PNLDChatLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="pnld-chat-app">{children}</div>;
+  return (
+    <div className="pnld-chat-app min-h-screen w-full overflow-hidden">
+      {children}
+    </div>
+  );
 }
