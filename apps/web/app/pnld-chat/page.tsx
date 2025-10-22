@@ -17,16 +17,6 @@ export default function PNLDChatPage() {
     setSelectedEdital(editalId);
   }, []);
 
-  const handleSendMessage = useCallback(async (message: string) => {
-    // TODO: Implement actual API call to PNLD AI service
-    console.log('Sending message:', message, 'for edital:', selectedEdital);
-
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // In the next ticket (MOK-33), we'll implement the actual API integration
-  }, [selectedEdital]);
-
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden">
       {/* Header - fixed height */}
@@ -41,7 +31,6 @@ export default function PNLDChatPage() {
         <ChatInterface
           selectedEdital={selectedEdital}
           onEditalSelect={handleEditalSelect}
-          onSendMessage={handleSendMessage}
         />
       </div>
 

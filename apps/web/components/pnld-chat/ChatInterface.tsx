@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { usePnldChat } from '@/hooks/usePnldChat';
 import { MessageProps } from './Message';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
@@ -9,53 +10,56 @@ import { EmptyState } from './EmptyState';
 interface ChatInterfaceProps {
   selectedEdital: string | null;
   onEditalSelect: (editalId: string) => void;
-  onSendMessage: (message: string) => Promise<void>;
 }
 
 export function ChatInterface({
   selectedEdital,
-  onEditalSelect,
-  onSendMessage
+  onEditalSelect
 }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<MessageProps[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
+  // Use the PNLD chat hook with the selected edital
+  const {
+    messages: chatMessages,
+    isLoading,
+    error,
+    sources,
+    sendMessage,
+    clearConversation
+  } = usePnldChat({
+    editalId: selectedEdital || undefined,
+  });
+
+  // Clear conversation when edital changes
+  useEffect(() => {
+    clearConversation();
+  }, [selectedEdital, clearConversation]);
 
   const handleSendMessage = async (content: string) => {
-    // Add user message immediately
-    const userMessage: MessageProps = {
-      role: 'user',
-      content,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setIsTyping(true);
-
-    try {
-      // Call the parent's send message handler
-      await onSendMessage(content);
-
-      // Note: The parent component should handle adding the assistant's response
-      // via the messages prop or a callback
-
-    } catch (error) {
-      console.error('Failed to send message:', error);
-
-      // Add error message
-      const errorMessage: MessageProps = {
-        role: 'assistant',
-        content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsTyping(false);
+    if (!selectedEdital) {
+      console.warn('No edital selected');
+      return;
     }
+
+    await sendMessage(content);
   };
 
   const handleSuggestedQuestion = (question: string) => {
     handleSendMessage(question);
   };
+
+  // Convert chat messages to component message format
+  const messages: MessageProps[] = chatMessages.map((msg, index) => {
+    const isLastAssistantMessage =
+      msg.role === 'assistant' &&
+      index === chatMessages.length - 1;
+
+    return {
+      role: msg.role as 'user' | 'assistant',
+      content: msg.content,
+      timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
+      // Only show sources on the last assistant message
+      sources: isLastAssistantMessage && msg.role === 'assistant' ? sources : undefined,
+    };
+  });
 
   const hasMessages = messages.length > 0;
 
@@ -69,7 +73,7 @@ export function ChatInterface({
             onSuggestedQuestionClick={handleSuggestedQuestion}
           />
         ) : (
-          <MessageList messages={messages} isTyping={isTyping} />
+          <MessageList messages={messages} isTyping={isLoading} />
         )}
       </div>
 
@@ -77,7 +81,7 @@ export function ChatInterface({
       <div className="bg-[#0013ff] px-8 md:px-32 py-8">
         <MessageInput
           onSendMessage={handleSendMessage}
-          disabled={!selectedEdital || isTyping}
+          disabled={!selectedEdital || isLoading}
           placeholder={
             selectedEdital
               ? "Digite sua pergunta sobre o PNLD..."
@@ -85,6 +89,15 @@ export function ChatInterface({
           }
         />
       </div>
+
+      {/* Error display (optional) */}
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-8 mb-4">
+          <p className="text-sm text-red-700">
+            {error.message}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
