@@ -2,6 +2,7 @@
 
 import { Phone, Mail, Instagram } from "iconoir-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export function CompactFooter() {
   const currentYear = new Date().getFullYear();
@@ -10,8 +11,17 @@ export function CompactFooter() {
     <footer className="bg-white border-t border-gray-200 py-4">
       <div className="container mx-auto px-8 md:px-32">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Contact Icons */}
+          {/* Logo + Contact Icons */}
           <div className="flex items-center gap-6">
+            <div className="relative w-[140px] h-[22px]">
+              <Image
+                src="/figma-assets/ef0506ed016aa13598712c377a66cc7c5637ea0e.svg"
+                alt="Mok Labs"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <span className="text-gray-300">|</span>
             <a
               href="https://wa.me/5541936182622"
               className="text-[#0013ff] hover:text-[#cbff63] transition-colors"
