@@ -108,20 +108,37 @@ async def list_documents(
         # Get document IDs for counting chunks
         document_ids = [doc["id"] for doc in result.data]
 
-        # Count embeddings/chunks per document
-        chunks_query = (
-            supabase.table("pnld_embeddings")
-            .select("document_id", count="exact")
-            .in_("document_id", document_ids)
-        )
-        chunks_result = await chunks_query.execute()
+        # Count embeddings/chunks per document using optimized server-side aggregation
+        # This uses the count_chunks_by_document() Postgres function for efficiency
+        try:
+            chunks_result = await supabase.rpc(
+                "count_chunks_by_document",
+                {"document_ids": document_ids}
+            ).execute()
 
-        # Create a mapping of document_id to chunk count
-        chunks_count_map = {}
-        if chunks_result.data:
-            for doc_id in document_ids:
-                count = len([c for c in chunks_result.data if c["document_id"] == doc_id])
-                chunks_count_map[doc_id] = count
+            # Create a mapping of document_id to chunk count from RPC result
+            chunks_count_map = {}
+            if chunks_result.data:
+                for row in chunks_result.data:
+                    chunks_count_map[row["document_id"]] = row["chunk_count"]
+
+        except Exception as e:
+            # Fallback to Python-side counting if RPC function doesn't exist
+            # This is less efficient but ensures the endpoint still works
+            print(f"Warning: count_chunks_by_document RPC failed, using fallback: {str(e)}")
+            chunks_query = (
+                supabase.table("pnld_embeddings")
+                .select("document_id", count="exact")
+                .in_("document_id", document_ids)
+            )
+            fallback_result = await chunks_query.execute()
+
+            chunks_count_map = {}
+            if fallback_result.data:
+                # Count chunks per document in Python (less efficient)
+                from collections import Counter
+                counts = Counter(row["document_id"] for row in fallback_result.data)
+                chunks_count_map = dict(counts)
 
         # Build response documents
         documents = []
