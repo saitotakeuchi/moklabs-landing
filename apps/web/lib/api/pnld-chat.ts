@@ -104,6 +104,7 @@ export async function* streamChatMessage(request: ChatRequest): AsyncGenerator<S
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
+  let currentEventType: string | null = null;
 
   try {
     while (true) {
@@ -118,11 +119,16 @@ export async function* streamChatMessage(request: ChatRequest): AsyncGenerator<S
       buffer = lines.pop() || '';
 
       for (const line of lines) {
-        if (line.trim() === '') continue;
+        if (line.trim() === '') {
+          // Empty line marks end of an SSE message
+          currentEventType = null;
+          continue;
+        }
 
-        // Parse SSE format: "event: type\ndata: json"
+        // Parse SSE format: "event: type\ndata: json\n\n"
         if (line.startsWith('event: ')) {
-          // Event type is on separate line, handled below
+          // Extract event type
+          currentEventType = line.substring(7).trim();
           continue;
         }
 
@@ -131,17 +137,20 @@ export async function* streamChatMessage(request: ChatRequest): AsyncGenerator<S
           try {
             const data = JSON.parse(dataStr);
 
-            // Determine event type from data structure
-            if ('conversation_id' in data && Object.keys(data).length === 1) {
+            // Use the parsed event type from the "event:" line
+            if (currentEventType === 'metadata') {
               yield { type: 'metadata', data };
-            } else if (Array.isArray(data) && data.length > 0 && 'document_id' in data[0]) {
+            } else if (currentEventType === 'sources') {
+              // Yield sources even if empty array
               yield { type: 'sources', data };
-            } else if ('content' in data && typeof data.content === 'string') {
+            } else if (currentEventType === 'token') {
               yield { type: 'token', data };
-            } else if ('conversation_id' in data && Object.keys(data).length === 1) {
+            } else if (currentEventType === 'done') {
               yield { type: 'done', data };
-            } else if ('error' in data) {
+            } else if (currentEventType === 'error') {
               yield { type: 'error', data };
+            } else {
+              console.warn('Unknown SSE event type:', currentEventType, data);
             }
           } catch (e) {
             console.error('Failed to parse SSE data:', dataStr, e);
