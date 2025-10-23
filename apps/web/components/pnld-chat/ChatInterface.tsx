@@ -63,6 +63,12 @@ export function ChatInterface({
 
   const hasMessages = messages.length > 0;
 
+  // Only show typing indicator if loading AND no assistant message is streaming yet
+  const isTyping = isLoading && (
+    chatMessages.length === 0 ||
+    chatMessages[chatMessages.length - 1]?.role !== 'assistant'
+  );
+
   return (
     <div className="flex flex-col h-full w-full bg-white">
       {/* Chat Content */}
@@ -73,7 +79,7 @@ export function ChatInterface({
             onSuggestedQuestionClick={handleSuggestedQuestion}
           />
         ) : (
-          <MessageList messages={messages} isTyping={isLoading} />
+          <MessageList messages={messages} isTyping={isTyping} />
         )}
       </div>
 
