@@ -21,7 +21,7 @@ export interface DocumentSource {
   content_excerpt: string;
   relevance_score: number;
   page_number?: number;
-  chunk_index: number;
+  chunk_index?: number;
   edital_id?: string;
 }
 
