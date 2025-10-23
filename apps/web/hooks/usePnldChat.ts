@@ -125,17 +125,30 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
               // Accumulate response content
               assistantContent += event.data.content;
 
-              // Update messages with partial response
+              // Update messages with partial response - update the last message if it's the streaming assistant
               setMessages((prev) => {
-                const filtered = prev.filter((m) => m.role !== 'assistant' || m.content !== '');
-                return [
-                  ...filtered,
-                  {
-                    role: 'assistant',
-                    content: assistantContent,
-                    timestamp: new Date().toISOString(),
-                  },
-                ];
+                // Check if the last message is our streaming assistant message
+                if (prev.length > 0 && prev[prev.length - 1].role === 'assistant') {
+                  // Update the existing assistant message
+                  return [
+                    ...prev.slice(0, -1),
+                    {
+                      role: 'assistant',
+                      content: assistantContent,
+                      timestamp: new Date().toISOString(),
+                    },
+                  ];
+                } else {
+                  // Add new assistant message
+                  return [
+                    ...prev,
+                    {
+                      role: 'assistant',
+                      content: assistantContent,
+                      timestamp: new Date().toISOString(),
+                    },
+                  ];
+                }
               });
               break;
 
