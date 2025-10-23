@@ -47,7 +47,7 @@ class PnldAiClient {
   /**
    * Get conversation history by ID
    */
-  async getConversation(conversationId: string): Promise<any> {
+  async getConversation(conversationId: string): Promise<unknown> {
     const response = await fetch(`${this.baseUrl}/chat/${conversationId}`, {
       method: "GET",
       headers: {
@@ -86,7 +86,7 @@ class PnldAiClient {
   /**
    * Get document by ID
    */
-  async getDocument(documentId: string): Promise<any> {
+  async getDocument(documentId: string): Promise<unknown> {
     const response = await fetch(`${this.baseUrl}/documents/${documentId}`, {
       method: "GET",
       headers: {
@@ -117,7 +117,7 @@ class PnldAiClient {
   /**
    * Check service health
    */
-  async healthCheck(): Promise<any> {
+  async healthCheck(): Promise<unknown> {
     const response = await fetch(`${this.baseUrl}/health`, {
       method: "GET",
     });
@@ -132,7 +132,7 @@ class PnldAiClient {
   /**
    * Check Supabase connection health
    */
-  async supabaseHealthCheck(): Promise<any> {
+  async supabaseHealthCheck(): Promise<unknown> {
     const response = await fetch(`${this.baseUrl}/health/supabase`, {
       method: "GET",
     });
@@ -151,7 +151,7 @@ class PnldAiClient {
     file: File,
     editalId: string,
     title: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     onProgress?: (progress: number) => void
   ): Promise<DocumentIndexResponse> {
     return new Promise((resolve, reject) => {
@@ -185,7 +185,7 @@ class PnldAiClient {
               xhr.responseText
             );
             resolve(response);
-          } catch (e) {
+          } catch {
             reject(new Error("Failed to parse response"));
           }
         } else {
@@ -196,7 +196,7 @@ class PnldAiClient {
                 errorResponse.detail || `Upload failed: ${xhr.statusText}`
               )
             );
-          } catch (e) {
+          } catch {
             reject(new Error(`Upload failed: ${xhr.statusText}`));
           }
         }

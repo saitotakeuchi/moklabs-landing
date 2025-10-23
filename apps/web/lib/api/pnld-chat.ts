@@ -48,7 +48,7 @@ export interface ConversationHistory {
   messages: ChatMessage[];
   created_at: string;
   updated_at: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Streaming event types
@@ -122,8 +122,8 @@ export async function* streamChatMessage(request: ChatRequest): AsyncGenerator<S
 
         // Parse SSE format: "event: type\ndata: json"
         if (line.startsWith('event: ')) {
-          const eventType = line.substring(7).trim();
-          continue; // Event type is on separate line, handled below
+          // Event type is on separate line, handled below
+          continue;
         }
 
         if (line.startsWith('data: ')) {

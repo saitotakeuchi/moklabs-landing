@@ -25,7 +25,7 @@ export default function DashboardPage() {
   const { refetch } = useDocuments({ autoFetch: false });
   const { deleteDocument, isDeleting } = useDocumentDelete();
 
-  const handleUploadComplete = (documentId: string) => {
+  const handleUploadComplete = () => {
     // Switch to list view and refresh the list
     setActiveTab('list');
     refetch();
@@ -49,7 +49,7 @@ export default function DashboardPage() {
       toast.success('Document deleted successfully');
       setDocumentToDelete(null);
       refetch();
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete document');
     }
   };

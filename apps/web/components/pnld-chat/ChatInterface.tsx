@@ -9,12 +9,11 @@ import { EmptyState } from './EmptyState';
 
 interface ChatInterfaceProps {
   selectedEdital: string | null;
-  onEditalSelect: (editalId: string) => void;
+  onEditalSelect?: (editalId: string) => void;
 }
 
 export function ChatInterface({
   selectedEdital,
-  onEditalSelect
 }: ChatInterfaceProps) {
   // Use the PNLD chat hook with the selected edital
   const {

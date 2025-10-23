@@ -80,7 +80,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
       if (onUploadComplete) {
         onUploadComplete(result.document_id);
       }
-    } catch (err) {
+    } catch {
       toast.error(error?.message || 'Failed to upload document');
     }
   };
