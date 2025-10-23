@@ -15,7 +15,7 @@ from app.models.document import (
     SampleChunk,
     DocumentDeletionResponse,
 )
-from app.services.supabase import get_supabase_client
+from app.services.supabase import get_async_supabase_client
 from app.services.embeddings import (
     generate_embeddings_batch,
     process_pdf_to_chunks,
@@ -51,7 +51,7 @@ async def list_documents(
         DocumentListResponse with paginated document list
     """
     try:
-        supabase = get_supabase_client()
+        supabase = await get_async_supabase_client()
 
         # Validate sort_by parameter
         valid_sort_fields = ["created_at", "updated_at", "title"]
@@ -69,7 +69,7 @@ async def list_documents(
             query = query.eq("edital_id", edital_id)
 
         # Get total count (before pagination)
-        count_result = query.execute()
+        count_result = await query.execute()
         total_count = count_result.count if count_result.count else 0
 
         # Apply sorting and pagination
@@ -78,7 +78,7 @@ async def list_documents(
 
         # Execute query
         try:
-            result = query.execute()
+            result = await query.execute()
         except Exception as e:
             # Handle range errors (e.g., offset beyond available data)
             error_str = str(e)
@@ -114,7 +114,7 @@ async def list_documents(
             .select("document_id", count="exact")
             .in_("document_id", document_ids)
         )
-        chunks_result = chunks_query.execute()
+        chunks_result = await chunks_query.execute()
 
         # Create a mapping of document_id to chunk count
         chunks_count_map = {}
@@ -177,10 +177,10 @@ async def index_document(request: DocumentIndexRequest) -> DocumentIndexResponse
         DocumentIndexResponse with document ID and status
     """
     try:
-        supabase = get_supabase_client()
+        supabase = await get_async_supabase_client()
 
         # 1. Store document in pnld_documents table
-        doc_result = (
+        doc_result = await (
             supabase.table("pnld_documents")
             .insert(
                 {
@@ -220,7 +220,7 @@ async def index_document(request: DocumentIndexRequest) -> DocumentIndexResponse
             for idx, (chunk, embedding) in enumerate(zip(text_chunks, embeddings))
         ]
 
-        embed_result = supabase.table("pnld_embeddings").insert(embedding_records).execute()
+        embed_result = await supabase.table("pnld_embeddings").insert(embedding_records).execute()
 
         if not embed_result.data:
             raise HTTPException(
@@ -281,7 +281,7 @@ async def index_pdf_document(
         )
 
     try:
-        supabase = get_supabase_client()
+        supabase = await get_async_supabase_client()
 
         # Read PDF file
         pdf_content = await file.read()
@@ -300,7 +300,7 @@ async def index_pdf_document(
         full_content = "\n\n".join([chunk.content for chunk in page_chunks])
 
         # Store document in pnld_documents table
-        doc_result = (
+        doc_result = await (
             supabase.table("pnld_documents")
             .insert(
                 {
@@ -343,7 +343,7 @@ async def index_pdf_document(
             for chunk, embedding in zip(page_chunks, embeddings)
         ]
 
-        embed_result = supabase.table("pnld_embeddings").insert(embedding_records).execute()
+        embed_result = await supabase.table("pnld_embeddings").insert(embedding_records).execute()
 
         if not embed_result.data:
             raise HTTPException(
@@ -462,7 +462,7 @@ async def upload_pdf(
                     detail=f"Invalid JSON in metadata field: {str(e)}",
                 )
 
-        supabase = get_supabase_client()
+        supabase = await get_async_supabase_client()
         pdf_file = BytesIO(pdf_content)
 
         # Extract and chunk PDF with page tracking
@@ -492,7 +492,7 @@ async def upload_pdf(
         }
 
         # Store document in pnld_documents table
-        doc_result = (
+        doc_result = await (
             supabase.table("pnld_documents")
             .insert(
                 {
@@ -530,7 +530,7 @@ async def upload_pdf(
             for chunk, embedding in zip(page_chunks, embeddings)
         ]
 
-        embed_result = supabase.table("pnld_embeddings").insert(embedding_records).execute()
+        embed_result = await supabase.table("pnld_embeddings").insert(embedding_records).execute()
 
         if not embed_result.data:
             raise HTTPException(
@@ -586,10 +586,10 @@ async def get_document(
         500: If database error occurs
     """
     try:
-        supabase = get_supabase_client()
+        supabase = await get_async_supabase_client()
 
         # Fetch document metadata
-        doc_result = (
+        doc_result = await (
             supabase.table("pnld_documents")
             .select("*")
             .eq("id", document_id)
@@ -605,7 +605,7 @@ async def get_document(
         document = doc_result.data[0]
 
         # Count embeddings/chunks
-        chunks_result = (
+        chunks_result = await (
             supabase.table("pnld_embeddings")
             .select("*", count="exact")
             .eq("document_id", document_id)
@@ -619,7 +619,7 @@ async def get_document(
         sample_chunks = None
         if include_chunks and chunks_count > 0:
             # Fetch first 5 chunks as samples
-            sample_result = (
+            sample_result = await (
                 supabase.table("pnld_embeddings")
                 .select("content, page_number, chunk_index")
                 .eq("document_id", document_id)
@@ -684,10 +684,10 @@ async def delete_document(document_id: str) -> DocumentDeletionResponse:
         500: If database error occurs
     """
     try:
-        supabase = get_supabase_client()
+        supabase = await get_async_supabase_client()
 
         # Check if document exists
-        doc_result = (
+        doc_result = await (
             supabase.table("pnld_documents")
             .select("id")
             .eq("id", document_id)
@@ -701,7 +701,7 @@ async def delete_document(document_id: str) -> DocumentDeletionResponse:
             )
 
         # Count embeddings before deletion
-        embeddings_result = (
+        embeddings_result = await (
             supabase.table("pnld_embeddings")
             .select("id", count="exact")
             .eq("document_id", document_id)
@@ -711,10 +711,10 @@ async def delete_document(document_id: str) -> DocumentDeletionResponse:
         embeddings_count = embeddings_result.count if embeddings_result.count else 0
 
         # Delete embeddings first
-        supabase.table("pnld_embeddings").delete().eq("document_id", document_id).execute()
+        await supabase.table("pnld_embeddings").delete().eq("document_id", document_id).execute()
 
         # Delete document
-        supabase.table("pnld_documents").delete().eq("id", document_id).execute()
+        await supabase.table("pnld_documents").delete().eq("id", document_id).execute()
 
         # Return deletion confirmation
         return DocumentDeletionResponse(

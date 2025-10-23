@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from app.models.chat import ChatRequest, ChatResponse, ChatMessage, DocumentSource, ConversationHistory
 from app.services.rag import generate_rag_response, generate_rag_response_stream
-from app.services.supabase import get_supabase_client
+from app.services.supabase import get_async_supabase_client
 
 router = APIRouter()
 
@@ -30,13 +30,13 @@ async def chat(request: ChatRequest) -> ChatResponse:
         ChatResponse with AI-generated message and source citations
     """
     try:
-        supabase = get_supabase_client()
+        supabase = await get_async_supabase_client()
 
         # Get or create conversation
         conversation_id = request.conversation_id
         if not conversation_id:
             # Create new conversation
-            conv_result = (
+            conv_result = await (
                 supabase.table("chat_conversations")
                 .insert(
                     {
@@ -79,7 +79,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
             sources.append(source)
 
         # Store user message
-        supabase.table("chat_messages").insert(
+        await supabase.table("chat_messages").insert(
             {
                 "conversation_id": conversation_id,
                 "role": "user",
@@ -89,7 +89,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
         ).execute()
 
         # Store assistant response
-        supabase.table("chat_messages").insert(
+        await supabase.table("chat_messages").insert(
             {
                 "conversation_id": conversation_id,
                 "role": "assistant",
@@ -147,13 +147,13 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
         sources = []
 
         try:
-            supabase = get_supabase_client()
+            supabase = await get_async_supabase_client()
 
             # Get or create conversation
             conversation_id = request.conversation_id
             if not conversation_id:
                 # Create new conversation
-                conv_result = (
+                conv_result = await (
                     supabase.table("chat_conversations")
                     .insert(
                         {
@@ -176,7 +176,7 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
             # TODO: Load previous messages from database if needed
 
             # Store user message
-            supabase.table("chat_messages").insert(
+            await supabase.table("chat_messages").insert(
                 {
                     "conversation_id": conversation_id,
                     "role": "user",
@@ -220,7 +220,7 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
 
                 elif event_type == 'done':
                     # Store assistant response in database
-                    supabase.table("chat_messages").insert(
+                    await supabase.table("chat_messages").insert(
                         {
                             "conversation_id": conversation_id,
                             "role": "assistant",
@@ -272,10 +272,10 @@ async def get_conversation(conversation_id: str) -> ConversationHistory:
         500: If database error occurs
     """
     try:
-        supabase = get_supabase_client()
+        supabase = await get_async_supabase_client()
 
         # Fetch conversation metadata
-        conv_result = (
+        conv_result = await (
             supabase.table("chat_conversations")
             .select("*")
             .eq("id", conversation_id)
@@ -291,7 +291,7 @@ async def get_conversation(conversation_id: str) -> ConversationHistory:
         conversation = conv_result.data[0]
 
         # Fetch all messages in chronological order
-        messages_result = (
+        messages_result = await (
             supabase.table("chat_messages")
             .select("*")
             .eq("conversation_id", conversation_id)

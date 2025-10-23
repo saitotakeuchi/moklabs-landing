@@ -1,9 +1,9 @@
 """RAG (Retrieval-Augmented Generation) service."""
 
 from typing import List, Optional, AsyncGenerator
-from openai import OpenAI
+from openai import AsyncOpenAI
 from app.config import settings
-from app.services.embeddings import get_openai_client
+from app.services.embeddings import get_async_openai_client
 from app.services.vector_search import search_similar_documents
 
 
@@ -106,7 +106,7 @@ async def generate_llm_response(
     Returns:
         Generated response text
     """
-    client = get_openai_client()
+    client = get_async_openai_client()
 
     # Build system message with context
     system_message = f"""You are a helpful assistant that answers questions about PNLD (Programa Nacional do Livro Didático) editals.
@@ -128,7 +128,7 @@ Context:
     messages.append({"role": "user", "content": query})
 
     # Generate response
-    response = client.chat.completions.create(
+    response = await client.chat.completions.create(
         model=settings.OPENAI_MODEL,
         messages=messages,
         max_tokens=max_tokens,
@@ -211,7 +211,7 @@ async def generate_llm_response_stream(
     Yields:
         Individual tokens as they're generated
     """
-    client = get_openai_client()
+    client = get_async_openai_client()
 
     # Build system message with context
     system_message = f"""You are a helpful assistant that answers questions about PNLD (Programa Nacional do Livro Didático) editals.
@@ -233,7 +233,7 @@ Context:
     messages.append({"role": "user", "content": query})
 
     # Generate streaming response
-    stream = client.chat.completions.create(
+    stream = await client.chat.completions.create(
         model=settings.OPENAI_MODEL,
         messages=messages,
         max_tokens=max_tokens,
@@ -241,6 +241,6 @@ Context:
         stream=True,
     )
 
-    for chunk in stream:
+    async for chunk in stream:
         if chunk.choices[0].delta.content:
             yield chunk.choices[0].delta.content
