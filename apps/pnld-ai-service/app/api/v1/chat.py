@@ -3,6 +3,7 @@
 import uuid
 import json
 from datetime import datetime
+from typing import List
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from app.models.chat import ChatRequest, ChatResponse, ChatMessage, DocumentSource, ConversationHistory
@@ -10,6 +11,43 @@ from app.services.rag import generate_rag_response, generate_rag_response_stream
 from app.services.supabase import get_async_supabase_client
 
 router = APIRouter()
+
+
+async def load_conversation_history(conversation_id: str) -> List[dict]:
+    """
+    Load conversation history from Supabase.
+
+    Args:
+        conversation_id: The conversation ID to load messages for
+
+    Returns:
+        List of message dictionaries with 'role' and 'content' keys
+        formatted for the LLM context
+    """
+    supabase = await get_async_supabase_client()
+
+    # Fetch messages in chronological order
+    messages_result = await (
+        supabase.table("chat_messages")
+        .select("role, content")
+        .eq("conversation_id", conversation_id)
+        .order("created_at", desc=False)
+        .execute()
+    )
+
+    if not messages_result.data:
+        return []
+
+    # Format messages for LLM (exclude system messages if any)
+    conversation_history = []
+    for msg in messages_result.data:
+        if msg["role"] in ["user", "assistant"]:
+            conversation_history.append({
+                "role": msg["role"],
+                "content": msg["content"]
+            })
+
+    return conversation_history
 
 
 @router.post("", response_model=ChatResponse, status_code=status.HTTP_200_OK)
@@ -51,9 +89,11 @@ async def chat(request: ChatRequest) -> ChatResponse:
             else:
                 conversation_id = str(uuid.uuid4())
 
-        # Get conversation history (optional: load previous messages)
-        conversation_history = []
-        # TODO: Load previous messages from database if needed
+        # Load conversation history if continuing existing conversation
+        if conversation_id:
+            conversation_history = await load_conversation_history(conversation_id)
+        else:
+            conversation_history = []
 
         # Generate RAG response
         response_text, source_docs = await generate_rag_response(
@@ -171,9 +211,11 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
             # Send conversation_id as metadata event
             yield f"event: metadata\ndata: {json.dumps({'conversation_id': conversation_id})}\n\n"
 
-            # Get conversation history (optional: load previous messages)
-            conversation_history = []
-            # TODO: Load previous messages from database if needed
+            # Load conversation history if continuing existing conversation
+            if conversation_id:
+                conversation_history = await load_conversation_history(conversation_id)
+            else:
+                conversation_history = []
 
             # Store user message
             await supabase.table("chat_messages").insert(
