@@ -35,6 +35,7 @@
     "remark-gfm": "^4.0.1",
     "resend": "^6.1.0",
     "shiki": "^3.13.0",
+    "sonner": "^2.0.7",
     "tinacms": "^2.9.0"
   },
   "devDependencies": {

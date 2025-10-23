@@ -10,6 +10,7 @@ import type {
   ChatResponse,
   DocumentIndexRequest,
   DocumentIndexResponse,
+  DocumentListResponse,
 } from "@moklabs/pnld-types";
 
 const AI_SERVICE_URL =
@@ -138,6 +139,112 @@ class PnldAiClient {
 
     if (!response.ok) {
       throw new Error(`Supabase health check failed: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Upload PDF document with progress tracking
+   */
+  async uploadPdf(
+    file: File,
+    editalId: string,
+    title: string,
+    metadata?: Record<string, any>,
+    onProgress?: (progress: number) => void
+  ): Promise<DocumentIndexResponse> {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("edital_id", editalId);
+      formData.append("title", title);
+      if (metadata) {
+        formData.append("metadata", JSON.stringify(metadata));
+      }
+
+      const xhr = new XMLHttpRequest();
+
+      // Track upload progress
+      if (onProgress) {
+        xhr.upload.addEventListener("progress", (event) => {
+          if (event.lengthComputable) {
+            const percentComplete = Math.round(
+              (event.loaded / event.total) * 100
+            );
+            onProgress(percentComplete);
+          }
+        });
+      }
+
+      // Handle completion
+      xhr.addEventListener("load", () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const response: DocumentIndexResponse = JSON.parse(
+              xhr.responseText
+            );
+            resolve(response);
+          } catch (e) {
+            reject(new Error("Failed to parse response"));
+          }
+        } else {
+          try {
+            const errorResponse = JSON.parse(xhr.responseText);
+            reject(
+              new Error(
+                errorResponse.detail || `Upload failed: ${xhr.statusText}`
+              )
+            );
+          } catch (e) {
+            reject(new Error(`Upload failed: ${xhr.statusText}`));
+          }
+        }
+      });
+
+      // Handle errors
+      xhr.addEventListener("error", () => {
+        reject(new Error("Network error during upload"));
+      });
+
+      // Handle abort
+      xhr.addEventListener("abort", () => {
+        reject(new Error("Upload cancelled"));
+      });
+
+      // Send request
+      xhr.open("POST", `${this.baseUrl}/documents/upload-pdf`);
+      xhr.send(formData);
+    });
+  }
+
+  /**
+   * List documents with optional filtering
+   */
+  async listDocuments(params: {
+    editalId?: string;
+    limit?: number;
+    offset?: number;
+    sortBy?: string;
+  }): Promise<DocumentListResponse> {
+    const queryParams = new URLSearchParams();
+    if (params.editalId) queryParams.append("edital_id", params.editalId);
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.offset) queryParams.append("offset", params.offset.toString());
+    if (params.sortBy) queryParams.append("sort_by", params.sortBy);
+
+    const response = await fetch(
+      `${this.baseUrl}/documents?${queryParams.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to list documents: ${response.statusText}`);
     }
 
     return response.json();
