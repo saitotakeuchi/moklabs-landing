@@ -100,7 +100,7 @@ async def list_documents(
         if not result.data:
             return DocumentListResponse(
                 documents=[],
-                total=0,
+                total=total_count,
                 limit=limit,
                 offset=offset,
             )
