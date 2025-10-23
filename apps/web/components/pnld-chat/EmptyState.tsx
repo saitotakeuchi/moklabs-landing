@@ -36,7 +36,7 @@ export function EmptyState({ selectedEdital, onSuggestedQuestionClick }: EmptySt
 
       {/* Welcome Message */}
       <div className="flex flex-col gap-4 items-center w-full max-w-3xl">
-        <div className="font-sans font-bold text-2xl leading-[1.2] text-[#0013ff] text-center">
+        <div className="font-sans font-bold text-xl leading-[1.2] text-[#0013ff] text-center">
           <p className="mb-0">👋 Oi! Eu sou o Copiloto PNLD da MokLabs.</p>
           <p className="mb-0">&nbsp;</p>
           <p className="mb-0">

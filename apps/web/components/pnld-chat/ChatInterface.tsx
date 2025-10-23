@@ -71,29 +71,35 @@ export function ChatInterface({
 
   return (
     <div className="flex flex-col h-full w-full bg-white">
-      {/* Chat Content */}
+      {/* Chat Content - Centered with max width on large screens */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {!hasMessages ? (
-          <EmptyState
-            selectedEdital={selectedEdital}
-            onSuggestedQuestionClick={handleSuggestedQuestion}
-          />
-        ) : (
-          <MessageList messages={messages} isTyping={isTyping} />
-        )}
+        <div className="flex-1 flex justify-center overflow-hidden">
+          <div className="w-full max-w-[1280px] flex flex-col overflow-hidden">
+            {!hasMessages ? (
+              <EmptyState
+                selectedEdital={selectedEdital}
+                onSuggestedQuestionClick={handleSuggestedQuestion}
+              />
+            ) : (
+              <MessageList messages={messages} isTyping={isTyping} />
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Input Section */}
-      <div className="bg-[#0013ff] px-8 md:px-32 py-8">
-        <MessageInput
-          onSendMessage={handleSendMessage}
-          disabled={!selectedEdital || isLoading}
-          placeholder={
-            selectedEdital
-              ? "Digite sua pergunta sobre o PNLD..."
-              : "Selecione um edital primeiro..."
-          }
-        />
+      {/* Input Section - Centered with max width on large screens */}
+      <div className="bg-[#0013ff] px-8 md:px-32 py-8 flex justify-center">
+        <div className="w-full max-w-[1280px]">
+          <MessageInput
+            onSendMessage={handleSendMessage}
+            disabled={!selectedEdital || isLoading}
+            placeholder={
+              selectedEdital
+                ? "Digite sua pergunta sobre o PNLD..."
+                : "Selecione um edital primeiro..."
+            }
+          />
+        </div>
       </div>
 
       {/* Error display (optional) */}
