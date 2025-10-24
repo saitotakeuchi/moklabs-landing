@@ -4,11 +4,11 @@
  * Displays a list/table of documents with filtering and pagination
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useDocuments } from '@/hooks/useDocuments';
-import { DocumentListItem, DocumentListItemCard } from './DocumentListItem';
+import { useState } from "react";
+import { useDocuments } from "@/hooks/useDocuments";
+import { DocumentListItem, DocumentListItemCard } from "./DocumentListItem";
 
 interface DocumentListProps {
   onViewDocument: (documentId: string) => void;
@@ -21,7 +21,7 @@ export function DocumentList({
   onDeleteDocument,
   onRefresh,
 }: DocumentListProps) {
-  const [editalFilter, setEditalFilter] = useState('');
+  const [editalFilter, setEditalFilter] = useState("");
   const [page, setPage] = useState(0);
   const limit = 20;
 
@@ -69,7 +69,7 @@ export function DocumentList({
           <div>
             <h2 className="text-2xl font-bold">Documents</h2>
             <p className="text-sm text-gray-600 mt-1">
-              {total} {total === 1 ? 'document' : 'documents'} total
+              {total} {total === 1 ? "document" : "documents"} total
             </p>
           </div>
           <div className="flex gap-2">
@@ -85,7 +85,7 @@ export function DocumentList({
               disabled={isLoading}
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50"
             >
-              {isLoading ? 'Loading...' : 'Refresh'}
+              {isLoading ? "Loading..." : "Refresh"}
             </button>
           </div>
         </div>
@@ -118,11 +118,13 @@ export function DocumentList({
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No documents</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              No documents
+            </h3>
             <p className="mt-1 text-sm text-gray-500">
               {editalFilter
-                ? 'No documents found with this Edital ID'
-                : 'Get started by uploading your first document'}
+                ? "No documents found with this Edital ID"
+                : "Get started by uploading your first document"}
             </p>
           </div>
         ) : (
@@ -189,7 +191,9 @@ export function DocumentList({
                     Previous
                   </button>
                   <button
-                    onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                    onClick={() =>
+                      setPage((p) => Math.min(totalPages - 1, p + 1))
+                    }
                     disabled={page >= totalPages - 1}
                     className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >

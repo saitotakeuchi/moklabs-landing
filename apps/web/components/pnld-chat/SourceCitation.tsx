@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { MessageSource } from './Message';
+import { useState } from "react";
+import { MessageSource } from "./Message";
 
 interface SourceCitationProps {
   sources: MessageSource[];
@@ -28,7 +28,7 @@ export function SourceCitation({ sources }: SourceCitationProps) {
             onClick={() => setExpanded(!expanded)}
             className="text-[#0013ff] hover:underline text-xs font-sans"
           >
-            {expanded ? 'Ver menos' : `Ver todas (${sources.length})`}
+            {expanded ? "Ver menos" : `Ver todas (${sources.length})`}
           </button>
         )}
       </div>
@@ -44,8 +44,10 @@ export function SourceCitation({ sources }: SourceCitationProps) {
                 {source.title}
               </p>
               {source.page_number && (
-                <span className="bg-[#0013ff] text-white text-xs px-2 py-1 rounded-full
-                                 font-sans whitespace-nowrap">
+                <span
+                  className="bg-[#0013ff] text-white text-xs px-2 py-1 rounded-full
+                                 font-sans whitespace-nowrap"
+                >
                   Pág. {source.page_number}
                 </span>
               )}
@@ -56,7 +58,9 @@ export function SourceCitation({ sources }: SourceCitationProps) {
             </p>
 
             <div className="flex items-center gap-2 text-xs text-gray-500 font-sans">
-              <span>Relevância: {Math.round(source.relevance_score * 100)}%</span>
+              <span>
+                Relevância: {Math.round(source.relevance_score * 100)}%
+              </span>
               {source.chunk_index !== undefined && (
                 <span>• Trecho {source.chunk_index + 1}</span>
               )}

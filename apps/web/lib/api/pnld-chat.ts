@@ -5,12 +5,13 @@
  */
 
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_PNLD_AI_SERVICE_URL || 'http://localhost:8000';
-const API_VERSION = '/api/v1';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_PNLD_AI_SERVICE_URL || "http://localhost:8000";
+const API_VERSION = "/api/v1";
 
 // Types matching backend API
 export interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp?: string;
 }
@@ -53,27 +54,33 @@ export interface ConversationHistory {
 
 // Streaming event types
 export type StreamEvent =
-  | { type: 'metadata'; data: { conversation_id: string } }
-  | { type: 'sources'; data: DocumentSource[] }
-  | { type: 'token'; data: { content: string } }
-  | { type: 'done'; data: { conversation_id: string } }
-  | { type: 'error'; data: { error: string; conversation_id?: string } };
+  | { type: "metadata"; data: { conversation_id: string } }
+  | { type: "sources"; data: DocumentSource[] }
+  | { type: "token"; data: { content: string } }
+  | { type: "done"; data: { conversation_id: string } }
+  | { type: "error"; data: { error: string; conversation_id?: string } };
 
 /**
  * Send a chat message (non-streaming)
  */
-export async function sendChatMessage(request: ChatRequest): Promise<ChatResponse> {
+export async function sendChatMessage(
+  request: ChatRequest
+): Promise<ChatResponse> {
   const response = await fetch(`${API_BASE_URL}${API_VERSION}/chat`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(request),
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-    throw new Error(error.detail || `HTTP ${response.status}: ${response.statusText}`);
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Unknown error" }));
+    throw new Error(
+      error.detail || `HTTP ${response.status}: ${response.statusText}`
+    );
   }
 
   return response.json();
@@ -83,27 +90,33 @@ export async function sendChatMessage(request: ChatRequest): Promise<ChatRespons
  * Send a chat message with streaming response
  * Returns an async generator that yields stream events
  */
-export async function* streamChatMessage(request: ChatRequest): AsyncGenerator<StreamEvent> {
+export async function* streamChatMessage(
+  request: ChatRequest
+): AsyncGenerator<StreamEvent> {
   const response = await fetch(`${API_BASE_URL}${API_VERSION}/chat/stream`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(request),
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-    throw new Error(error.detail || `HTTP ${response.status}: ${response.statusText}`);
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Unknown error" }));
+    throw new Error(
+      error.detail || `HTTP ${response.status}: ${response.statusText}`
+    );
   }
 
   if (!response.body) {
-    throw new Error('Response body is null');
+    throw new Error("Response body is null");
   }
 
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
-  let buffer = '';
+  let buffer = "";
   let currentEventType: string | null = null;
 
   try {
@@ -113,47 +126,47 @@ export async function* streamChatMessage(request: ChatRequest): AsyncGenerator<S
       if (done) break;
 
       buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
+      const lines = buffer.split("\n");
 
       // Keep the last incomplete line in the buffer
-      buffer = lines.pop() || '';
+      buffer = lines.pop() || "";
 
       for (const line of lines) {
-        if (line.trim() === '') {
+        if (line.trim() === "") {
           // Empty line marks end of an SSE message
           currentEventType = null;
           continue;
         }
 
         // Parse SSE format: "event: type\ndata: json\n\n"
-        if (line.startsWith('event: ')) {
+        if (line.startsWith("event: ")) {
           // Extract event type
           currentEventType = line.substring(7).trim();
           continue;
         }
 
-        if (line.startsWith('data: ')) {
+        if (line.startsWith("data: ")) {
           const dataStr = line.substring(6);
           try {
             const data = JSON.parse(dataStr);
 
             // Use the parsed event type from the "event:" line
-            if (currentEventType === 'metadata') {
-              yield { type: 'metadata', data };
-            } else if (currentEventType === 'sources') {
+            if (currentEventType === "metadata") {
+              yield { type: "metadata", data };
+            } else if (currentEventType === "sources") {
               // Yield sources even if empty array
-              yield { type: 'sources', data };
-            } else if (currentEventType === 'token') {
-              yield { type: 'token', data };
-            } else if (currentEventType === 'done') {
-              yield { type: 'done', data };
-            } else if (currentEventType === 'error') {
-              yield { type: 'error', data };
+              yield { type: "sources", data };
+            } else if (currentEventType === "token") {
+              yield { type: "token", data };
+            } else if (currentEventType === "done") {
+              yield { type: "done", data };
+            } else if (currentEventType === "error") {
+              yield { type: "error", data };
             } else {
-              console.warn('Unknown SSE event type:', currentEventType, data);
+              console.warn("Unknown SSE event type:", currentEventType, data);
             }
           } catch (e) {
-            console.error('Failed to parse SSE data:', dataStr, e);
+            console.error("Failed to parse SSE data:", dataStr, e);
           }
         }
       }
@@ -166,20 +179,29 @@ export async function* streamChatMessage(request: ChatRequest): AsyncGenerator<S
 /**
  * Get conversation history
  */
-export async function getConversationHistory(conversationId: string): Promise<ConversationHistory> {
-  const response = await fetch(`${API_BASE_URL}${API_VERSION}/chat/${conversationId}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+export async function getConversationHistory(
+  conversationId: string
+): Promise<ConversationHistory> {
+  const response = await fetch(
+    `${API_BASE_URL}${API_VERSION}/chat/${conversationId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw new Error('Conversation not found');
+      throw new Error("Conversation not found");
     }
-    const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-    throw new Error(error.detail || `HTTP ${response.status}: ${response.statusText}`);
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Unknown error" }));
+    throw new Error(
+      error.detail || `HTTP ${response.status}: ${response.statusText}`
+    );
   }
 
   return response.json();

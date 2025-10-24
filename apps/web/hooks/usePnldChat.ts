@@ -4,15 +4,15 @@
  * Manages chat state, conversation tracking, and message streaming for PNLD Chat
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   ChatMessage,
   DocumentSource,
   streamChatMessage,
   ChatRequest,
-} from '@/lib/api/pnld-chat';
+} from "@/lib/api/pnld-chat";
 
-const CONVERSATION_ID_KEY = 'pnld_conversation_id';
+const CONVERSATION_ID_KEY = "pnld_conversation_id";
 
 export interface UsePnldChatOptions {
   editalId?: string;
@@ -33,7 +33,9 @@ export interface UsePnldChatReturn {
 /**
  * Custom hook for managing PNLD chat state and interactions
  */
-export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn {
+export function usePnldChat(
+  options: UsePnldChatOptions = {}
+): UsePnldChatReturn {
   const { editalId, maxTokens = 1000, temperature = 0.7 } = options;
 
   // State management
@@ -48,7 +50,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
 
   // Load conversation ID from localStorage on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const savedConversationId = localStorage.getItem(CONVERSATION_ID_KEY);
       if (savedConversationId) {
         setConversationId(savedConversationId);
@@ -58,7 +60,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
 
   // Save conversation ID to localStorage when it changes
   useEffect(() => {
-    if (conversationId && typeof window !== 'undefined') {
+    if (conversationId && typeof window !== "undefined") {
       localStorage.setItem(CONVERSATION_ID_KEY, conversationId);
     }
   }, [conversationId]);
@@ -73,7 +75,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
       }
 
       if (isStreamingRef.current) {
-        console.warn('Already streaming a message, ignoring request');
+        console.warn("Already streaming a message, ignoring request");
         return;
       }
 
@@ -84,7 +86,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
 
       // Add user message immediately (optimistic update)
       const userMessage: ChatMessage = {
-        role: 'user',
+        role: "user",
         content: message,
         timestamp: new Date().toISOString(),
       };
@@ -101,7 +103,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
       };
 
       // Accumulate assistant response content
-      let assistantContent = '';
+      let assistantContent = "";
       let newConversationId = conversationId;
       let newSources: DocumentSource[] = [];
       const assistantTimestamp = new Date().toISOString();
@@ -110,31 +112,34 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
         // Stream the response
         for await (const event of streamChatMessage(request)) {
           switch (event.type) {
-            case 'metadata':
+            case "metadata":
               // Update conversation ID
               newConversationId = event.data.conversation_id;
               setConversationId(newConversationId);
               break;
 
-            case 'sources':
+            case "sources":
               // Update sources
               newSources = event.data;
               setSources(newSources);
               break;
 
-            case 'token':
+            case "token":
               // Accumulate response content
               assistantContent += event.data.content;
 
               // Update messages with partial response - update the last message if it's the streaming assistant
               setMessages((prev) => {
                 // Check if the last message is our streaming assistant message
-                if (prev.length > 0 && prev[prev.length - 1].role === 'assistant') {
+                if (
+                  prev.length > 0 &&
+                  prev[prev.length - 1].role === "assistant"
+                ) {
                   // Update the existing assistant message with same timestamp
                   return [
                     ...prev.slice(0, -1),
                     {
-                      role: 'assistant',
+                      role: "assistant",
                       content: assistantContent,
                       timestamp: assistantTimestamp,
                     },
@@ -144,7 +149,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
                   return [
                     ...prev,
                     {
-                      role: 'assistant',
+                      role: "assistant",
                       content: assistantContent,
                       timestamp: assistantTimestamp,
                     },
@@ -153,12 +158,15 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
               });
               break;
 
-            case 'done':
+            case "done":
               // Streaming complete
-              console.log('Streaming complete for conversation:', event.data.conversation_id);
+              console.log(
+                "Streaming complete for conversation:",
+                event.data.conversation_id
+              );
               break;
 
-            case 'error':
+            case "error":
               // Handle streaming error
               throw new Error(event.data.error);
           }
@@ -168,16 +176,18 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
         setIsLoading(false);
         isStreamingRef.current = false;
       } catch (err) {
-        console.error('Error streaming chat message:', err);
-        const errorObj = err instanceof Error ? err : new Error('Failed to send message');
+        console.error("Error streaming chat message:", err);
+        const errorObj =
+          err instanceof Error ? err : new Error("Failed to send message");
         setError(errorObj);
 
         // Add error message to chat
         setMessages((prev) => [
           ...prev,
           {
-            role: 'assistant',
-            content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.',
+            role: "assistant",
+            content:
+              "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.",
             timestamp: new Date().toISOString(),
           },
         ]);
@@ -200,7 +210,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
     setIsLoading(false);
     isStreamingRef.current = false;
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.removeItem(CONVERSATION_ID_KEY);
     }
   }, []);

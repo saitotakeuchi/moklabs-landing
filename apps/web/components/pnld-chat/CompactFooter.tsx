@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Phone, Mail, Instagram } from "iconoir-react";
 import Link from "next/link";
@@ -59,9 +59,7 @@ export function CompactFooter() {
               Política de Privacidade
             </Link>
             <span className="hidden sm:inline">•</span>
-            <span className="font-sans">
-              © {currentYear} Mok Labs
-            </span>
+            <span className="font-sans">© {currentYear} Mok Labs</span>
           </div>
         </div>
       </div>

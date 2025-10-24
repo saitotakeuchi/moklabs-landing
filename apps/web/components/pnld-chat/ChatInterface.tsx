@@ -1,20 +1,18 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { usePnldChat } from '@/hooks/usePnldChat';
-import { MessageProps } from './Message';
-import { MessageList } from './MessageList';
-import { MessageInput } from './MessageInput';
-import { EmptyState } from './EmptyState';
+import { useEffect } from "react";
+import { usePnldChat } from "@/hooks/usePnldChat";
+import { MessageProps } from "./Message";
+import { MessageList } from "./MessageList";
+import { MessageInput } from "./MessageInput";
+import { EmptyState } from "./EmptyState";
 
 interface ChatInterfaceProps {
   selectedEdital: string | null;
   onEditalSelect?: (editalId: string) => void;
 }
 
-export function ChatInterface({
-  selectedEdital,
-}: ChatInterfaceProps) {
+export function ChatInterface({ selectedEdital }: ChatInterfaceProps) {
   // Use the PNLD chat hook with the selected edital
   const {
     messages: chatMessages,
@@ -22,7 +20,7 @@ export function ChatInterface({
     error,
     sources,
     sendMessage,
-    clearConversation
+    clearConversation,
   } = usePnldChat({
     editalId: selectedEdital || undefined,
   });
@@ -34,7 +32,7 @@ export function ChatInterface({
 
   const handleSendMessage = async (content: string) => {
     if (!selectedEdital) {
-      console.warn('No edital selected');
+      console.warn("No edital selected");
       return;
     }
 
@@ -48,25 +46,27 @@ export function ChatInterface({
   // Convert chat messages to component message format
   const messages: MessageProps[] = chatMessages.map((msg, index) => {
     const isLastAssistantMessage =
-      msg.role === 'assistant' &&
-      index === chatMessages.length - 1;
+      msg.role === "assistant" && index === chatMessages.length - 1;
 
     return {
-      role: msg.role as 'user' | 'assistant',
+      role: msg.role as "user" | "assistant",
       content: msg.content,
       timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
       // Only show sources on the last assistant message
-      sources: isLastAssistantMessage && msg.role === 'assistant' ? sources : undefined,
+      sources:
+        isLastAssistantMessage && msg.role === "assistant"
+          ? sources
+          : undefined,
     };
   });
 
   const hasMessages = messages.length > 0;
 
   // Only show typing indicator if loading AND no assistant message is streaming yet
-  const isTyping = isLoading && (
-    chatMessages.length === 0 ||
-    chatMessages[chatMessages.length - 1]?.role !== 'assistant'
-  );
+  const isTyping =
+    isLoading &&
+    (chatMessages.length === 0 ||
+      chatMessages[chatMessages.length - 1]?.role !== "assistant");
 
   return (
     <div className="flex flex-col h-full w-full bg-white">
@@ -104,9 +104,7 @@ export function ChatInterface({
       {/* Error display (optional) */}
       {error && (
         <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-8 mb-4">
-          <p className="text-sm text-red-700">
-            {error.message}
-          </p>
+          <p className="text-sm text-red-700">{error.message}</p>
         </div>
       )}
     </div>

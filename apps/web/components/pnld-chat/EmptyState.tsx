@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
 
 interface EmptyStateProps {
   selectedEdital: string | null;
@@ -10,10 +10,13 @@ interface EmptyStateProps {
 const SUGGESTED_QUESTIONS = [
   "Qual é o prazo de entrega?",
   "Quais são os arquivos digitais exigidos?",
-  "Posso enviar o mesmo material para mais de um edital?"
+  "Posso enviar o mesmo material para mais de um edital?",
 ];
 
-export function EmptyState({ selectedEdital, onSuggestedQuestionClick }: EmptyStateProps) {
+export function EmptyState({
+  selectedEdital,
+  onSuggestedQuestionClick,
+}: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center gap-8 py-12 px-4">
       {/* Avatar */}
@@ -66,16 +69,20 @@ export function EmptyState({ selectedEdital, onSuggestedQuestionClick }: EmptySt
 
       {/* Warning when no edital selected */}
       {!selectedEdital && (
-        <div className="bg-white border-2 border-[#0013ff] rounded-[24px]
-                        flex gap-2 items-center justify-center px-4 py-6">
+        <div
+          className="bg-white border-2 border-[#0013ff] rounded-[24px]
+                        flex gap-2 items-center justify-center px-4 py-6"
+        >
           <Image
             src="/figma-assets/4a4eb96308682e17abfbbc706b848f44fbbbd6ce.svg"
             alt="Warning Icon"
             width={24}
             height={24}
           />
-          <p className="font-sans font-bold text-base leading-[1.4]
-                        text-[#0013ff] text-center whitespace-nowrap">
+          <p
+            className="font-sans font-bold text-base leading-[1.4]
+                        text-[#0013ff] text-center whitespace-nowrap"
+          >
             Selecione um edital para começar!
           </p>
         </div>

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { Header, ChatInterface, CompactFooter } from '@/components/pnld-chat';
+import { useState, useCallback } from "react";
+import { Header, ChatInterface, CompactFooter } from "@/components/pnld-chat";
 
 // Mock data for available editais - will be replaced with real data from API
 const MOCK_EDITAIS = [
-  { id: 'PNLD-2027-2030-ANOS-INICIAIS', name: 'PNLD 2027-2030 Anos Iniciais' },
-  { id: 'PNLD-2027-2030-ANOS-FINAIS', name: 'PNLD 2027-2030 Anos Finais' },
-  { id: 'PNLD-2027-2030-ENSINO-MEDIO', name: 'PNLD 2027-2030 Ensino Médio' },
+  { id: "PNLD-2027-2030-ANOS-INICIAIS", name: "PNLD 2027-2030 Anos Iniciais" },
+  { id: "PNLD-2027-2030-ANOS-FINAIS", name: "PNLD 2027-2030 Anos Finais" },
+  { id: "PNLD-2027-2030-ENSINO-MEDIO", name: "PNLD 2027-2030 Ensino Médio" },
 ];
 
 export default function PNLDChatPage() {

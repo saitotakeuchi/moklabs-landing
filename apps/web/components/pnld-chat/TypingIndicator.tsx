@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 export function TypingIndicator() {
   return (
@@ -9,15 +9,15 @@ export function TypingIndicator() {
             <div className="flex gap-1">
               <div
                 className="w-2 h-2 bg-[#0013ff] rounded-full animate-bounce"
-                style={{ animationDelay: '0ms', animationDuration: '1s' }}
+                style={{ animationDelay: "0ms", animationDuration: "1s" }}
               />
               <div
                 className="w-2 h-2 bg-[#0013ff] rounded-full animate-bounce"
-                style={{ animationDelay: '150ms', animationDuration: '1s' }}
+                style={{ animationDelay: "150ms", animationDuration: "1s" }}
               />
               <div
                 className="w-2 h-2 bg-[#0013ff] rounded-full animate-bounce"
-                style={{ animationDelay: '300ms', animationDuration: '1s' }}
+                style={{ animationDelay: "300ms", animationDuration: "1s" }}
               />
             </div>
             <span className="text-[#0013ff] text-sm font-sans ml-2">

@@ -4,10 +4,11 @@
  * Manages document listing, filtering, and pagination
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_PNLD_AI_SERVICE_URL || 'http://localhost:8000';
-const API_VERSION = '/api/v1';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_PNLD_AI_SERVICE_URL || "http://localhost:8000";
+const API_VERSION = "/api/v1";
 
 export interface Document {
   id: string;
@@ -46,12 +47,14 @@ export interface UseDocumentsReturn {
 /**
  * Custom hook for managing document list
  */
-export function useDocuments(options: UseDocumentsOptions = {}): UseDocumentsReturn {
+export function useDocuments(
+  options: UseDocumentsOptions = {}
+): UseDocumentsReturn {
   const {
     editalId,
     limit = 20,
     offset = 0,
-    sortBy = 'created_at',
+    sortBy = "created_at",
     autoFetch = true,
   } = options;
 
@@ -67,32 +70,37 @@ export function useDocuments(options: UseDocumentsOptions = {}): UseDocumentsRet
     try {
       // Build query params
       const params = new URLSearchParams();
-      if (editalId) params.append('edital_id', editalId);
-      params.append('limit', limit.toString());
-      params.append('offset', offset.toString());
-      params.append('sort_by', sortBy);
+      if (editalId) params.append("edital_id", editalId);
+      params.append("limit", limit.toString());
+      params.append("offset", offset.toString());
+      params.append("sort_by", sortBy);
 
       const response = await fetch(
         `${API_BASE_URL}${API_VERSION}/documents?${params.toString()}`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response
+          .json()
+          .catch(() => ({ detail: "Unknown error" }));
+        throw new Error(
+          errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       const data: DocumentsListResponse = await response.json();
       setDocuments(data.documents);
       setTotal(data.total);
     } catch (err) {
-      console.error('Error fetching documents:', err);
-      const errorObj = err instanceof Error ? err : new Error('Failed to fetch documents');
+      console.error("Error fetching documents:", err);
+      const errorObj =
+        err instanceof Error ? err : new Error("Failed to fetch documents");
       setError(errorObj);
     } finally {
       setIsLoading(false);
@@ -134,19 +142,27 @@ export function useDocumentDelete(): UseDocumentDeleteReturn {
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}${API_VERSION}/documents/${documentId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `${API_BASE_URL}${API_VERSION}/documents/${documentId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response
+          .json()
+          .catch(() => ({ detail: "Unknown error" }));
+        throw new Error(
+          errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       // Successfully deleted
     } catch (err) {
-      console.error('Error deleting document:', err);
-      const errorObj = err instanceof Error ? err : new Error('Failed to delete document');
+      console.error("Error deleting document:", err);
+      const errorObj =
+        err instanceof Error ? err : new Error("Failed to delete document");
       setError(errorObj);
       throw errorObj;
     } finally {
@@ -203,32 +219,39 @@ export function useDocumentDetails(
 
     try {
       const params = new URLSearchParams();
-      if (includeChunks) params.append('include_chunks', 'true');
+      if (includeChunks) params.append("include_chunks", "true");
 
       const url = `${API_BASE_URL}${API_VERSION}/documents/${documentId}${
-        params.toString() ? `?${params.toString()}` : ''
+        params.toString() ? `?${params.toString()}` : ""
       }`;
 
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('Document not found');
+          throw new Error("Document not found");
         }
-        const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response
+          .json()
+          .catch(() => ({ detail: "Unknown error" }));
+        throw new Error(
+          errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       const data: DocumentDetail = await response.json();
       setDocument(data);
     } catch (err) {
-      console.error('Error fetching document details:', err);
-      const errorObj = err instanceof Error ? err : new Error('Failed to fetch document details');
+      console.error("Error fetching document details:", err);
+      const errorObj =
+        err instanceof Error
+          ? err
+          : new Error("Failed to fetch document details");
       setError(errorObj);
     } finally {
       setIsLoading(false);

@@ -4,10 +4,11 @@
  * Handles PDF document upload with progress tracking
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_PNLD_AI_SERVICE_URL || 'http://localhost:8000';
-const API_VERSION = '/api/v1';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_PNLD_AI_SERVICE_URL || "http://localhost:8000";
+const API_VERSION = "/api/v1";
 
 export interface DocumentUploadRequest {
   file: File;
@@ -23,7 +24,7 @@ export interface DocumentUploadResponse {
   filename: string;
   pages_processed?: number;
   chunks_created: number;
-  status: 'success' | 'processing' | 'failed';
+  status: "success" | "processing" | "failed";
 }
 
 export interface UseDocumentUploadReturn {
@@ -56,8 +57,8 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
       setError(null);
 
       // Validate file type
-      if (!request.file.name.toLowerCase().endsWith('.pdf')) {
-        const err = new Error('Only PDF files are allowed');
+      if (!request.file.name.toLowerCase().endsWith(".pdf")) {
+        const err = new Error("Only PDF files are allowed");
         setError(err);
         setIsUploading(false);
         throw err;
@@ -66,7 +67,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
       // Validate file size (50MB max)
       const MAX_SIZE = 50 * 1024 * 1024; // 50MB in bytes
       if (request.file.size > MAX_SIZE) {
-        const err = new Error('File size must be less than 50MB');
+        const err = new Error("File size must be less than 50MB");
         setError(err);
         setIsUploading(false);
         throw err;
@@ -74,33 +75,37 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
 
       return new Promise((resolve, reject) => {
         const formData = new FormData();
-        formData.append('file', request.file);
-        formData.append('edital_id', request.editalId);
-        formData.append('title', request.title);
+        formData.append("file", request.file);
+        formData.append("edital_id", request.editalId);
+        formData.append("title", request.title);
         if (request.metadata) {
-          formData.append('metadata', JSON.stringify(request.metadata));
+          formData.append("metadata", JSON.stringify(request.metadata));
         }
 
         const xhr = new XMLHttpRequest();
 
         // Track upload progress
-        xhr.upload.addEventListener('progress', (event) => {
+        xhr.upload.addEventListener("progress", (event) => {
           if (event.lengthComputable) {
-            const percentComplete = Math.round((event.loaded / event.total) * 100);
+            const percentComplete = Math.round(
+              (event.loaded / event.total) * 100
+            );
             setProgress(percentComplete);
           }
         });
 
         // Handle completion
-        xhr.addEventListener('load', () => {
+        xhr.addEventListener("load", () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
-              const response: DocumentUploadResponse = JSON.parse(xhr.responseText);
+              const response: DocumentUploadResponse = JSON.parse(
+                xhr.responseText
+              );
               setIsUploading(false);
               setProgress(100);
               resolve(response);
             } catch (e) {
-              const err = new Error('Failed to parse response');
+              const err = new Error("Failed to parse response");
               setError(err);
               setIsUploading(false);
               reject(err);
@@ -124,23 +129,23 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
         });
 
         // Handle errors
-        xhr.addEventListener('error', () => {
-          const err = new Error('Network error during upload');
+        xhr.addEventListener("error", () => {
+          const err = new Error("Network error during upload");
           setError(err);
           setIsUploading(false);
           reject(err);
         });
 
         // Handle abort
-        xhr.addEventListener('abort', () => {
-          const err = new Error('Upload cancelled');
+        xhr.addEventListener("abort", () => {
+          const err = new Error("Upload cancelled");
           setError(err);
           setIsUploading(false);
           reject(err);
         });
 
         // Send request
-        xhr.open('POST', `${API_BASE_URL}${API_VERSION}/documents/upload-pdf`);
+        xhr.open("POST", `${API_BASE_URL}${API_VERSION}/documents/upload-pdf`);
         xhr.send(formData);
       });
     },

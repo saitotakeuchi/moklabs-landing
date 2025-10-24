@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { SourceCitation } from './SourceCitation';
+import { SourceCitation } from "./SourceCitation";
 
 export interface MessageSource {
   document_id: string;
@@ -12,24 +12,27 @@ export interface MessageSource {
 }
 
 export interface MessageProps {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   sources?: MessageSource[];
   timestamp?: Date;
 }
 
 export function Message({ role, content, sources, timestamp }: MessageProps) {
-  const isUser = role === 'user';
+  const isUser = role === "user";
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full`}>
-      <div className={`max-w-[70%] ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-2`}>
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} w-full`}>
+      <div
+        className={`max-w-[70%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-2`}
+      >
         {/* Message Bubble */}
         <div
           className={`
-            ${isUser
-              ? 'bg-[#0013ff] text-white'
-              : 'bg-white text-[#0013ff] border-2 border-[#0013ff]'
+            ${
+              isUser
+                ? "bg-[#0013ff] text-white"
+                : "bg-white text-[#0013ff] border-2 border-[#0013ff]"
             }
             rounded-[24px] px-6 py-4
             font-['Inter'] text-base leading-[1.4]
@@ -37,7 +40,7 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
           `}
         >
           <div className="prose prose-sm max-w-none">
-            {content.split('\n').map((paragraph, idx) => (
+            {content.split("\n").map((paragraph, idx) => (
               <p key={idx} className="mb-2 last:mb-0">
                 {paragraph}
               </p>
@@ -55,9 +58,9 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
         {/* Timestamp */}
         {timestamp && (
           <span className="text-xs text-gray-500 px-2 font-sans">
-            {timestamp.toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit'
+            {timestamp.toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
             })}
           </span>
         )}

@@ -4,7 +4,7 @@
  * Displays a single document in the list
  */
 
-import type { Document } from '@/hooks/useDocuments';
+import type { Document } from "@/hooks/useDocuments";
 
 interface DocumentListItemProps {
   document: Document;
@@ -12,12 +12,19 @@ interface DocumentListItemProps {
   onDelete: (documentId: string) => void;
 }
 
-export function DocumentListItem({ document, onView, onDelete }: DocumentListItemProps) {
-  const formattedDate = new Date(document.created_at).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+export function DocumentListItem({
+  document,
+  onView,
+  onDelete,
+}: DocumentListItemProps) {
+  const formattedDate = new Date(document.created_at).toLocaleDateString(
+    "pt-BR",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }
+  );
 
   return (
     <tr className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
@@ -30,7 +37,9 @@ export function DocumentListItem({ document, onView, onDelete }: DocumentListIte
         </button>
       </td>
       <td className="px-6 py-4 text-sm text-gray-600">{document.edital_id}</td>
-      <td className="px-6 py-4 text-sm text-gray-600 text-center">{document.chunks_count}</td>
+      <td className="px-6 py-4 text-sm text-gray-600 text-center">
+        {document.chunks_count}
+      </td>
       <td className="px-6 py-4 text-sm text-gray-600">{formattedDate}</td>
       <td className="px-6 py-4">
         <div className="flex gap-2 justify-end">
@@ -55,12 +64,19 @@ export function DocumentListItem({ document, onView, onDelete }: DocumentListIte
 /**
  * DocumentListItemCard Component (for mobile view)
  */
-export function DocumentListItemCard({ document, onView, onDelete }: DocumentListItemProps) {
-  const formattedDate = new Date(document.created_at).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+export function DocumentListItemCard({
+  document,
+  onView,
+  onDelete,
+}: DocumentListItemProps) {
+  const formattedDate = new Date(document.created_at).toLocaleDateString(
+    "pt-BR",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }
+  );
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">

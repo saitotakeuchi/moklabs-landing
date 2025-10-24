@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, FormEvent, KeyboardEvent } from 'react';
+import { useState, FormEvent, KeyboardEvent } from "react";
 
 interface MessageInputProps {
   onSendMessage: (message: string) => void;
@@ -11,20 +11,20 @@ interface MessageInputProps {
 export function MessageInput({
   onSendMessage,
   disabled,
-  placeholder = "Digite sua pergunta sobre o PNLD..."
+  placeholder = "Digite sua pergunta sobre o PNLD...",
 }: MessageInputProps) {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (message.trim() && !disabled) {
       onSendMessage(message.trim());
-      setMessage('');
+      setMessage("");
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
     }
@@ -67,7 +67,8 @@ export function MessageInput({
 
       {/* Disclaimer */}
       <p className="font-sans text-xs leading-[1.4] text-white text-center mt-4">
-        As respostas são baseadas em documentos oficiais do FNDE. Nenhum conteúdo é gerado fora das fontes do edital.
+        As respostas são baseadas em documentos oficiais do FNDE. Nenhum
+        conteúdo é gerado fora das fontes do edital.
       </p>
     </form>
   );

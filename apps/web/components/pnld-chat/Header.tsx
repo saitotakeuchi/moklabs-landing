@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState } from "react";
+import Image from "next/image";
 
 interface HeaderProps {
   selectedEdital: string | null;
@@ -9,12 +9,16 @@ interface HeaderProps {
   availableEditais: Array<{ id: string; name: string }>;
 }
 
-export function Header({ selectedEdital, onEditalSelect, availableEditais }: HeaderProps) {
+export function Header({
+  selectedEdital,
+  onEditalSelect,
+  availableEditais,
+}: HeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const selectedEditalName =
-    availableEditais.find(e => e.id === selectedEdital)?.name ||
-    'Escolha o edital de interesse...';
+    availableEditais.find((e) => e.id === selectedEdital)?.name ||
+    "Escolha o edital de interesse...";
 
   return (
     <div className="bg-[#0013ff] w-full">
@@ -30,8 +34,10 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
                 className="object-contain"
               />
             </div>
-            <p className="font-sans font-bold text-xl leading-[1.2]
-                          text-[#cbff63] whitespace-nowrap hidden md:block">
+            <p
+              className="font-sans font-bold text-xl leading-[1.2]
+                          text-[#cbff63] whitespace-nowrap hidden md:block"
+            >
               | Copiloto PNLD
             </p>
           </div>
@@ -46,8 +52,10 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
               aria-label="Selecionar edital"
               aria-expanded={isDropdownOpen}
             >
-              <span className="font-sans text-sm md:text-base leading-[1.4]
-                              text-[#0013ff] truncate">
+              <span
+                className="font-sans text-sm md:text-base leading-[1.4]
+                              text-[#0013ff] truncate"
+              >
                 {selectedEditalName}
               </span>
               <Image
@@ -55,7 +63,7 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
                 alt=""
                 width={20}
                 height={20}
-                className={`transition-transform flex-shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                className={`transition-transform flex-shrink-0 ${isDropdownOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -69,12 +77,16 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
                 />
 
                 {/* Dropdown Menu */}
-                <div className="absolute top-full right-0 left-0 mt-2 z-20
+                <div
+                  className="absolute top-full right-0 left-0 mt-2 z-20
                                 bg-white border-2 border-[#0013ff] rounded-[16px]
-                                shadow-lg max-h-[300px] overflow-y-auto">
+                                shadow-lg max-h-[300px] overflow-y-auto"
+                >
                   {availableEditais.length === 0 ? (
-                    <div className="px-4 py-3 text-center text-gray-500
-                                    font-sans text-sm">
+                    <div
+                      className="px-4 py-3 text-center text-gray-500
+                                    font-sans text-sm"
+                    >
                       Nenhum edital disponível
                     </div>
                   ) : (
@@ -88,9 +100,10 @@ export function Header({ selectedEdital, onEditalSelect, availableEditais }: Hea
                         className={`
                           w-full px-4 py-3 text-left font-sans text-sm md:text-base
                           hover:bg-[#0013ff] hover:text-white transition-colors
-                          ${selectedEdital === edital.id
-                            ? 'bg-[#cbff63] text-[#0013ff]'
-                            : 'text-[#0013ff]'
+                          ${
+                            selectedEdital === edital.id
+                              ? "bg-[#cbff63] text-[#0013ff]"
+                              : "text-[#0013ff]"
                           }
                         `}
                       >

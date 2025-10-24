@@ -4,9 +4,9 @@
  * Confirmation dialog for deleting documents
  */
 
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 interface DocumentDeleteDialogProps {
   isOpen: boolean;
@@ -26,20 +26,20 @@ export function DocumentDeleteDialog({
   // Handle Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen && !isDeleting) {
+      if (e.key === "Escape" && isOpen && !isDeleting) {
         onCancel();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
       // Prevent body scroll when dialog is open
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, isDeleting, onCancel]);
 
@@ -75,11 +75,12 @@ export function DocumentDeleteDialog({
             Delete Document
           </h3>
           <p className="text-sm text-gray-500 text-center">
-            Are you sure you want to delete <strong>&quot;{documentTitle}&quot;</strong>?
+            Are you sure you want to delete{" "}
+            <strong>&quot;{documentTitle}&quot;</strong>?
           </p>
           <p className="text-sm text-gray-500 text-center mt-2">
-            This will permanently delete the document and all its embeddings. This action cannot be
-            undone.
+            This will permanently delete the document and all its embeddings.
+            This action cannot be undone.
           </p>
         </div>
 
@@ -98,7 +99,7 @@ export function DocumentDeleteDialog({
             disabled={isDeleting}
             className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>

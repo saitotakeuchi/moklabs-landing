@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import { Header, Footer } from '@/components/sections';
-import { ReactNode } from 'react';
+import { usePathname } from "next/navigation";
+import { Header, Footer } from "@/components/sections";
+import { ReactNode } from "react";
 
 interface ConditionalLayoutProps {
   children: ReactNode;
@@ -17,8 +17,10 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname();
 
   // Routes that should NOT have the default header/footer
-  const standaloneRoutes = ['/pnld-chat'];
-  const isStandalonePage = standaloneRoutes.some(route => pathname.startsWith(route));
+  const standaloneRoutes = ["/pnld-chat"];
+  const isStandalonePage = standaloneRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
 
   // Standalone pages render children only (no default header/footer)
   if (isStandalonePage) {

@@ -4,19 +4,21 @@
  * Document management interface for uploading, viewing, and deleting documents
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { toast, Toaster } from 'sonner';
-import { DocumentUpload } from '@/components/pnld-docs/DocumentUpload';
-import { DocumentList } from '@/components/pnld-docs/DocumentList';
-import { DocumentDetail } from '@/components/pnld-docs/DocumentDetail';
-import { DocumentDeleteDialog } from '@/components/pnld-docs/DocumentDeleteDialog';
-import { useDocumentDelete, useDocuments } from '@/hooks/useDocuments';
+import { useState } from "react";
+import { toast, Toaster } from "sonner";
+import { DocumentUpload } from "@/components/pnld-docs/DocumentUpload";
+import { DocumentList } from "@/components/pnld-docs/DocumentList";
+import { DocumentDetail } from "@/components/pnld-docs/DocumentDetail";
+import { DocumentDeleteDialog } from "@/components/pnld-docs/DocumentDeleteDialog";
+import { useDocumentDelete, useDocuments } from "@/hooks/useDocuments";
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'list'>('list');
-  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"upload" | "list">("list");
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(
+    null
+  );
   const [documentToDelete, setDocumentToDelete] = useState<{
     id: string;
     title: string;
@@ -27,7 +29,7 @@ export default function DashboardPage() {
 
   const handleUploadComplete = () => {
     // Switch to list view and refresh the list
-    setActiveTab('list');
+    setActiveTab("list");
     refetch();
   };
 
@@ -46,11 +48,11 @@ export default function DashboardPage() {
 
     try {
       await deleteDocument(documentToDelete.id);
-      toast.success('Document deleted successfully');
+      toast.success("Document deleted successfully");
       setDocumentToDelete(null);
       refetch();
     } catch {
-      toast.error('Failed to delete document');
+      toast.error("Failed to delete document");
     }
   };
 
@@ -66,7 +68,9 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">PNLD Document Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            PNLD Document Management
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             Upload, manage, and view your PNLD documents and embeddings
           </p>
@@ -79,21 +83,21 @@ export default function DashboardPage() {
         <div className="mb-6">
           <nav className="flex space-x-4 border-b border-gray-200">
             <button
-              onClick={() => setActiveTab('list')}
+              onClick={() => setActiveTab("list")}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'list'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                activeTab === "list"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
               Documents
             </button>
             <button
-              onClick={() => setActiveTab('upload')}
+              onClick={() => setActiveTab("upload")}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === 'upload'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                activeTab === "upload"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
               Upload New
@@ -103,7 +107,7 @@ export default function DashboardPage() {
 
         {/* Tab Content */}
         <div className="space-y-6">
-          {activeTab === 'upload' ? (
+          {activeTab === "upload" ? (
             <DocumentUpload onUploadComplete={handleUploadComplete} />
           ) : (
             <DocumentList

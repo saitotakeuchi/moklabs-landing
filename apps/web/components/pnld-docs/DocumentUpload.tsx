@@ -4,21 +4,21 @@
  * Drag-and-drop file upload for PDF documents
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { useDocumentUpload } from '@/hooks/useDocumentUpload';
-import { UploadProgress } from './UploadProgress';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { useDocumentUpload } from "@/hooks/useDocumentUpload";
+import { UploadProgress } from "./UploadProgress";
+import { toast } from "sonner";
 
 interface DocumentUploadProps {
   onUploadComplete?: (documentId: string) => void;
 }
 
 export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
-  const [editalId, setEditalId] = useState('');
-  const [title, setTitle] = useState('');
+  const [editalId, setEditalId] = useState("");
+  const [title, setTitle] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { upload, isUploading, progress, error, reset } = useDocumentUpload();
@@ -29,7 +29,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
       setSelectedFile(file);
       // Auto-fill title from filename if empty
       if (!title) {
-        setTitle(file.name.replace('.pdf', ''));
+        setTitle(file.name.replace(".pdf", ""));
       }
     }
   };
@@ -37,7 +37,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'application/pdf': ['.pdf'],
+      "application/pdf": [".pdf"],
     },
     multiple: false,
     disabled: isUploading,
@@ -47,17 +47,17 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
     e.preventDefault();
 
     if (!selectedFile) {
-      toast.error('Please select a PDF file');
+      toast.error("Please select a PDF file");
       return;
     }
 
     if (!editalId.trim()) {
-      toast.error('Please enter an Edital ID');
+      toast.error("Please enter an Edital ID");
       return;
     }
 
     if (!title.trim()) {
-      toast.error('Please enter a document title');
+      toast.error("Please enter a document title");
       return;
     }
 
@@ -71,8 +71,8 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
       toast.success(`Document "${result.title}" uploaded successfully!`);
 
       // Reset form
-      setEditalId('');
-      setTitle('');
+      setEditalId("");
+      setTitle("");
       setSelectedFile(null);
       reset();
 
@@ -81,14 +81,14 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
         onUploadComplete(result.document_id);
       }
     } catch {
-      toast.error(error?.message || 'Failed to upload document');
+      toast.error(error?.message || "Failed to upload document");
     }
   };
 
   const handleCancel = () => {
     setSelectedFile(null);
-    setEditalId('');
-    setTitle('');
+    setEditalId("");
+    setTitle("");
     reset();
   };
 
@@ -102,11 +102,11 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
             isDragActive
-              ? 'border-blue-500 bg-blue-50'
+              ? "border-blue-500 bg-blue-50"
               : selectedFile
-              ? 'border-green-500 bg-green-50'
-              : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
-          } ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                ? "border-green-500 bg-green-50"
+                : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+          } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
         >
           <input {...getInputProps()} />
           <div className="space-y-2">
@@ -126,7 +126,9 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
             </svg>
             {selectedFile ? (
               <div>
-                <p className="text-sm font-medium text-green-600">File selected:</p>
+                <p className="text-sm font-medium text-green-600">
+                  File selected:
+                </p>
                 <p className="text-sm text-gray-600">{selectedFile.name}</p>
                 <p className="text-xs text-gray-500 mt-1">
                   {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
@@ -139,7 +141,9 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
                 <p className="text-sm text-gray-600">
                   Drag and drop a PDF file here, or click to select
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Max file size: 50MB</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Max file size: 50MB
+                </p>
               </div>
             )}
           </div>
@@ -153,7 +157,10 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
         {/* Form Fields */}
         <div className="space-y-4">
           <div>
-            <label htmlFor="editalId" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="editalId"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Edital ID <span className="text-red-500">*</span>
             </label>
             <input
@@ -169,7 +176,10 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
           </div>
 
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Document Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -199,7 +209,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
             disabled={isUploading || !selectedFile}
             className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            {isUploading ? 'Uploading...' : 'Upload Document'}
+            {isUploading ? "Uploading..." : "Upload Document"}
           </button>
           {selectedFile && !isUploading && (
             <button

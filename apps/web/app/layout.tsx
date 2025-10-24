@@ -109,9 +109,7 @@ export default function RootLayout({
       <body className={`${firaCode.variable} ${inter.variable} antialiased`}>
         <GoogleAnalytics />
         <div className="min-h-screen bg-white">
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
+          <ConditionalLayout>{children}</ConditionalLayout>
           <CookieConsent />
         </div>
         <VercelAnalytics />
