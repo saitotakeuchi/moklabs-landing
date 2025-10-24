@@ -35,3 +35,29 @@ export interface DocumentEmbedding {
   embedding?: number[];
   created_at: string;
 }
+
+export interface DocumentListItem {
+  id: string;
+  edital_id: string;
+  title: string;
+  chunks_count: number;
+  created_at: string;
+  updated_at: string;
+  metadata?: Record<string, any>;
+}
+
+export interface DocumentListResponse {
+  documents: DocumentListItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface DocumentDetail extends DocumentListItem {
+  embeddings_count: number;
+  pages_count?: number;
+  sample_chunks?: Array<{
+    content: string;
+    page_number?: number;
+  }>;
+}

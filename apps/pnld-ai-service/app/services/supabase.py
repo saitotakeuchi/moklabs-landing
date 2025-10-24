@@ -1,23 +1,24 @@
 """Supabase client singleton."""
 
-from supabase import create_client, Client
+from supabase import acreate_client
+from supabase._async.client import AsyncClient
 from app.config import settings
 
 
-_supabase_client: Client | None = None
+_supabase_client: AsyncClient | None = None
 
 
-def get_supabase_client() -> Client:
+async def get_async_supabase_client() -> AsyncClient:
     """
-    Get or create the Supabase client singleton.
+    Get or create the async Supabase client singleton.
 
     Returns:
-        Supabase client instance
+        Async Supabase client instance
     """
     global _supabase_client
 
     if _supabase_client is None:
-        _supabase_client = create_client(
+        _supabase_client = await acreate_client(
             supabase_url=settings.SUPABASE_URL,
             supabase_key=settings.SUPABASE_SERVICE_KEY,
         )

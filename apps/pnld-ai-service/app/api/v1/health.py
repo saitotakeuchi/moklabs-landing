@@ -3,7 +3,7 @@
 from fastapi import APIRouter, status
 from datetime import datetime
 from app.config import settings
-from app.services.supabase import get_supabase_client
+from app.services.supabase import get_async_supabase_client
 
 router = APIRouter()
 
@@ -31,9 +31,9 @@ async def supabase_health() -> dict[str, str | bool]:
     Returns whether Supabase is accessible.
     """
     try:
-        client = get_supabase_client()
+        client = await get_async_supabase_client()
         # Simple query to test connection
-        response = client.table("pnld_documents").select("count", count="exact").limit(0).execute()
+        response = await client.table("pnld_documents").select("count", count="exact").limit(0).execute()
 
         return {
             "status": "healthy",

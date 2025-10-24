@@ -1,7 +1,7 @@
 """Vector similarity search using pgvector."""
 
 from typing import List, Optional, Dict, Any
-from app.services.supabase import get_supabase_client
+from app.services.supabase import get_async_supabase_client
 from app.services.embeddings import generate_embedding
 
 
@@ -26,12 +26,12 @@ async def search_similar_documents(
     # Generate embedding for the query
     query_embedding = await generate_embedding(query)
 
-    # Get Supabase client
-    client = get_supabase_client()
+    # Get async Supabase client
+    client = await get_async_supabase_client()
 
     # Perform vector similarity search using the match_documents RPC function
     try:
-        response = client.rpc(
+        response = await client.rpc(
             "match_documents",
             {
                 "query_embedding": query_embedding,
@@ -89,8 +89,8 @@ async def index_document_embeddings(
     # Generate embeddings for all chunks
     embeddings = await generate_embeddings_batch(content_chunks)
 
-    # Get Supabase client
-    client = get_supabase_client()
+    # Get async Supabase client
+    client = await get_async_supabase_client()
 
     # Prepare embedding records
     embedding_records = [
@@ -104,6 +104,6 @@ async def index_document_embeddings(
 
     # Insert embeddings into Supabase
     # TODO: Uncomment when database is set up
-    # response = client.table("pnld_embeddings").insert(embedding_records).execute()
+    # response = await client.table("pnld_embeddings").insert(embedding_records).execute()
 
     return len(embedding_records)

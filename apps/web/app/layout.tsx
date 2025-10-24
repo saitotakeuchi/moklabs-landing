@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fira_Code, Inter } from "next/font/google";
 import "./globals.css";
-import { Header, Footer } from "@/components/sections";
+import { ConditionalLayout } from "@/components/layout";
 import {
   CookieConsent,
   GoogleAnalytics,
@@ -109,11 +109,7 @@ export default function RootLayout({
       <body className={`${firaCode.variable} ${inter.variable} antialiased`}>
         <GoogleAnalytics />
         <div className="min-h-screen bg-white">
-          <div className="pt-[60px] sm:pt-[84px] md:pt-[98px]">
-            <Header />
-            {children}
-            <Footer />
-          </div>
+          <ConditionalLayout>{children}</ConditionalLayout>
           <CookieConsent />
         </div>
         <VercelAnalytics />
