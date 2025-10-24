@@ -1,21 +1,21 @@
 """Embedding generation service using OpenAI."""
 
 from typing import List, BinaryIO, Optional
-from openai import OpenAI
+from openai import AsyncOpenAI
 from pypdf import PdfReader
 from app.config import settings
 from app.models.document import PageChunk
 
 
-_openai_client: OpenAI | None = None
+_openai_client: AsyncOpenAI | None = None
 
 
-def get_openai_client() -> OpenAI:
-    """Get or create the OpenAI client singleton."""
+def get_async_openai_client() -> AsyncOpenAI:
+    """Get or create the AsyncOpenAI client singleton."""
     global _openai_client
 
     if _openai_client is None:
-        _openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        _openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
     return _openai_client
 
@@ -30,9 +30,9 @@ async def generate_embedding(text: str) -> List[float]:
     Returns:
         List of floats representing the embedding vector
     """
-    client = get_openai_client()
+    client = get_async_openai_client()
 
-    response = client.embeddings.create(
+    response = await client.embeddings.create(
         model=settings.OPENAI_EMBEDDING_MODEL,
         input=text,
     )
@@ -50,9 +50,9 @@ async def generate_embeddings_batch(texts: List[str]) -> List[List[float]]:
     Returns:
         List of embedding vectors
     """
-    client = get_openai_client()
+    client = get_async_openai_client()
 
-    response = client.embeddings.create(
+    response = await client.embeddings.create(
         model=settings.OPENAI_EMBEDDING_MODEL,
         input=texts,
     )

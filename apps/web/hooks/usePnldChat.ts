@@ -104,6 +104,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
       let assistantContent = '';
       let newConversationId = conversationId;
       let newSources: DocumentSource[] = [];
+      const assistantTimestamp = new Date().toISOString();
 
       try {
         // Stream the response
@@ -129,13 +130,13 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
               setMessages((prev) => {
                 // Check if the last message is our streaming assistant message
                 if (prev.length > 0 && prev[prev.length - 1].role === 'assistant') {
-                  // Update the existing assistant message
+                  // Update the existing assistant message with same timestamp
                   return [
                     ...prev.slice(0, -1),
                     {
                       role: 'assistant',
                       content: assistantContent,
-                      timestamp: new Date().toISOString(),
+                      timestamp: assistantTimestamp,
                     },
                   ];
                 } else {
@@ -145,7 +146,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
                     {
                       role: 'assistant',
                       content: assistantContent,
-                      timestamp: new Date().toISOString(),
+                      timestamp: assistantTimestamp,
                     },
                   ];
                 }
@@ -163,28 +164,7 @@ export function usePnldChat(options: UsePnldChatOptions = {}): UsePnldChatReturn
           }
         }
 
-        // Ensure final assistant message is in state
-        if (assistantContent) {
-          setMessages((prev) => {
-            // Check if last message is already the complete assistant message
-            const lastMsg = prev[prev.length - 1];
-            if (lastMsg?.role === 'assistant' && lastMsg.content === assistantContent) {
-              return prev;
-            }
-
-            // Update or add the final assistant message
-            const filtered = prev.filter((m) => !(m.role === 'assistant' && m.content === assistantContent));
-            return [
-              ...filtered,
-              {
-                role: 'assistant',
-                content: assistantContent,
-                timestamp: new Date().toISOString(),
-              },
-            ];
-          });
-        }
-
+        // No need for post-processing - the final state is already correct from the last token update
         setIsLoading(false);
         isStreamingRef.current = false;
       } catch (err) {
