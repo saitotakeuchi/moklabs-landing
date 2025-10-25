@@ -71,6 +71,47 @@ To add or update a secret:
 flyctl secrets set SECRET_NAME=value
 ```
 
+#### CORS Configuration
+
+The backend is configured to accept requests from the following origins:
+
+```bash
+CORS_ORIGINS=https://moklabs-landing.vercel.app,http://localhost:3000,http://127.0.0.1:3000
+```
+
+**CORS Middleware Settings** (configured in `apps/pnld-ai-service/app/main.py`):
+- ✅ `allow_origins`: Parsed from CORS_ORIGINS env var
+- ✅ `allow_credentials`: true
+- ✅ `allow_methods`: ["*"] (all methods)
+- ✅ `allow_headers`: ["*"] (all headers)
+- ✅ `max_age`: 600 seconds
+
+**Testing CORS Configuration:**
+
+Test preflight request:
+```bash
+curl -i -X OPTIONS https://pnld-ai-service.fly.dev/api/v1/health \
+  -H "Origin: https://moklabs-landing.vercel.app" \
+  -H "Access-Control-Request-Method: GET"
+```
+
+Expected response headers:
+```
+access-control-allow-origin: https://moklabs-landing.vercel.app
+access-control-allow-credentials: true
+access-control-allow-methods: DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
+```
+
+**Adding New Origins:**
+
+To add a new origin (e.g., custom domain or staging environment):
+```bash
+cd apps/pnld-ai-service
+flyctl secrets set CORS_ORIGINS="https://moklabs-landing.vercel.app,https://your-new-domain.com,http://localhost:3000"
+```
+
+This will trigger a rolling update of all machines.
+
 ### Local Development
 
 For local development, use `.env.local`:
@@ -120,7 +161,10 @@ After configuring environment variables:
 
 ### CORS errors
 - Verify `CORS_ORIGINS` includes your Vercel deployment URL
-- Update with: `flyctl secrets set CORS_ORIGINS=https://moklabs-landing.vercel.app,http://localhost:3000`
+- Current configured origins: `https://moklabs-landing.vercel.app,http://localhost:3000,http://127.0.0.1:3000`
+- Test CORS preflight: See "Testing CORS Configuration" section above
+- Update with: `flyctl secrets set CORS_ORIGINS="https://moklabs-landing.vercel.app,http://localhost:3000,http://127.0.0.1:3000"`
+- Note: Updating secrets triggers automatic rolling deployment
 
 ### Environment variable not updating
 - Vercel requires redeployment after changing environment variables

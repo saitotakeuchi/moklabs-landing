@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { useDocuments } from "@/hooks/useDocuments";
 import { DocumentListItem, DocumentListItemCard } from "./DocumentListItem";
+import { DocumentListSkeleton } from "@/components/ui";
 
 interface DocumentListProps {
   onViewDocument: (documentId: string) => void;
@@ -95,13 +96,7 @@ export function DocumentList({
       <div className="p-6">
         {isLoading && documents.length === 0 ? (
           // Loading skeleton
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-16 bg-gray-200 rounded"></div>
-              </div>
-            ))}
-          </div>
+          <DocumentListSkeleton count={5} />
         ) : documents.length === 0 ? (
           // Empty state
           <div className="text-center py-12">
