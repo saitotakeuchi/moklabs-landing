@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Message, MessageProps } from "./Message";
-import { TypingIndicator } from "./TypingIndicator";
+import { ChatMessageSkeleton } from "@/components/ui";
 
 interface MessageListProps {
   messages: MessageProps[];
@@ -40,7 +40,7 @@ export function MessageList({ messages, isTyping }: MessageListProps) {
         />
       ))}
 
-      {isTyping && <TypingIndicator />}
+      {isTyping && <ChatMessageSkeleton />}
 
       {/* Invisible element to scroll to */}
       <div ref={messagesEndRef} />
