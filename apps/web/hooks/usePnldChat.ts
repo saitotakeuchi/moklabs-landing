@@ -12,6 +12,12 @@ import {
   ChatRequest,
 } from "@/lib/api/pnld-chat";
 import { getUserFriendlyErrorMessage } from "@/lib/error-handler";
+import {
+  trackChatMessageSent,
+  trackChatResponseReceived,
+  trackChatResponseError,
+  trackSseConnectionFailed,
+} from "@/lib/analytics";
 
 const CONVERSATION_ID_KEY = "pnld_conversation_id";
 
@@ -108,6 +114,14 @@ export function usePnldChat(
       let newConversationId = conversationId;
       let newSources: DocumentSource[] = [];
       const assistantTimestamp = new Date().toISOString();
+      const requestStartTime = Date.now();
+
+      // Track message sent
+      trackChatMessageSent({
+        conversationId: conversationId || undefined,
+        editalId,
+        messageLength: message.length,
+      });
 
       try {
         // Stream the response
@@ -165,6 +179,15 @@ export function usePnldChat(
                 "Streaming complete for conversation:",
                 event.data.conversation_id
               );
+
+              // Track successful response
+              const responseTime = Date.now() - requestStartTime;
+              trackChatResponseReceived({
+                conversationId: event.data.conversation_id,
+                editalId,
+                responseTimeMs: responseTime,
+                sourcesCount: newSources.length,
+              });
               break;
 
             case "error":
@@ -183,6 +206,26 @@ export function usePnldChat(
 
         // Get user-friendly error message
         const userFriendlyMessage = getUserFriendlyErrorMessage(originalError);
+
+        // Track error
+        trackChatResponseError({
+          conversationId: newConversationId || undefined,
+          editalId,
+          errorType: originalError.name,
+          errorMessage: originalError.message,
+        });
+
+        // Check if it's an SSE connection error
+        if (
+          originalError.message.toLowerCase().includes("connection") ||
+          originalError.message.toLowerCase().includes("fetch")
+        ) {
+          trackSseConnectionFailed({
+            conversationId: newConversationId || undefined,
+            retryCount: 0,
+            errorMessage: originalError.message,
+          });
+        }
 
         // Create error with user-friendly message
         const errorObj = new Error(userFriendlyMessage);
