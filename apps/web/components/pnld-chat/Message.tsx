@@ -37,7 +37,7 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
             rounded-[20px] sm:rounded-[24px]
             px-4 sm:px-5 md:px-6
             py-3 sm:py-3.5 md:py-4
-            font-['Inter'] text-sm sm:text-base leading-[1.4]
+            font-inter text-sm sm:text-base leading-[1.4]
             break-words
           `}
         >

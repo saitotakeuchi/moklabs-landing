@@ -57,7 +57,7 @@ export function Header({
               aria-expanded={isDropdownOpen}
             >
               <span
-                className="font-sans text-sm md:text-base leading-[1.4]
+                className="font-inter text-sm md:text-base leading-[1.4]
                               text-[#0013ff] truncate"
               >
                 {selectedEditalName}
@@ -102,7 +102,7 @@ export function Header({
                           setIsDropdownOpen(false);
                         }}
                         className={`
-                          w-full px-4 py-3 text-left font-sans text-sm md:text-base
+                          w-full px-4 py-3 text-left font-inter text-sm md:text-base
                           min-h-[44px] flex items-center
                           hover:bg-[#0013ff] hover:text-white transition-colors
                           active:bg-[#0013cc] touch-manipulation

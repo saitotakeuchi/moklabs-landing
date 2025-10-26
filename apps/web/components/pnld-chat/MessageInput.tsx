@@ -45,7 +45,7 @@ export function MessageInput({
                      rounded-[20px] sm:rounded-[24px]
                      px-3 sm:px-4 md:px-4
                      py-3 sm:py-3.5 md:py-4
-                     font-['Inter'] text-sm sm:text-base leading-[1.4] text-[#0013ff]
+                     font-inter text-sm sm:text-base leading-[1.4] text-[#0013ff]
                      placeholder:text-[#0013ff] placeholder:opacity-50
                      disabled:opacity-50 disabled:cursor-not-allowed
                      focus:outline-none focus:ring-2 focus:ring-[#0013ff] focus:ring-offset-2
