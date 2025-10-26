@@ -87,7 +87,7 @@ export function ChatInterface({ selectedEdital }: ChatInterfaceProps) {
       </div>
 
       {/* Input Section - Centered with max width on large screens */}
-      <div className="bg-[#0013ff] px-8 md:px-32 py-8 flex justify-center">
+      <div className="bg-[#0013ff] px-4 sm:px-6 md:px-8 lg:px-32 py-6 sm:py-7 md:py-8 flex justify-center">
         <div className="w-full max-w-[1280px]">
           <MessageInput
             onSendMessage={handleSendMessage}
