@@ -12,7 +12,7 @@ export default function PNLDChatLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="pnld-chat-app min-h-screen w-full overflow-hidden">
+    <div className="pnld-chat-app min-h-screen w-full overflow-hidden font-inter">
       <NetworkStatus />
       {children}
     </div>
