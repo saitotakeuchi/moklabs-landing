@@ -9,3 +9,5 @@ export {
   DocumentDetailSkeleton,
   DocumentCardSkeleton,
 } from "./DocumentListSkeleton";
+export { ErrorBoundary } from "./ErrorBoundary";
+export { NetworkStatus } from "./NetworkStatus";
