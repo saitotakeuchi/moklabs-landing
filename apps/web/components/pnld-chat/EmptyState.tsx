@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { SuggestedQuestions } from "./SuggestedQuestions";
 
 interface EmptyStateProps {
   selectedEdital: string | null;
@@ -51,26 +52,10 @@ export function EmptyState({
 
         {/* Suggested Questions */}
         {selectedEdital && (
-          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 items-stretch sm:items-center justify-center w-full mt-2 sm:mt-4">
-            {SUGGESTED_QUESTIONS.map((question, index) => (
-              <button
-                key={index}
-                onClick={() => onSuggestedQuestionClick(question)}
-                className="bg-white border-2 border-[#0013ff]
-                           rounded-[20px] sm:rounded-[24px]
-                           px-4 sm:px-4 py-3 sm:py-4
-                           min-h-[44px]
-                           hover:bg-[#0013ff] hover:text-white
-                           active:bg-[#0013cc]
-                           transition-colors
-                           font-inter text-sm sm:text-base leading-[1.4] text-[#0013ff]
-                           touch-manipulation
-                           text-center"
-              >
-                &quot;{question}&quot;
-              </button>
-            ))}
-          </div>
+          <SuggestedQuestions
+            questions={SUGGESTED_QUESTIONS}
+            onQuestionClick={onSuggestedQuestionClick}
+          />
         )}
       </div>
 
