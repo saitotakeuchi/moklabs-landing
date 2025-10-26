@@ -26,7 +26,18 @@
       "Bash(node test-sse-events.js:*)",
       "Bash(timeout 30 python:*)",
       "Bash(pip install:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(dir \"C:\\Program Files\\flyctl.exe\")",
+      "Bash(powershell -Command:*)",
+      "Read(//c/Users/DESKTOP/.fly/bin/**)",
+      "Read(//c/Users/**)",
+      "Bash(export PATH=\"$PATH:/c/Users/DESKTOP/.fly/bin\")",
+      "Bash(flyctl version:*)",
+      "Bash(echo:*)",
+      "Bash(export PATH=\"$PATH:/c/Users/DESKTOP/AppData/Local/flyctl/bin\")",
+      "Bash(flyctl status:*)",
+      "Bash(flyctl secrets:*)",
+      "Bash(vercel --version:*)"
     ],
     "deny": [],
     "ask": []
