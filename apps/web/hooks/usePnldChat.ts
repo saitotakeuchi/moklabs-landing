@@ -11,6 +11,13 @@ import {
   streamChatMessage,
   ChatRequest,
 } from "@/lib/api/pnld-chat";
+import { getUserFriendlyErrorMessage } from "@/lib/error-handler";
+import {
+  trackChatMessageSent,
+  trackChatResponseReceived,
+  trackChatResponseError,
+  trackSseConnectionFailed,
+} from "@/lib/analytics";
 
 const CONVERSATION_ID_KEY = "pnld_conversation_id";
 
@@ -107,6 +114,14 @@ export function usePnldChat(
       let newConversationId = conversationId;
       let newSources: DocumentSource[] = [];
       const assistantTimestamp = new Date().toISOString();
+      const requestStartTime = Date.now();
+
+      // Track message sent
+      trackChatMessageSent({
+        conversationId: conversationId || undefined,
+        editalId,
+        messageLength: message.length,
+      });
 
       try {
         // Stream the response
@@ -164,6 +179,15 @@ export function usePnldChat(
                 "Streaming complete for conversation:",
                 event.data.conversation_id
               );
+
+              // Track successful response
+              const responseTime = Date.now() - requestStartTime;
+              trackChatResponseReceived({
+                conversationId: event.data.conversation_id,
+                editalId,
+                responseTimeMs: responseTime,
+                sourcesCount: newSources.length,
+              });
               break;
 
             case "error":
@@ -177,20 +201,47 @@ export function usePnldChat(
         isStreamingRef.current = false;
       } catch (err) {
         console.error("Error streaming chat message:", err);
-        const errorObj =
+        const originalError =
           err instanceof Error ? err : new Error("Failed to send message");
+
+        // Get user-friendly error message
+        const userFriendlyMessage = getUserFriendlyErrorMessage(originalError);
+
+        // Track error
+        trackChatResponseError({
+          conversationId: newConversationId || undefined,
+          editalId,
+          errorType: originalError.name,
+          errorMessage: originalError.message,
+        });
+
+        // Check if it's an SSE connection error
+        if (
+          originalError.message.toLowerCase().includes("connection") ||
+          originalError.message.toLowerCase().includes("fetch")
+        ) {
+          trackSseConnectionFailed({
+            conversationId: newConversationId || undefined,
+            retryCount: 0,
+            errorMessage: originalError.message,
+          });
+        }
+
+        // Create error with user-friendly message
+        const errorObj = new Error(userFriendlyMessage);
         setError(errorObj);
 
-        // Add error message to chat
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content:
-              "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.",
-            timestamp: new Date().toISOString(),
-          },
-        ]);
+        // Remove the assistant message that was being streamed (if any)
+        setMessages((prev) => {
+          if (
+            prev.length > 0 &&
+            prev[prev.length - 1].role === "assistant" &&
+            prev[prev.length - 1].content === ""
+          ) {
+            return prev.slice(0, -1);
+          }
+          return prev;
+        });
 
         setIsLoading(false);
         isStreamingRef.current = false;

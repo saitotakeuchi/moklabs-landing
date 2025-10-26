@@ -87,7 +87,7 @@ export function ChatInterface({ selectedEdital }: ChatInterfaceProps) {
       </div>
 
       {/* Input Section - Centered with max width on large screens */}
-      <div className="bg-[#0013ff] px-8 md:px-32 py-8 flex justify-center">
+      <div className="bg-[#0013ff] px-4 sm:px-6 md:px-8 lg:px-32 py-6 sm:py-7 md:py-8 flex justify-center">
         <div className="w-full max-w-[1280px]">
           <MessageInput
             onSendMessage={handleSendMessage}
@@ -101,10 +101,64 @@ export function ChatInterface({ selectedEdital }: ChatInterfaceProps) {
         </div>
       </div>
 
-      {/* Error display (optional) */}
+      {/* Error display with retry */}
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-8 mb-4">
-          <p className="text-sm text-red-700">{error.message}</p>
+        <div className="mx-4 sm:mx-6 md:mx-8 mb-4">
+          <div className="bg-red-50 border-l-4 border-red-500 rounded-r-lg p-4 shadow-sm">
+            <div className="flex items-start gap-3">
+              <svg
+                className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-red-800">
+                  Erro ao processar mensagem
+                </p>
+                <p className="text-sm text-red-700 mt-1">{error.message}</p>
+                <button
+                  onClick={() => {
+                    const lastUserMessage = messages
+                      .filter((m) => m.role === "user")
+                      .pop();
+                    if (lastUserMessage) {
+                      sendMessage(lastUserMessage.content);
+                    }
+                  }}
+                  className="mt-3 text-sm font-medium text-red-700 hover:text-red-900 underline"
+                >
+                  Tentar novamente
+                </button>
+              </div>
+              <button
+                onClick={() => clearConversation()}
+                className="text-red-500 hover:text-red-700 transition-colors"
+                aria-label="Fechar erro"
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

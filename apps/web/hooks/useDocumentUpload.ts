@@ -5,6 +5,10 @@
  */
 
 import { useState, useCallback } from "react";
+import {
+  trackDocumentUploaded,
+  trackDocumentUploadError,
+} from "@/lib/analytics";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_PNLD_AI_SERVICE_URL || "http://localhost:8000";
@@ -56,11 +60,22 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
       setProgress(0);
       setError(null);
 
+      const uploadStartTime = Date.now();
+
       // Validate file type
       if (!request.file.name.toLowerCase().endsWith(".pdf")) {
         const err = new Error("Only PDF files are allowed");
         setError(err);
         setIsUploading(false);
+
+        // Track validation error
+        trackDocumentUploadError({
+          editalId: request.editalId,
+          fileSizeBytes: request.file.size,
+          errorType: "ValidationError",
+          errorMessage: err.message,
+        });
+
         throw err;
       }
 
@@ -70,6 +85,15 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
         const err = new Error("File size must be less than 50MB");
         setError(err);
         setIsUploading(false);
+
+        // Track validation error
+        trackDocumentUploadError({
+          editalId: request.editalId,
+          fileSizeBytes: request.file.size,
+          errorType: "ValidationError",
+          errorMessage: err.message,
+        });
+
         throw err;
       }
 
@@ -101,6 +125,17 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
               const response: DocumentUploadResponse = JSON.parse(
                 xhr.responseText
               );
+              const processingTime = Date.now() - uploadStartTime;
+
+              // Track successful upload
+              trackDocumentUploaded({
+                documentId: response.document_id,
+                editalId: response.edital_id,
+                fileSizeBytes: request.file.size,
+                chunksCount: response.chunks_created,
+                processingTimeMs: processingTime,
+              });
+
               setIsUploading(false);
               setProgress(100);
               resolve(response);
@@ -108,6 +143,15 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
               const err = new Error("Failed to parse response");
               setError(err);
               setIsUploading(false);
+
+              // Track parse error
+              trackDocumentUploadError({
+                editalId: request.editalId,
+                fileSizeBytes: request.file.size,
+                errorType: "ParseError",
+                errorMessage: err.message,
+              });
+
               reject(err);
             }
           } else {
@@ -118,11 +162,29 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
               );
               setError(err);
               setIsUploading(false);
+
+              // Track upload error
+              trackDocumentUploadError({
+                editalId: request.editalId,
+                fileSizeBytes: request.file.size,
+                errorType: `HTTPError_${xhr.status}`,
+                errorMessage: err.message,
+              });
+
               reject(err);
             } catch (e) {
               const err = new Error(`Upload failed: ${xhr.statusText}`);
               setError(err);
               setIsUploading(false);
+
+              // Track upload error
+              trackDocumentUploadError({
+                editalId: request.editalId,
+                fileSizeBytes: request.file.size,
+                errorType: `HTTPError_${xhr.status}`,
+                errorMessage: err.message,
+              });
+
               reject(err);
             }
           }
@@ -133,6 +195,15 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
           const err = new Error("Network error during upload");
           setError(err);
           setIsUploading(false);
+
+          // Track network error
+          trackDocumentUploadError({
+            editalId: request.editalId,
+            fileSizeBytes: request.file.size,
+            errorType: "NetworkError",
+            errorMessage: err.message,
+          });
+
           reject(err);
         });
 
@@ -141,6 +212,15 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
           const err = new Error("Upload cancelled");
           setError(err);
           setIsUploading(false);
+
+          // Track cancellation
+          trackDocumentUploadError({
+            editalId: request.editalId,
+            fileSizeBytes: request.file.size,
+            errorType: "UploadCancelled",
+            errorMessage: err.message,
+          });
+
           reject(err);
         });
 
