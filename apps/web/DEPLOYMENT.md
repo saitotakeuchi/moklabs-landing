@@ -46,6 +46,7 @@ vercel env add NEXT_PUBLIC_PNLD_AI_SERVICE_URL development
 **Option 3: Via `.env.production` file (committed to repo)**
 
 Create `apps/web/.env.production`:
+
 ```bash
 NEXT_PUBLIC_PNLD_AI_SERVICE_URL=https://pnld-ai-service.fly.dev
 ```
@@ -61,12 +62,14 @@ The following secrets are already configured on Fly.io for the backend service:
 - ✅ `SUPABASE_ANON_KEY` - Supabase anonymous key
 
 To view configured secrets:
+
 ```bash
 cd apps/pnld-ai-service
 flyctl secrets list
 ```
 
 To add or update a secret:
+
 ```bash
 flyctl secrets set SECRET_NAME=value
 ```
@@ -80,6 +83,7 @@ CORS_ORIGINS=https://moklabs-landing.vercel.app,http://localhost:3000,http://127
 ```
 
 **CORS Middleware Settings** (configured in `apps/pnld-ai-service/app/main.py`):
+
 - ✅ `allow_origins`: Parsed from CORS_ORIGINS env var
 - ✅ `allow_credentials`: true
 - ✅ `allow_methods`: ["*"] (all methods)
@@ -89,6 +93,7 @@ CORS_ORIGINS=https://moklabs-landing.vercel.app,http://localhost:3000,http://127
 **Testing CORS Configuration:**
 
 Test preflight request:
+
 ```bash
 curl -i -X OPTIONS https://pnld-ai-service.fly.dev/api/v1/health \
   -H "Origin: https://moklabs-landing.vercel.app" \
@@ -96,6 +101,7 @@ curl -i -X OPTIONS https://pnld-ai-service.fly.dev/api/v1/health \
 ```
 
 Expected response headers:
+
 ```
 access-control-allow-origin: https://moklabs-landing.vercel.app
 access-control-allow-credentials: true
@@ -105,6 +111,7 @@ access-control-allow-methods: DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
 **Adding New Origins:**
 
 To add a new origin (e.g., custom domain or staging environment):
+
 ```bash
 cd apps/pnld-ai-service
 flyctl secrets set CORS_ORIGINS="https://moklabs-landing.vercel.app,https://your-new-domain.com,http://localhost:3000"
@@ -122,6 +129,7 @@ NEXT_PUBLIC_PNLD_AI_SERVICE_URL=http://localhost:8000
 ```
 
 Make sure the backend is running locally:
+
 ```bash
 cd apps/pnld-ai-service
 python -m uvicorn app.main:app --reload --port 8000
@@ -132,10 +140,13 @@ python -m uvicorn app.main:app --reload --port 8000
 After configuring environment variables:
 
 1. **Verify backend is accessible**:
+
    ```bash
    curl https://pnld-ai-service.fly.dev/api/v1/health
    ```
+
    Expected response:
+
    ```json
    {
      "status": "healthy",
@@ -155,11 +166,13 @@ After configuring environment variables:
 ## Troubleshooting
 
 ### Backend not responding
+
 - Check if Fly.io machines are running: `flyctl status`
 - Machines auto-start on first request (may take 3-5 seconds)
 - Check Fly.io logs: `flyctl logs`
 
 ### CORS errors
+
 - Verify `CORS_ORIGINS` includes your Vercel deployment URL
 - Current configured origins: `https://moklabs-landing.vercel.app,http://localhost:3000,http://127.0.0.1:3000`
 - Test CORS preflight: See "Testing CORS Configuration" section above
@@ -167,5 +180,6 @@ After configuring environment variables:
 - Note: Updating secrets triggers automatic rolling deployment
 
 ### Environment variable not updating
+
 - Vercel requires redeployment after changing environment variables
 - Trigger a new deployment or redeploy from dashboard

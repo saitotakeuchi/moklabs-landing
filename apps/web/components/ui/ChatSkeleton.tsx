@@ -13,7 +13,10 @@ interface ChatSkeletonProps {
   role?: "user" | "assistant";
 }
 
-export function ChatSkeleton({ count = 1, role = "assistant" }: ChatSkeletonProps) {
+export function ChatSkeleton({
+  count = 1,
+  role = "assistant",
+}: ChatSkeletonProps) {
   const isUser = role === "user";
 
   return (
@@ -23,7 +26,9 @@ export function ChatSkeleton({ count = 1, role = "assistant" }: ChatSkeletonProp
           key={index}
           className={`flex ${isUser ? "justify-end" : "justify-start"} w-full mb-4`}
         >
-          <div className={`max-w-[70%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-2`}>
+          <div
+            className={`max-w-[70%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-2`}
+          >
             {/* Message bubble skeleton */}
             <div
               className={`
@@ -71,9 +76,18 @@ export function ChatMessageSkeleton() {
         >
           <div className="flex items-center gap-2">
             <div className="flex gap-1">
-              <Skeleton className="h-2 w-2 rounded-full animate-pulse" style={{ animationDelay: "0ms" }} />
-              <Skeleton className="h-2 w-2 rounded-full animate-pulse" style={{ animationDelay: "150ms" }} />
-              <Skeleton className="h-2 w-2 rounded-full animate-pulse" style={{ animationDelay: "300ms" }} />
+              <Skeleton
+                className="h-2 w-2 rounded-full animate-pulse"
+                style={{ animationDelay: "0ms" }}
+              />
+              <Skeleton
+                className="h-2 w-2 rounded-full animate-pulse"
+                style={{ animationDelay: "150ms" }}
+              />
+              <Skeleton
+                className="h-2 w-2 rounded-full animate-pulse"
+                style={{ animationDelay: "300ms" }}
+              />
             </div>
           </div>
         </div>

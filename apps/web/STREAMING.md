@@ -23,6 +23,7 @@ The backend streams responses using Server-Sent Events with the following event 
 5. **error** - Error information if something fails
 
 **SSE Format**:
+
 ```
 event: metadata
 data: {"conversation_id": "uuid"}
@@ -53,6 +54,7 @@ export async function* streamChatMessage(
 ```
 
 **Key Features**:
+
 - Manual SSE parsing (required for POST requests)
 - Async generator for easy iteration
 - Proper event type handling
@@ -61,6 +63,7 @@ export async function* streamChatMessage(
 **State Management**: `apps/web/hooks/usePnldChat.ts`
 
 The `usePnldChat` hook manages:
+
 - Message accumulation during streaming
 - Conversation ID tracking
 - Source citations
@@ -101,18 +104,24 @@ assistantContent += event.data.content;
 setMessages((prev) => {
   if (prev[prev.length - 1].role === "assistant") {
     // Update existing assistant message
-    return [...prev.slice(0, -1), {
-      role: "assistant",
-      content: assistantContent,
-      timestamp: assistantTimestamp,
-    }];
+    return [
+      ...prev.slice(0, -1),
+      {
+        role: "assistant",
+        content: assistantContent,
+        timestamp: assistantTimestamp,
+      },
+    ];
   } else {
     // Add new assistant message
-    return [...prev, {
-      role: "assistant",
-      content: assistantContent,
-      timestamp: assistantTimestamp,
-    }];
+    return [
+      ...prev,
+      {
+        role: "assistant",
+        content: assistantContent,
+        timestamp: assistantTimestamp,
+      },
+    ];
   }
 });
 ```
@@ -146,10 +155,13 @@ try {
 } catch (err) {
   setError(err);
   // Add error message to chat
-  setMessages((prev) => [...prev, {
-    role: "assistant",
-    content: "Desculpe, ocorreu um erro...",
-  }]);
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "assistant",
+      content: "Desculpe, ocorreu um erro...",
+    },
+  ]);
 }
 ```
 
@@ -193,6 +205,7 @@ node test-sse-events.js
 ```
 
 **Expected output**:
+
 ```
 ✓ [metadata] conversation_id: uuid
 ✓ [sources] N sources received
@@ -206,12 +219,14 @@ node test-sse-events.js
 ### Manual Testing
 
 1. Start the backend:
+
    ```bash
    cd apps/pnld-ai-service
    python -m uvicorn app.main:app --reload --port 8000
    ```
 
 2. Start the frontend:
+
    ```bash
    cd apps/web
    npm run dev
