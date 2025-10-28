@@ -236,7 +236,10 @@ export function trackSseConnectionRestored(props: {
  *
  * Logs errors for monitoring without exposing sensitive data
  */
-export function logError(error: Error, context?: Record<string, unknown>): void {
+export function logError(
+  error: Error,
+  context?: Record<string, unknown>
+): void {
   // In development, log to console
   if (process.env.NODE_ENV === "development") {
     console.error("[Error]", error, context);

@@ -22,7 +22,9 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
   const isUser = role === "user";
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"} w-full px-2 sm:px-0`}>
+    <div
+      className={`flex ${isUser ? "justify-end" : "justify-start"} w-full px-2 sm:px-0`}
+    >
       <div
         className={`max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[70%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-2`}
       >

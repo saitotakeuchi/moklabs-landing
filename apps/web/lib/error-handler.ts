@@ -20,7 +20,10 @@ export function getUserFriendlyErrorMessage(error: Error | string): string {
   const lowerMessage = errorMessage.toLowerCase();
 
   // Network errors
-  if (lowerMessage.includes("failed to fetch") || lowerMessage.includes("networkerror")) {
+  if (
+    lowerMessage.includes("failed to fetch") ||
+    lowerMessage.includes("networkerror")
+  ) {
     return "Não foi possível conectar ao servidor. Verifique sua conexão com a internet.";
   }
 
@@ -33,11 +36,17 @@ export function getUserFriendlyErrorMessage(error: Error | string): string {
     return "O recurso solicitado não foi encontrado.";
   }
 
-  if (lowerMessage.includes("500") || lowerMessage.includes("internal server error")) {
+  if (
+    lowerMessage.includes("500") ||
+    lowerMessage.includes("internal server error")
+  ) {
     return "Erro interno do servidor. Nossa equipe foi notificada.";
   }
 
-  if (lowerMessage.includes("503") || lowerMessage.includes("service unavailable")) {
+  if (
+    lowerMessage.includes("503") ||
+    lowerMessage.includes("service unavailable")
+  ) {
     return "O serviço está temporariamente indisponível. Tente novamente em alguns instantes.";
   }
 
@@ -50,11 +59,17 @@ export function getUserFriendlyErrorMessage(error: Error | string): string {
   }
 
   // File upload errors
-  if (lowerMessage.includes("file too large") || lowerMessage.includes("exceeds maximum")) {
+  if (
+    lowerMessage.includes("file too large") ||
+    lowerMessage.includes("exceeds maximum")
+  ) {
     return "O arquivo é muito grande. O tamanho máximo permitido é 50MB.";
   }
 
-  if (lowerMessage.includes("invalid pdf") || lowerMessage.includes("not a pdf")) {
+  if (
+    lowerMessage.includes("invalid pdf") ||
+    lowerMessage.includes("not a pdf")
+  ) {
     return "O arquivo enviado não é um PDF válido.";
   }
 
@@ -88,12 +103,22 @@ export function isRetryableError(error: Error): boolean {
   }
 
   // 5xx server errors are retryable
-  if (message.includes("500") || message.includes("503") || message.includes("502") || message.includes("504")) {
+  if (
+    message.includes("500") ||
+    message.includes("503") ||
+    message.includes("502") ||
+    message.includes("504")
+  ) {
     return true;
   }
 
   // Connection errors are retryable
-  if (message.includes("connection") && (message.includes("lost") || message.includes("refused") || message.includes("reset"))) {
+  if (
+    message.includes("connection") &&
+    (message.includes("lost") ||
+      message.includes("refused") ||
+      message.includes("reset"))
+  ) {
     return true;
   }
 
