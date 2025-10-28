@@ -106,7 +106,21 @@ npm run lint
 
 ### Code Formatting
 
-Format code with Prettier:
+This project uses **Prettier** for code formatting with **automatic pre-commit hooks** via Husky and lint-staged.
+
+**✨ Automatic Formatting (Recommended)**
+
+Code is automatically formatted when you commit:
+
+```bash
+git add .
+git commit -m "Your commit message"
+# Prettier will auto-format staged files before committing
+```
+
+**Manual Formatting**
+
+You can also format code manually:
 
 ```bash
 # Check formatting
@@ -115,6 +129,13 @@ npm run format:check
 # Auto-fix formatting
 npm run format
 ```
+
+**How It Works**
+
+- **Husky** manages Git hooks
+- **lint-staged** runs Prettier only on staged files
+- Pre-commit hook automatically formats code before each commit
+- This prevents formatting issues in CI/CD pipeline
 
 ### Adding Blog Posts
 
@@ -368,6 +389,8 @@ nextjs-migration/
 
 - **[ESLint](https://eslint.org/)** - Code linting
 - **[Prettier](https://prettier.io/)** - Code formatting
+- **[Husky](https://typicode.github.io/husky/)** - Git hooks management
+- **[lint-staged](https://github.com/okonet/lint-staged)** - Run linters on staged files
 
 ## 📈 Performance
 
@@ -454,9 +477,10 @@ npm run type-check
 
 - Follow the existing code style
 - Write TypeScript with proper types (avoid `any`)
-- Use Prettier for code formatting
+- Code is automatically formatted with Prettier on commit (via Husky pre-commit hooks)
 - Write meaningful commit messages
 - Add tests for new features
+- Ensure all linting and type-checking passes before pushing
 
 ## 📄 License
 

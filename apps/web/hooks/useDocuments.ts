@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect, useCallback } from "react";
+import { trackDocumentDeleted, trackApiError } from "@/lib/analytics";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_PNLD_AI_SERVICE_URL || "http://localhost:8000";
@@ -153,12 +154,25 @@ export function useDocumentDelete(): UseDocumentDeleteReturn {
         const errorData = await response
           .json()
           .catch(() => ({ detail: "Unknown error" }));
-        throw new Error(
+        const error = new Error(
           errorData.detail || `HTTP ${response.status}: ${response.statusText}`
         );
+
+        // Track deletion error
+        trackApiError({
+          endpoint: `/documents/${documentId}`,
+          errorCode: response.status.toString(),
+          errorType: "DocumentDeletionError",
+          errorMessage: error.message,
+        });
+
+        throw error;
       }
 
-      // Successfully deleted
+      // Successfully deleted - track event
+      trackDocumentDeleted({
+        documentId,
+      });
     } catch (err) {
       console.error("Error deleting document:", err);
       const errorObj =

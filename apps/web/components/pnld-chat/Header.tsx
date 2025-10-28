@@ -22,11 +22,11 @@ export function Header({
 
   return (
     <div className="bg-[#0013ff] w-full">
-      <div className="container mx-auto px-8 md:px-32 py-6">
-        <div className="flex items-center justify-between gap-6">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-32 py-4 md:py-6">
+        <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6">
           {/* Logo + Copiloto PNLD Title */}
-          <div className="flex items-center gap-4">
-            <div className="relative w-[180px] h-[28px]">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0">
+            <div className="relative w-[120px] sm:w-[150px] md:w-[180px] h-[20px] sm:h-[24px] md:h-[28px] flex-shrink-0">
               <Image
                 src="/logo-moklabs.svg"
                 alt="Mok Labs Logo"
@@ -35,25 +35,29 @@ export function Header({
               />
             </div>
             <p
-              className="font-sans font-bold text-xl leading-[1.2]
-                          text-[#cbff63] whitespace-nowrap hidden md:block"
+              className="font-sans font-bold text-sm sm:text-base md:text-xl leading-[1.2]
+                          text-[#cbff63] whitespace-nowrap hidden sm:block truncate"
             >
               | Copiloto PNLD
             </p>
           </div>
 
           {/* Edital Selector - replaces menu */}
-          <div className="relative flex-shrink-0">
+          <div className="relative flex-shrink-0 max-w-[50%] sm:max-w-none">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="bg-white border-2 border-[#0013ff] rounded-[16px]
-                         flex items-center justify-between gap-4 px-4 py-3 min-w-[250px] md:min-w-[350px]
-                         hover:bg-gray-50 transition-colors"
+                         flex items-center justify-between gap-2 sm:gap-3 md:gap-4
+                         px-3 sm:px-4 py-2.5 sm:py-3
+                         min-w-[140px] sm:min-w-[200px] md:min-w-[300px] lg:min-w-[350px]
+                         min-h-[44px]
+                         hover:bg-gray-50 active:bg-gray-100 transition-colors
+                         touch-manipulation"
               aria-label="Selecionar edital"
               aria-expanded={isDropdownOpen}
             >
               <span
-                className="font-sans text-sm md:text-base leading-[1.4]
+                className="font-inter text-sm md:text-base leading-[1.4]
                               text-[#0013ff] truncate"
               >
                 {selectedEditalName}
@@ -98,8 +102,10 @@ export function Header({
                           setIsDropdownOpen(false);
                         }}
                         className={`
-                          w-full px-4 py-3 text-left font-sans text-sm md:text-base
+                          w-full px-4 py-3 text-left font-inter text-sm md:text-base
+                          min-h-[44px] flex items-center
                           hover:bg-[#0013ff] hover:text-white transition-colors
+                          active:bg-[#0013cc] touch-manipulation
                           ${
                             selectedEdital === edital.id
                               ? "bg-[#cbff63] text-[#0013ff]"

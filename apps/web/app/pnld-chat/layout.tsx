@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NetworkStatus } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "PNLD Chat - Mok Labs",
@@ -12,6 +13,7 @@ export default function PNLDChatLayout({
 }>) {
   return (
     <div className="pnld-chat-app min-h-screen w-full overflow-hidden">
+      <NetworkStatus />
       {children}
     </div>
   );

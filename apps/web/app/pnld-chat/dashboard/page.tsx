@@ -114,6 +114,7 @@ export default function DashboardPage() {
               onViewDocument={handleViewDocument}
               onDeleteDocument={handleDeleteClick}
               onRefresh={refetch}
+              onUploadClick={() => setActiveTab("upload")}
             />
           )}
         </div>

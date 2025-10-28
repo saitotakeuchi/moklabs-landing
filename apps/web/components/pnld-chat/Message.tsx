@@ -22,9 +22,11 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
   const isUser = role === "user";
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"} w-full`}>
+    <div
+      className={`flex ${isUser ? "justify-end" : "justify-start"} w-full px-2 sm:px-0`}
+    >
       <div
-        className={`max-w-[70%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-2`}
+        className={`max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[70%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-2`}
       >
         {/* Message Bubble */}
         <div
@@ -34,8 +36,10 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
                 ? "bg-[#0013ff] text-white"
                 : "bg-white text-[#0013ff] border-2 border-[#0013ff]"
             }
-            rounded-[24px] px-6 py-4
-            font-['Inter'] text-base leading-[1.4]
+            rounded-[20px] sm:rounded-[24px]
+            px-4 sm:px-5 md:px-6
+            py-3 sm:py-3.5 md:py-4
+            font-inter text-sm sm:text-base leading-[1.4]
             break-words
           `}
         >

@@ -29,6 +29,12 @@ export const metadata: Metadata = {
   title: "Mok Labs - PNLD Digital",
   description:
     "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD. Soluções digitais sob medida, sem retrabalho, sem stress.",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
   keywords:
     "PNLD digital, livros digitais acessíveis, conversão PDF, ePUB, materiais educacionais, editais PNLD",
   authors: [{ name: "Mok Labs" }],
