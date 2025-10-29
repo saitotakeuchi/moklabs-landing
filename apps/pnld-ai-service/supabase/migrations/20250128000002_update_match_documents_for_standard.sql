@@ -1,5 +1,6 @@
--- Update match_documents function to include standard documents (NULL edital_id)
+-- Update match_documents function to include standard documents (NULL edital_id) AND page metadata
 -- Migration: 20250128000002_update_match_documents_for_standard
+-- This migration consolidates standard document support with page-level metadata tracking
 
 -- First, drop all existing versions of match_documents function
 -- We need to be explicit about each signature that might exist
@@ -14,7 +15,9 @@ DROP FUNCTION IF EXISTS match_documents(query_embedding vector(1536), match_thre
 DROP FUNCTION IF EXISTS match_documents(vector(1536), float, int);
 DROP FUNCTION IF EXISTS match_documents(vector(1536), double precision, integer);
 
--- Now create the function with updated logic to include standard documents
+-- Now create the authoritative function with:
+-- 1. Standard document support (NULL edital_id)
+-- 2. Page-level metadata (page_number, chunk_index, chunk_metadata)
 -- Using the same types as the original: float instead of double precision, int instead of integer, varchar instead of text
 CREATE OR REPLACE FUNCTION match_documents(
   query_embedding vector(1536),
@@ -28,7 +31,10 @@ RETURNS TABLE (
   content text,
   similarity float,
   document_title text,
-  edital_id varchar
+  edital_id varchar,
+  page_number integer,
+  chunk_index integer,
+  chunk_metadata jsonb
 )
 LANGUAGE plpgsql
 AS $$
@@ -40,7 +46,10 @@ BEGIN
     e.content,
     1 - (e.embedding <=> query_embedding) as similarity,
     d.title as document_title,
-    d.edital_id
+    d.edital_id,
+    e.page_number,
+    e.chunk_index,
+    e.metadata as chunk_metadata
   FROM pnld_embeddings e
   JOIN pnld_documents d ON e.document_id = d.id
   WHERE
@@ -56,5 +65,5 @@ BEGIN
 END;
 $$;
 
--- Add comment explaining the update
-COMMENT ON FUNCTION match_documents IS 'Matches documents based on vector similarity. When edital_filter is provided, includes both documents matching that edital AND standard documents (where edital_id IS NULL). Standard documents are always included in searches.';
+-- Add comment explaining the complete function behavior
+COMMENT ON FUNCTION match_documents IS 'Matches documents based on vector similarity with page-level metadata. When edital_filter is provided, includes both documents matching that edital AND standard documents (where edital_id IS NULL). Returns page_number, chunk_index, and chunk_metadata for citation support.';
