@@ -20,6 +20,7 @@ from app.services.embeddings import (
     generate_embeddings_batch,
     process_pdf_to_chunks,
     chunk_text,
+    TextlessPdfError,
 )
 
 router = APIRouter()
@@ -305,12 +306,13 @@ async def index_pdf_document(
         pdf_file = BytesIO(pdf_content)
 
         # Extract and chunk PDF with page tracking
-        page_chunks = process_pdf_to_chunks(pdf_file, max_chunk_size=1000, overlap=200)
-
-        if not page_chunks:
+        try:
+            page_chunks = process_pdf_to_chunks(pdf_file, max_chunk_size=1000, overlap=200)
+        except TextlessPdfError as e:
+            # PDF contains no extractable text (scanned/image-based PDF)
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="PDF file appears to be empty or unreadable",
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=str(e),
             )
 
         # Reconstruct full content for storage (optional)
@@ -483,12 +485,13 @@ async def upload_pdf(
         pdf_file = BytesIO(pdf_content)
 
         # Extract and chunk PDF with page tracking
-        page_chunks = process_pdf_to_chunks(pdf_file, max_chunk_size=1000, overlap=200)
-
-        if not page_chunks:
+        try:
+            page_chunks = process_pdf_to_chunks(pdf_file, max_chunk_size=1000, overlap=200)
+        except TextlessPdfError as e:
+            # PDF contains no extractable text (scanned/image-based PDF)
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="PDF file appears to be empty or unreadable. Please ensure the PDF contains extractable text",
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=str(e),
             )
 
         # Calculate page count
