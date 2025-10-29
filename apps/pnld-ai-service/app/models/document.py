@@ -8,7 +8,7 @@ from datetime import datetime
 class DocumentIndexRequest(BaseModel):
     """Request model for document indexing."""
 
-    edital_id: str = Field(..., description="PNLD edital identifier")
+    edital_id: Optional[str] = Field(None, description="PNLD edital identifier. NULL for standard documents that apply to all editais")
     title: str = Field(..., min_length=1, description="Document title")
     content: str = Field(..., min_length=1, description="Document content to be indexed")
     metadata: Optional[Dict[str, Any]] = Field(
@@ -20,7 +20,7 @@ class DocumentIndexResponse(BaseModel):
     """Response model for document indexing."""
 
     document_id: str
-    edital_id: str
+    edital_id: Optional[str]
     status: str
     chunks_created: int
     message: Optional[str] = None
@@ -30,7 +30,7 @@ class Document(BaseModel):
     """Full document model."""
 
     id: str
-    edital_id: str
+    edital_id: Optional[str]
     title: str
     content: str
     metadata: Optional[Dict[str, Any]] = None
@@ -68,7 +68,7 @@ class PdfUploadResponse(BaseModel):
     """Response model for PDF upload endpoint."""
 
     document_id: str = Field(..., description="Unique document identifier")
-    edital_id: str = Field(..., description="PNLD edital identifier")
+    edital_id: Optional[str] = Field(None, description="PNLD edital identifier. NULL for standard documents")
     title: str = Field(..., description="Document title")
     filename: str = Field(..., description="Original filename")
     pages_processed: int = Field(..., description="Number of pages processed")
@@ -82,7 +82,7 @@ class DocumentListItem(BaseModel):
     """Document list item model (without full content)."""
 
     id: str = Field(..., description="Unique document identifier")
-    edital_id: str = Field(..., description="PNLD edital identifier")
+    edital_id: Optional[str] = Field(None, description="PNLD edital identifier. NULL for standard documents")
     title: str = Field(..., description="Document title")
     chunks_count: int = Field(..., description="Number of chunks/embeddings")
     created_at: datetime = Field(..., description="Document creation timestamp")
@@ -113,7 +113,7 @@ class DocumentDetail(BaseModel):
     """Detailed document model with statistics."""
 
     id: str = Field(..., description="Unique document identifier")
-    edital_id: str = Field(..., description="PNLD edital identifier")
+    edital_id: Optional[str] = Field(None, description="PNLD edital identifier. NULL for standard documents")
     title: str = Field(..., description="Document title")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Document metadata")
     created_at: datetime = Field(..., description="Document creation timestamp")
