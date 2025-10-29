@@ -11,7 +11,7 @@ from app.models.edital import (
 )
 from app.services.supabase import get_async_supabase_client
 
-router = APIRouter(prefix="/editais", tags=["editais"])
+router = APIRouter(tags=["editais"])
 
 
 @router.get("", response_model=ListEditaisResponse)
