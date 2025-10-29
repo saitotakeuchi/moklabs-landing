@@ -235,14 +235,35 @@ This service is designed to be deployed separately from the frontend (not on Ver
 
 ## Database Schema
 
-The service uses four main tables:
+The service uses five main tables:
 
-1. **pnld_documents**: Stores PNLD edital documents
-2. **pnld_embeddings**: Stores vector embeddings for similarity search
-3. **chat_conversations**: Stores conversation metadata
-4. **chat_messages**: Stores individual chat messages
+1. **editais**: Stores PNLD edital metadata (types: didático, literário, outros)
+2. **pnld_documents**: Stores PNLD edital documents (references editais via foreign key)
+3. **pnld_embeddings**: Stores vector embeddings for similarity search
+4. **chat_conversations**: Stores conversation metadata (references editais via foreign key)
+5. **chat_messages**: Stores individual chat messages
 
-See `supabase/migrations/20250101000000_initial_schema.sql` for the complete schema.
+### Referential Integrity
+
+The database enforces referential integrity between editais and related tables:
+
+- **pnld_documents.edital_id** → **editais.id** (foreign key)
+  - NULL values allowed for "standard documents" that apply to all editais
+  - Non-NULL values must reference a valid edital
+  - ON DELETE RESTRICT: Cannot delete an edital if documents reference it
+  - ON UPDATE CASCADE: Updates document references if edital slug changes
+
+- **chat_conversations.edital_id** → **editais.id** (foreign key)
+  - NULL values allowed for general conversations
+  - Non-NULL values must reference a valid edital
+  - Same ON DELETE/UPDATE behavior as documents
+
+The API validates edital existence before creating documents or conversations, providing user-friendly error messages when referencing non-existent editais.
+
+See migration files in `supabase/migrations/` for the complete schema:
+- `20250101000000_initial_schema.sql` - Core tables and pgvector setup
+- `20250128000000_create_editais_table.sql` - Editais table
+- `20250129000000_add_documents_edital_fk.sql` - Foreign key constraints
 
 ## Environment Variables Reference
 

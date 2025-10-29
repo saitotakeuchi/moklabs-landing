@@ -29,6 +29,38 @@ logger = get_logger(__name__)
 router = APIRouter()
 
 
+async def validate_edital_exists(edital_id: Optional[str]) -> None:
+    """
+    Validate that an edital exists in the database.
+
+    Standard documents (edital_id=None) are always valid.
+    For non-NULL edital_id, verifies the edital exists in the editais table.
+
+    Args:
+        edital_id: The edital ID to validate (can be None for standard documents)
+
+    Raises:
+        HTTPException: 404 if edital_id is not None and doesn't exist
+    """
+    # Standard documents (NULL edital_id) are always valid
+    if edital_id is None:
+        return
+
+    # Validate non-NULL edital_id exists in editais table
+    supabase = await get_async_supabase_client()
+    result = await supabase.table("editais").select("id").eq("id", edital_id).execute()
+
+    if not result.data:
+        logger.warning(
+            f"Attempted to reference non-existent edital",
+            extra={"edital_id": edital_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Edital '{edital_id}' not found. Please create the edital first or use edital_id=null for standard documents.",
+        )
+
+
 @router.get("", response_model=DocumentListResponse, status_code=status.HTTP_200_OK)
 async def list_documents(
     edital_id: Optional[str] = Query(None, description="Filter by edital ID"),
@@ -206,6 +238,9 @@ async def index_document(request: DocumentIndexRequest) -> DocumentIndexResponse
         DocumentIndexResponse with document ID and status
     """
     try:
+        # Validate that edital exists (if edital_id is not None)
+        await validate_edital_exists(request.edital_id)
+
         supabase = await get_async_supabase_client()
 
         # 1. Store document in pnld_documents table
@@ -313,6 +348,9 @@ async def index_pdf_document(
         )
 
     try:
+        # Validate that edital exists (if edital_id is not None)
+        await validate_edital_exists(edital_id)
+
         supabase = await get_async_supabase_client()
 
         # Read PDF file

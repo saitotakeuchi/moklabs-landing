@@ -3,7 +3,7 @@
 import uuid
 import json
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from app.models.chat import ChatRequest, ChatResponse, ChatMessage, DocumentSource, ConversationHistory
@@ -13,6 +13,38 @@ from app.utils.logging import get_logger, set_request_context
 
 router = APIRouter()
 logger = get_logger(__name__)
+
+
+async def validate_edital_exists(edital_id: Optional[str]) -> None:
+    """
+    Validate that an edital exists in the database.
+
+    Conversations without edital_id (general conversations) are always valid.
+    For non-NULL edital_id, verifies the edital exists in the editais table.
+
+    Args:
+        edital_id: The edital ID to validate (can be None for general conversations)
+
+    Raises:
+        HTTPException: 404 if edital_id is not None and doesn't exist
+    """
+    # General conversations (NULL edital_id) are always valid
+    if edital_id is None:
+        return
+
+    # Validate non-NULL edital_id exists in editais table
+    supabase = await get_async_supabase_client()
+    result = await supabase.table("editais").select("id").eq("id", edital_id).execute()
+
+    if not result.data:
+        logger.warning(
+            f"Attempted to reference non-existent edital in conversation",
+            extra={"edital_id": edital_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Edital '{edital_id}' not found. Please create the edital first or omit edital_id for general conversations.",
+        )
 
 
 async def update_conversation_timestamp(conversation_id: str) -> None:
@@ -94,6 +126,9 @@ async def chat(request: ChatRequest) -> ChatResponse:
         ChatResponse with AI-generated message and source citations
     """
     try:
+        # Validate that edital exists (if edital_id is not None)
+        await validate_edital_exists(request.edital_id)
+
         supabase = await get_async_supabase_client()
 
         # Get or create conversation
@@ -226,6 +261,9 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
         sources = []
 
         try:
+            # Validate that edital exists (if edital_id is not None)
+            await validate_edital_exists(request.edital_id)
+
             supabase = await get_async_supabase_client()
 
             # Get or create conversation
