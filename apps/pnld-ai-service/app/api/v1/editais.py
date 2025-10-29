@@ -11,7 +11,7 @@ from app.models.edital import (
 )
 from app.services.supabase import get_async_supabase_client
 
-router = APIRouter(tags=["editais"])
+router = APIRouter()
 
 
 @router.get("", response_model=ListEditaisResponse)
@@ -48,7 +48,7 @@ async def list_editais(
     query = query.order("created_at", desc=True).range(offset, offset + limit - 1)
 
     # Execute query
-    response = query.execute()
+    response = await query.execute()
 
     return ListEditaisResponse(
         editais=[EditalResponse(**edital) for edital in response.data],
@@ -72,7 +72,7 @@ async def get_edital(edital_id: str) -> EditalResponse:
     """
     supabase = await get_async_supabase_client()
 
-    response = supabase.table("editais").select("*").eq("id", edital_id).execute()
+    response = await supabase.table("editais").select("*").eq("id", edital_id).execute()
 
     if not response.data:
         raise HTTPException(
@@ -104,7 +104,7 @@ async def create_edital(request: CreateEditalRequest) -> EditalResponse:
 
     # Check if edital with same ID already exists
     existing = (
-        supabase.table("editais").select("id").eq("id", edital_id).execute()
+        await supabase.table("editais").select("id").eq("id", edital_id).execute()
     )
 
     if existing.data:
@@ -121,7 +121,7 @@ async def create_edital(request: CreateEditalRequest) -> EditalResponse:
         "type": request.type.value,
     }
 
-    response = supabase.table("editais").insert(edital_data).execute()
+    response = await supabase.table("editais").insert(edital_data).execute()
 
     if not response.data:
         raise HTTPException(
@@ -152,7 +152,7 @@ async def update_edital(
     supabase = await get_async_supabase_client()
 
     # Check if edital exists
-    existing = supabase.table("editais").select("*").eq("id", edital_id).execute()
+    existing = await supabase.table("editais").select("*").eq("id", edital_id).execute()
 
     if not existing.data:
         raise HTTPException(
@@ -182,12 +182,12 @@ async def update_edital(
         # 3. Create new edital with new ID
         if new_id != edital_id:
             # Update documents
-            supabase.table("documents").update({"edital_id": new_id}).eq(
+            await supabase.table("documents").update({"edital_id": new_id}).eq(
                 "edital_id", edital_id
             ).execute()
 
             # Delete old edital
-            supabase.table("editais").delete().eq("id", edital_id).execute()
+            await supabase.table("editais").delete().eq("id", edital_id).execute()
 
             # Create new edital
             edital_data = {
@@ -201,7 +201,7 @@ async def update_edital(
                 ),
             }
 
-            response = supabase.table("editais").insert(edital_data).execute()
+            response = await supabase.table("editais").insert(edital_data).execute()
 
             if not response.data:
                 raise HTTPException(
@@ -212,7 +212,7 @@ async def update_edital(
             return EditalResponse(**response.data[0])
 
     # Update edital
-    response = (
+    response = await (
         supabase.table("editais")
         .update(update_data)
         .eq("id", edital_id)
@@ -245,7 +245,7 @@ async def delete_edital(edital_id: str) -> None:
     supabase = await get_async_supabase_client()
 
     # Check if edital exists
-    existing = supabase.table("editais").select("id").eq("id", edital_id).execute()
+    existing = await supabase.table("editais").select("id").eq("id", edital_id).execute()
 
     if not existing.data:
         raise HTTPException(
@@ -254,7 +254,7 @@ async def delete_edital(edital_id: str) -> None:
         )
 
     # Check if there are documents associated with this edital
-    documents = (
+    documents = await (
         supabase.table("documents")
         .select("id", count="exact")
         .eq("edital_id", edital_id)
@@ -269,7 +269,7 @@ async def delete_edital(edital_id: str) -> None:
         )
 
     # Delete edital
-    response = supabase.table("editais").delete().eq("id", edital_id).execute()
+    response = await supabase.table("editais").delete().eq("id", edital_id).execute()
 
     if not response.data:
         raise HTTPException(
