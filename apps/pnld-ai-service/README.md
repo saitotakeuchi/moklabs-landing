@@ -138,10 +138,32 @@ The service will be available at:
 
 ### Docker
 
-Build the Docker image:
+#### Building the Docker Image
+
+The Dockerfile uses a multi-stage build for optimal image size and includes configurations for reproducible builds:
 
 ```bash
 docker build -t pnld-ai-service .
+```
+
+**Reproducibility Features:**
+- `poetry.lock` is included in the build (not excluded by .dockerignore) to ensure exact dependency versions
+- pip and setuptools are pinned to specific versions (pip==24.3.1, setuptools==75.6.0)
+- Poetry validates the lockfile with `poetry check --lock` during build
+- Environment variables ensure consistent Poetry behavior:
+  - `POETRY_VIRTUALENVS_IN_PROJECT=true`
+  - `POETRY_NO_INTERACTION=1`
+  - `POETRY_VIRTUALENVS_CREATE=false`
+
+**Build Process:**
+1. **Builder stage**: Installs Poetry and dependencies using poetry.lock
+2. **Runtime stage**: Copies installed packages and application code, runs as non-root user
+
+**Verifying the Build:**
+
+Check if poetry.lock is being used:
+```bash
+docker build --progress=plain -t pnld-ai-service . 2>&1 | grep "poetry.lock"
 ```
 
 Run the container:
@@ -149,6 +171,9 @@ Run the container:
 ```bash
 docker run -p 8000:8000 --env-file .env pnld-ai-service
 ```
+
+**CI/CD:**
+The GitHub Actions workflow includes a Docker build smoke test that verifies the image builds successfully with deterministic dependencies. See `.github/workflows/ci.yml` for details.
 
 ## API Endpoints
 
