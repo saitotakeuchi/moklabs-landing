@@ -264,6 +264,27 @@ See migration files in `supabase/migrations/` for the complete schema:
 - `20250101000000_initial_schema.sql` - Core tables and pgvector setup
 - `20250128000000_create_editais_table.sql` - Editais table
 - `20250129000000_add_documents_edital_fk.sql` - Foreign key constraints
+- `20250129000001_enable_rls_all_tables.sql` - Row Level Security policies
+
+### Row Level Security (RLS)
+
+All tables have Row Level Security enabled with the following access patterns:
+
+**Service Role (Backend API):**
+- Full access (SELECT, INSERT, UPDATE, DELETE) to all tables
+- Uses `SUPABASE_SERVICE_KEY` for authentication
+- Required for RAG operations, document indexing, and chat functionality
+
+**Public/Anon Access (Frontend):**
+- Read-only access to: `editais`, `pnld_documents`, `chat_conversations`, `chat_messages`
+- No access to: `pnld_embeddings` (internal use only)
+- Uses `SUPABASE_ANON_KEY` for authentication
+
+This ensures that:
+- Direct database access is restricted by default
+- Backend API has full control via service role
+- Frontend can read data for display but cannot modify
+- Embeddings are kept private for security
 
 ## Environment Variables Reference
 
