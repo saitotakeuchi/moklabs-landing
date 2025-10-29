@@ -98,14 +98,14 @@ class ListEditaisResponse(BaseModel):
 
 def generate_slug(name: str, year: int) -> str:
     """
-    Generate a slug from edital name and year.
+    Generate a slug from edital name only.
 
     Args:
         name: Edital name
-        year: Edital year
+        year: Edital year (kept for backward compatibility but not used in slug)
 
     Returns:
-        Slug string (e.g., "pnld-2024-didatico")
+        Slug string (e.g., "pnld-didatico")
     """
     # Convert to lowercase
     slug = name.lower()
@@ -132,8 +132,5 @@ def generate_slug(name: str, year: int) -> str:
 
     # Remove leading/trailing hyphens
     slug = slug.strip("-")
-
-    # Add year
-    slug = f"{slug}-{year}"
 
     return slug
