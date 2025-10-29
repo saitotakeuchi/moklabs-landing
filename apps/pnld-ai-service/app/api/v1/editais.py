@@ -182,7 +182,7 @@ async def update_edital(
         # 3. Create new edital with new ID
         if new_id != edital_id:
             # Update documents
-            await supabase.table("documents").update({"edital_id": new_id}).eq(
+            await supabase.table("pnld_documents").update({"edital_id": new_id}).eq(
                 "edital_id", edital_id
             ).execute()
 
@@ -255,7 +255,7 @@ async def delete_edital(edital_id: str) -> None:
 
     # Check if there are documents associated with this edital
     documents = await (
-        supabase.table("documents")
+        supabase.table("pnld_documents")
         .select("id", count="exact")
         .eq("edital_id", edital_id)
         .limit(1)
