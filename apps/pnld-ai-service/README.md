@@ -258,6 +258,21 @@ See `supabase/migrations/20250101000000_initial_schema.sql` for the complete sch
 | `OPENAI_MODEL` | OpenAI chat model | `gpt-4-turbo-preview` |
 | `OPENAI_EMBEDDING_MODEL` | OpenAI embedding model | `text-embedding-3-small` |
 
+## Logging and Observability
+
+The service implements structured logging with request tracing. All components use a centralized logging configuration that provides:
+
+- Request ID tracking across all operations
+- Conversation ID tracking for chat endpoints
+- Structured log formats (JSON in production, human-readable in development)
+- Contextual metadata for debugging
+
+See [LOGGING_OBSERVABILITY.md](./LOGGING_OBSERVABILITY.md) for detailed documentation on:
+- Logging best practices
+- Error handling patterns
+- Conversation state management
+- Monitoring and alerting strategies
+
 ## Troubleshooting
 
 ### Common Issues
@@ -277,6 +292,18 @@ See `supabase/migrations/20250101000000_initial_schema.sql` for the complete sch
 **Issue**: OpenAI API rate limit errors
 
 **Solution**: Implement rate limiting in your application or upgrade your OpenAI plan.
+
+---
+
+**Issue**: Logs not appearing or missing context
+
+**Solution**: Check [LOGGING_OBSERVABILITY.md](./LOGGING_OBSERVABILITY.md) for logging configuration and troubleshooting.
+
+## Documentation
+
+- [LOGGING_OBSERVABILITY.md](./LOGGING_OBSERVABILITY.md) - Logging and observability documentation
+- [QUERY_OPTIMIZATIONS.md](./QUERY_OPTIMIZATIONS.md) - Database query performance improvements
+- [CONTAINER_REPRODUCIBILITY.md](./CONTAINER_REPRODUCIBILITY.md) - Docker build reproducibility
 
 ## License
 

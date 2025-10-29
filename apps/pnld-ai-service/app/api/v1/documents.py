@@ -22,6 +22,9 @@ from app.services.embeddings import (
     chunk_text,
     TextlessPdfError,
 )
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter()
 
@@ -133,7 +136,7 @@ async def list_documents(
         except Exception as e:
             # Fallback to Python-side counting if RPC function doesn't exist
             # This is less efficient but ensures the endpoint still works
-            print(f"Warning: count_chunks_by_document RPC failed, using fallback: {str(e)}")
+            logger.warning(f"count_chunks_by_document RPC failed, using fallback", extra={"error": str(e), "error_type": type(e).__name__})
             chunks_query = (
                 supabase.table("pnld_embeddings")
                 .select("document_id", count="exact")
@@ -175,12 +178,13 @@ async def list_documents(
         raise
     except Exception as e:
         # Log full traceback for debugging
+        error_message = str(e)
         error_traceback = traceback.format_exc()
-        print(f"List documents error: {error_traceback}")
+        logger.error(f"List documents error", extra={"error": error_message, "traceback": error_traceback})
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list documents: {str(e)} | Type: {type(e).__name__}",
+            detail=f"Failed to list documents: {error_message} | Type: {type(e).__name__}",
         )
 
 
@@ -253,6 +257,8 @@ async def index_document(request: DocumentIndexRequest) -> DocumentIndexResponse
                 detail="Failed to store embeddings",
             )
 
+        logger.info(f"Document indexed successfully", extra={"document_id": document_id, "chunks_count": len(text_chunks)})
+
         return DocumentIndexResponse(
             document_id=document_id,
             edital_id=request.edital_id,
@@ -263,12 +269,13 @@ async def index_document(request: DocumentIndexRequest) -> DocumentIndexResponse
 
     except Exception as e:
         # Log full traceback for debugging
+        error_message = str(e)
         error_traceback = traceback.format_exc()
-        print(f"Document indexing error: {error_traceback}")
+        logger.error(f"Document indexing failed", extra={"error": error_message, "traceback": error_traceback})
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to index document: {str(e)} | Type: {type(e).__name__}",
+            detail=f"Failed to index document: {error_message} | Type: {type(e).__name__}",
         )
 
 
@@ -389,12 +396,13 @@ async def index_pdf_document(
         raise
     except Exception as e:
         # Log full traceback for debugging
+        error_message = str(e)
         error_traceback = traceback.format_exc()
-        print(f"PDF indexing error: {error_traceback}")
+        logger.error(f"PDF indexing failed", extra={"document_id": document_id if 'document_id' in locals() else None, "error": error_message, "traceback": error_traceback})
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to index PDF: {str(e)} | Type: {type(e).__name__}",
+            detail=f"Failed to index PDF: {error_message} | Type: {type(e).__name__}",
         )
 
 
@@ -565,6 +573,8 @@ async def upload_pdf(
                 detail="Failed to store embeddings in database",
             )
 
+        logger.info(f"PDF uploaded successfully", extra={"document_id": document_id, "filename": file.filename, "file_size": len(pdf_content)})
+
         return PdfUploadResponse(
             document_id=document_id,
             edital_id=edital_id,
@@ -579,12 +589,13 @@ async def upload_pdf(
         raise
     except Exception as e:
         # Log full traceback for debugging
+        error_message = str(e)
         error_traceback = traceback.format_exc()
-        print(f"PDF upload error: {error_traceback}")
+        logger.error(f"PDF upload failed", extra={"filename": file.filename if file and file.filename else None, "error": error_message, "traceback": error_traceback})
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to process PDF upload: {str(e)} | Type: {type(e).__name__}",
+            detail=f"Failed to process PDF upload: {error_message} | Type: {type(e).__name__}",
         )
 
 
@@ -744,6 +755,8 @@ async def delete_document(document_id: str) -> DocumentDeletionResponse:
 
         # Delete document
         await supabase.table("pnld_documents").delete().eq("id", document_id).execute()
+
+        logger.info(f"Document deleted", extra={"document_id": document_id})
 
         # Return deletion confirmation
         return DocumentDeletionResponse(

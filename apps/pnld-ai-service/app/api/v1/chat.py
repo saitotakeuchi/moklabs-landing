@@ -9,8 +9,34 @@ from fastapi.responses import StreamingResponse
 from app.models.chat import ChatRequest, ChatResponse, ChatMessage, DocumentSource, ConversationHistory
 from app.services.rag import generate_rag_response, generate_rag_response_stream
 from app.services.supabase import get_async_supabase_client
+from app.utils.logging import get_logger, set_request_context
 
 router = APIRouter()
+logger = get_logger(__name__)
+
+
+async def update_conversation_timestamp(conversation_id: str) -> None:
+    """
+    Update the updated_at timestamp for a conversation.
+
+    This should be called whenever a message is added to ensure
+    the conversation's updated_at reflects the latest activity.
+
+    Args:
+        conversation_id: The conversation ID to update
+    """
+    try:
+        supabase = await get_async_supabase_client()
+        await (
+            supabase.table("chat_conversations")
+            .update({"updated_at": datetime.now().isoformat()})
+            .eq("id", conversation_id)
+            .execute()
+        )
+        logger.debug(f"Updated conversation timestamp", extra={"conversation_id": conversation_id})
+    except Exception as e:
+        # Log but don't fail the request if timestamp update fails
+        logger.warning(f"Failed to update conversation timestamp", extra={"conversation_id": conversation_id, "error": str(e)})
 
 
 async def load_conversation_history(conversation_id: str) -> List[dict]:
@@ -88,6 +114,10 @@ async def chat(request: ChatRequest) -> ChatResponse:
                 conversation_id = conv_result.data[0]["id"]
             else:
                 conversation_id = str(uuid.uuid4())
+            logger.info(f"Created new conversation", extra={"conversation_id": conversation_id, "edital_id": request.edital_id})
+
+        # Set conversation context for logging
+        set_request_context(conversation_id=conversation_id)
 
         # Load conversation history if continuing existing conversation
         if conversation_id:
@@ -138,6 +168,11 @@ async def chat(request: ChatRequest) -> ChatResponse:
             }
         ).execute()
 
+        # Update conversation timestamp to reflect latest activity
+        await update_conversation_timestamp(conversation_id)
+
+        logger.info(f"Chat completed successfully", extra={"message_length": len(response_text), "sources_count": len(sources)})
+
         return ChatResponse(
             conversation_id=conversation_id,
             message=ChatMessage(
@@ -149,7 +184,11 @@ async def chat(request: ChatRequest) -> ChatResponse:
             metadata={"edital_id": request.edital_id},
         )
 
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
     except Exception as e:
+        logger.error(f"Chat request failed", extra={"error": str(e), "error_type": type(e).__name__})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process chat request: {str(e)}",
@@ -207,6 +246,10 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
                     conversation_id = conv_result.data[0]["id"]
                 else:
                     conversation_id = str(uuid.uuid4())
+                logger.info(f"Created new conversation (streaming)", extra={"conversation_id": conversation_id, "edital_id": request.edital_id})
+
+            # Set conversation context for logging
+            set_request_context(conversation_id=conversation_id)
 
             # Send conversation_id as metadata event
             yield f"event: metadata\ndata: {json.dumps({'conversation_id': conversation_id})}\n\n"
@@ -271,10 +314,16 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
                         }
                     ).execute()
 
+                    # Update conversation timestamp to reflect latest activity
+                    await update_conversation_timestamp(conversation_id)
+
+                    logger.info(f"Streaming chat completed successfully", extra={"message_length": len(complete_response), "sources_count": len(sources)})
+
                     # Send done event
                     yield f"event: done\ndata: {json.dumps({'conversation_id': conversation_id})}\n\n"
 
         except Exception as e:
+            logger.error(f"Streaming chat failed", extra={"conversation_id": conversation_id, "error": str(e), "error_type": type(e).__name__})
             # Send error event
             error_data = {
                 "error": str(e),
