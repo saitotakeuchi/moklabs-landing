@@ -62,28 +62,35 @@ async def list_documents(
                 detail=f"Invalid sort_by field. Must be one of: {', '.join(valid_sort_fields)}",
             )
 
-        # Build query for documents
+        # Build query for documents with count and pagination in a single request
+        # This optimization eliminates the need for two separate queries
         query = supabase.table("pnld_documents").select("*", count="exact")
 
         # Apply edital_id filter if provided
         if edital_id:
             query = query.eq("edital_id", edital_id)
 
-        # Get total count (before pagination)
-        count_result = await query.execute()
-        total_count = count_result.count if count_result.count else 0
-
-        # Apply sorting and pagination
+        # Apply sorting
         query = query.order(sort_by, desc=(sort_by != "title"))
+
+        # Apply pagination
         query = query.range(offset, offset + limit - 1)
 
-        # Execute query
+        # Execute single query to get both count and paginated data
         try:
             result = await query.execute()
+            total_count = result.count if result.count else 0
         except Exception as e:
             # Handle range errors (e.g., offset beyond available data)
             error_str = str(e)
             if "416" in error_str or "Range Not Satisfiable" in error_str:
+                # For range errors, we need to get the count with a separate lightweight query
+                count_query = supabase.table("pnld_documents").select("id", count="exact").limit(0)
+                if edital_id:
+                    count_query = count_query.eq("edital_id", edital_id)
+                count_result = await count_query.execute()
+                total_count = count_result.count if count_result.count else 0
+
                 # Return empty result for out-of-range offsets
                 return DocumentListResponse(
                     documents=[],
@@ -624,11 +631,13 @@ async def get_document(
 
         document = doc_result.data[0]
 
-        # Count embeddings/chunks
+        # Count embeddings/chunks efficiently without fetching all rows
+        # Use limit(0) to get only the count header without materializing data
         chunks_result = await (
             supabase.table("pnld_embeddings")
-            .select("*", count="exact")
+            .select("id", count="exact")
             .eq("document_id", document_id)
+            .limit(0)
             .execute()
         )
 
