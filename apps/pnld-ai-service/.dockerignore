@@ -10,7 +10,7 @@ ENV/
 .venv
 
 # Poetry
-poetry.lock
+# Note: poetry.lock IS included for reproducible builds
 
 # Environment variables
 .env

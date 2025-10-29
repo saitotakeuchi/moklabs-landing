@@ -20,9 +20,45 @@ from app.services.embeddings import (
     generate_embeddings_batch,
     process_pdf_to_chunks,
     chunk_text,
+    TextlessPdfError,
 )
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter()
+
+
+async def validate_edital_exists(edital_id: Optional[str]) -> None:
+    """
+    Validate that an edital exists in the database.
+
+    Standard documents (edital_id=None) are always valid.
+    For non-NULL edital_id, verifies the edital exists in the editais table.
+
+    Args:
+        edital_id: The edital ID to validate (can be None for standard documents)
+
+    Raises:
+        HTTPException: 404 if edital_id is not None and doesn't exist
+    """
+    # Standard documents (NULL edital_id) are always valid
+    if edital_id is None:
+        return
+
+    # Validate non-NULL edital_id exists in editais table
+    supabase = await get_async_supabase_client()
+    result = await supabase.table("editais").select("id").eq("id", edital_id).execute()
+
+    if not result.data:
+        logger.warning(
+            f"Attempted to reference non-existent edital",
+            extra={"edital_id": edital_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Edital '{edital_id}' not found. Please create the edital first or use edital_id=null for standard documents.",
+        )
 
 
 @router.get("", response_model=DocumentListResponse, status_code=status.HTTP_200_OK)
@@ -61,28 +97,35 @@ async def list_documents(
                 detail=f"Invalid sort_by field. Must be one of: {', '.join(valid_sort_fields)}",
             )
 
-        # Build query for documents
+        # Build query for documents with count and pagination in a single request
+        # This optimization eliminates the need for two separate queries
         query = supabase.table("pnld_documents").select("*", count="exact")
 
         # Apply edital_id filter if provided
         if edital_id:
             query = query.eq("edital_id", edital_id)
 
-        # Get total count (before pagination)
-        count_result = await query.execute()
-        total_count = count_result.count if count_result.count else 0
-
-        # Apply sorting and pagination
+        # Apply sorting
         query = query.order(sort_by, desc=(sort_by != "title"))
+
+        # Apply pagination
         query = query.range(offset, offset + limit - 1)
 
-        # Execute query
+        # Execute single query to get both count and paginated data
         try:
             result = await query.execute()
+            total_count = result.count if result.count else 0
         except Exception as e:
             # Handle range errors (e.g., offset beyond available data)
             error_str = str(e)
             if "416" in error_str or "Range Not Satisfiable" in error_str:
+                # For range errors, we need to get the count with a separate lightweight query
+                count_query = supabase.table("pnld_documents").select("id", count="exact").limit(0)
+                if edital_id:
+                    count_query = count_query.eq("edital_id", edital_id)
+                count_result = await count_query.execute()
+                total_count = count_result.count if count_result.count else 0
+
                 # Return empty result for out-of-range offsets
                 return DocumentListResponse(
                     documents=[],
@@ -125,7 +168,7 @@ async def list_documents(
         except Exception as e:
             # Fallback to Python-side counting if RPC function doesn't exist
             # This is less efficient but ensures the endpoint still works
-            print(f"Warning: count_chunks_by_document RPC failed, using fallback: {str(e)}")
+            logger.warning(f"count_chunks_by_document RPC failed, using fallback", extra={"error": str(e), "error_type": type(e).__name__})
             chunks_query = (
                 supabase.table("pnld_embeddings")
                 .select("document_id", count="exact")
@@ -167,12 +210,13 @@ async def list_documents(
         raise
     except Exception as e:
         # Log full traceback for debugging
+        error_message = str(e)
         error_traceback = traceback.format_exc()
-        print(f"List documents error: {error_traceback}")
+        logger.error(f"List documents error", extra={"error": error_message, "traceback": error_traceback})
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list documents: {str(e)} | Type: {type(e).__name__}",
+            detail=f"Failed to list documents: {error_message} | Type: {type(e).__name__}",
         )
 
 
@@ -194,6 +238,9 @@ async def index_document(request: DocumentIndexRequest) -> DocumentIndexResponse
         DocumentIndexResponse with document ID and status
     """
     try:
+        # Validate that edital exists (if edital_id is not None)
+        await validate_edital_exists(request.edital_id)
+
         supabase = await get_async_supabase_client()
 
         # 1. Store document in pnld_documents table
@@ -245,6 +292,8 @@ async def index_document(request: DocumentIndexRequest) -> DocumentIndexResponse
                 detail="Failed to store embeddings",
             )
 
+        logger.info(f"Document indexed successfully", extra={"document_id": document_id, "chunks_count": len(text_chunks)})
+
         return DocumentIndexResponse(
             document_id=document_id,
             edital_id=request.edital_id,
@@ -255,12 +304,13 @@ async def index_document(request: DocumentIndexRequest) -> DocumentIndexResponse
 
     except Exception as e:
         # Log full traceback for debugging
+        error_message = str(e)
         error_traceback = traceback.format_exc()
-        print(f"Document indexing error: {error_traceback}")
+        logger.error(f"Document indexing failed", extra={"error": error_message, "traceback": error_traceback})
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to index document: {str(e)} | Type: {type(e).__name__}",
+            detail=f"Failed to index document: {error_message} | Type: {type(e).__name__}",
         )
 
 
@@ -298,6 +348,9 @@ async def index_pdf_document(
         )
 
     try:
+        # Validate that edital exists (if edital_id is not None)
+        await validate_edital_exists(edital_id)
+
         supabase = await get_async_supabase_client()
 
         # Read PDF file
@@ -305,12 +358,13 @@ async def index_pdf_document(
         pdf_file = BytesIO(pdf_content)
 
         # Extract and chunk PDF with page tracking
-        page_chunks = process_pdf_to_chunks(pdf_file, max_chunk_size=1000, overlap=200)
-
-        if not page_chunks:
+        try:
+            page_chunks = process_pdf_to_chunks(pdf_file, max_chunk_size=1000, overlap=200)
+        except TextlessPdfError as e:
+            # PDF contains no extractable text (scanned/image-based PDF)
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="PDF file appears to be empty or unreadable",
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=str(e),
             )
 
         # Reconstruct full content for storage (optional)
@@ -380,12 +434,13 @@ async def index_pdf_document(
         raise
     except Exception as e:
         # Log full traceback for debugging
+        error_message = str(e)
         error_traceback = traceback.format_exc()
-        print(f"PDF indexing error: {error_traceback}")
+        logger.error(f"PDF indexing failed", extra={"document_id": document_id if 'document_id' in locals() else None, "error": error_message, "traceback": error_traceback})
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to index PDF: {str(e)} | Type: {type(e).__name__}",
+            detail=f"Failed to index PDF: {error_message} | Type: {type(e).__name__}",
         )
 
 
@@ -483,12 +538,13 @@ async def upload_pdf(
         pdf_file = BytesIO(pdf_content)
 
         # Extract and chunk PDF with page tracking
-        page_chunks = process_pdf_to_chunks(pdf_file, max_chunk_size=1000, overlap=200)
-
-        if not page_chunks:
+        try:
+            page_chunks = process_pdf_to_chunks(pdf_file, max_chunk_size=1000, overlap=200)
+        except TextlessPdfError as e:
+            # PDF contains no extractable text (scanned/image-based PDF)
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="PDF file appears to be empty or unreadable. Please ensure the PDF contains extractable text",
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=str(e),
             )
 
         # Calculate page count
@@ -555,6 +611,8 @@ async def upload_pdf(
                 detail="Failed to store embeddings in database",
             )
 
+        logger.info(f"PDF uploaded successfully", extra={"document_id": document_id, "filename": file.filename, "file_size": len(pdf_content)})
+
         return PdfUploadResponse(
             document_id=document_id,
             edital_id=edital_id,
@@ -569,12 +627,13 @@ async def upload_pdf(
         raise
     except Exception as e:
         # Log full traceback for debugging
+        error_message = str(e)
         error_traceback = traceback.format_exc()
-        print(f"PDF upload error: {error_traceback}")
+        logger.error(f"PDF upload failed", extra={"filename": file.filename if file and file.filename else None, "error": error_message, "traceback": error_traceback})
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to process PDF upload: {str(e)} | Type: {type(e).__name__}",
+            detail=f"Failed to process PDF upload: {error_message} | Type: {type(e).__name__}",
         )
 
 
@@ -621,11 +680,13 @@ async def get_document(
 
         document = doc_result.data[0]
 
-        # Count embeddings/chunks
+        # Count embeddings/chunks efficiently without fetching all rows
+        # Use limit(0) to get only the count header without materializing data
         chunks_result = await (
             supabase.table("pnld_embeddings")
-            .select("*", count="exact")
+            .select("id", count="exact")
             .eq("document_id", document_id)
+            .limit(0)
             .execute()
         )
 
@@ -732,6 +793,8 @@ async def delete_document(document_id: str) -> DocumentDeletionResponse:
 
         # Delete document
         await supabase.table("pnld_documents").delete().eq("id", document_id).execute()
+
+        logger.info(f"Document deleted", extra={"document_id": document_id})
 
         # Return deletion confirmation
         return DocumentDeletionResponse(

@@ -13,7 +13,7 @@ const API_VERSION = "/api/v1";
 
 export interface Document {
   id: string;
-  edital_id: string;
+  edital_id: string | null;
   title: string;
   chunks_count: number;
   created_at: string;

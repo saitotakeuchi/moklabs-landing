@@ -3,6 +3,9 @@
 from typing import List, Optional, Dict, Any
 from app.services.supabase import get_async_supabase_client
 from app.services.embeddings import generate_embedding
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 async def search_similar_documents(
@@ -41,12 +44,20 @@ async def search_similar_documents(
             },
         ).execute()
 
-        # Log search results for debugging
-        print(f"Vector search: query='{query[:50]}...', edital_id={edital_id}, threshold={similarity_threshold}")
-        print(f"Vector search returned: {len(response.data) if response.data else 0} results")
+        # Log search results
+        result_count = len(response.data) if response.data else 0
+        logger.info(
+            f"Vector search completed",
+            extra={
+                "query_preview": query[:50],
+                "edital_id": edital_id,
+                "threshold": similarity_threshold,
+                "result_count": result_count,
+            }
+        )
 
     except Exception as e:
-        print(f"Vector search error: {str(e)}")
+        logger.error(f"Vector search failed: {str(e)}", extra={"edital_id": edital_id, "error_type": type(e).__name__})
         raise
 
     # Transform results to include all metadata
@@ -68,42 +79,3 @@ async def search_similar_documents(
             )
 
     return results
-
-
-async def index_document_embeddings(
-    document_id: str,
-    content_chunks: List[str],
-) -> int:
-    """
-    Generate and store embeddings for document chunks.
-
-    Args:
-        document_id: The document ID to associate embeddings with
-        content_chunks: List of text chunks to embed
-
-    Returns:
-        Number of embeddings created
-    """
-    from app.services.embeddings import generate_embeddings_batch
-
-    # Generate embeddings for all chunks
-    embeddings = await generate_embeddings_batch(content_chunks)
-
-    # Get async Supabase client
-    client = await get_async_supabase_client()
-
-    # Prepare embedding records
-    embedding_records = [
-        {
-            "document_id": document_id,
-            "content": chunk,
-            "embedding": embedding,
-        }
-        for chunk, embedding in zip(content_chunks, embeddings)
-    ]
-
-    # Insert embeddings into Supabase
-    # TODO: Uncomment when database is set up
-    # response = await client.table("pnld_embeddings").insert(embedding_records).execute()
-
-    return len(embedding_records)

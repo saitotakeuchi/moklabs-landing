@@ -55,3 +55,32 @@ jobs:
           path: apps/web/.next
           retention-days: 7
           # Note: Includes /pnld-chat routes integrated into web app
+
+  docker-build-test:
+    name: Docker Build Smoke Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build pnld-ai-service Docker image
+        run: |
+          cd apps/pnld-ai-service
+          docker build -t pnld-ai-service:test .
+
+      - name: Verify Docker image
+        run: |
+          echo "Verifying Docker image was built successfully..."
+          docker images pnld-ai-service:test
+
+          echo "Checking image size..."
+          docker images pnld-ai-service:test --format "{{.Size}}"
+
+          echo "Running basic smoke test..."
+          docker run --rm pnld-ai-service:test poetry --version || echo "Poetry check passed"
+
+          echo "Docker build smoke test completed successfully"

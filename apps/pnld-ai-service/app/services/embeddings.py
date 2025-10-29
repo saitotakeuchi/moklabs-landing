@@ -7,6 +7,20 @@ from app.config import settings
 from app.models.document import PageChunk
 
 
+class TextlessPdfError(Exception):
+    """
+    Raised when a PDF file contains no extractable text.
+
+    This typically occurs with:
+    - Scanned documents (images without OCR)
+    - PDFs created from images without text layer
+    - Corrupted or malformed PDFs
+
+    Resolution requires OCR processing to extract text from images.
+    """
+    pass
+
+
 _openai_client: AsyncOpenAI | None = None
 
 
@@ -69,22 +83,38 @@ def extract_pages_from_pdf(pdf_file: BinaryIO) -> List[PageChunk]:
 
     Returns:
         List of PageChunk objects, one per page
+
+    Raises:
+        TextlessPdfError: If PDF contains no extractable text (e.g., scanned document)
     """
     reader = PdfReader(pdf_file)
     page_chunks = []
+    total_pages = len(reader.pages)
+    pages_with_text = 0
 
     for page_num, page in enumerate(reader.pages, start=1):
         # Extract text from the page
+        # Note: extract_text() can return None for scanned/image-only pages
         text = page.extract_text()
 
-        if text.strip():  # Only create chunks for non-empty pages
+        # Guard against None before calling .strip()
+        if text is not None and text.strip():
+            pages_with_text += 1
             page_chunk = PageChunk(
                 page_number=page_num,
                 content=text.strip(),
                 chunk_index=0,
-                metadata={"total_pages": len(reader.pages)},
+                metadata={"total_pages": total_pages},
             )
             page_chunks.append(page_chunk)
+
+    # If no pages had extractable text, raise an error
+    if not page_chunks:
+        raise TextlessPdfError(
+            f"PDF contains no extractable text across {total_pages} page(s). "
+            "This typically indicates a scanned document or image-based PDF. "
+            "Please provide a PDF with selectable text or use OCR software to convert the document first."
+        )
 
     return page_chunks
 
@@ -170,8 +200,15 @@ def process_pdf_to_chunks(
 
     Returns:
         List of PageChunk objects ready for embedding
+
+    Raises:
+        TextlessPdfError: If PDF contains no extractable text (e.g., scanned document)
+
+    Note:
+        This function rejects scanned PDFs and image-based PDFs without text layers.
+        PDFs must contain selectable/extractable text to be processed.
     """
-    # Extract pages from PDF
+    # Extract pages from PDF (raises TextlessPdfError if no text found)
     page_chunks = extract_pages_from_pdf(pdf_file)
 
     # Further chunk pages that are too large

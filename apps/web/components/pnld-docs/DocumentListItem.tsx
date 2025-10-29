@@ -8,12 +8,14 @@ import type { Document } from "@/hooks/useDocuments";
 
 interface DocumentListItemProps {
   document: Document;
+  editalName?: string;
   onView: (documentId: string) => void;
   onDelete: (documentId: string) => void;
 }
 
 export function DocumentListItem({
   document,
+  editalName,
   onView,
   onDelete,
 }: DocumentListItemProps) {
@@ -36,7 +38,9 @@ export function DocumentListItem({
           {document.title}
         </button>
       </td>
-      <td className="px-6 py-4 text-sm text-gray-600">{document.edital_id}</td>
+      <td className="px-6 py-4 text-sm text-gray-600">
+        {editalName || (document.edital_id === null ? "Standard" : document.edital_id)}
+      </td>
       <td className="px-6 py-4 text-sm text-gray-600 text-center">
         {document.chunks_count}
       </td>
@@ -66,6 +70,7 @@ export function DocumentListItem({
  */
 export function DocumentListItemCard({
   document,
+  editalName,
   onView,
   onDelete,
 }: DocumentListItemProps) {
@@ -90,7 +95,7 @@ export function DocumentListItemCard({
       </div>
       <div className="space-y-1 text-sm text-gray-600">
         <p>
-          <span className="font-medium">Edital:</span> {document.edital_id}
+          <span className="font-medium">Edital:</span> {editalName || (document.edital_id === null ? "Standard" : document.edital_id)}
         </p>
         <p>
           <span className="font-medium">Chunks:</span> {document.chunks_count}

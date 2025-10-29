@@ -6,8 +6,9 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useDocuments } from "@/hooks/useDocuments";
+import { useEditais } from "@/hooks/useEditais";
 import { DocumentListItem, DocumentListItemCard } from "./DocumentListItem";
 import { DocumentListSkeleton } from "@/components/ui";
 import { EmptyDocumentState } from "./EmptyDocumentState";
@@ -30,10 +31,20 @@ export function DocumentList({
   const limit = 20;
 
   const { documents, total, isLoading, error, refetch } = useDocuments({
-    editalId: editalFilter || undefined,
+    editalId: editalFilter === "standard" ? "null" : (editalFilter || undefined),
     limit,
     offset: page * limit,
   });
+
+  const { editais } = useEditais();
+
+  // Create a map of edital ID to edital name for quick lookup
+  const editalNamesMap = useMemo(() => {
+    return editais.reduce((acc, edital) => {
+      acc[edital.id] = edital.name;
+      return acc;
+    }, {} as Record<string, string>);
+  }, [editais]);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -77,13 +88,21 @@ export function DocumentList({
             </p>
           </div>
           <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Filter by Edital ID..."
+            <select
               value={editalFilter}
               onChange={(e) => handleFilterChange(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
-            />
+            >
+              <option value="">Todos os editais</option>
+              <option value="standard" className="font-semibold">
+                📌 Standard (applies to all)
+              </option>
+              {editais.map((edital) => (
+                <option key={edital.id} value={edital.id}>
+                  {edital.name} ({edital.year})
+                </option>
+              ))}
+            </select>
             <button
               onClick={handleRefresh}
               disabled={isLoading}
@@ -135,6 +154,11 @@ export function DocumentList({
                     <DocumentListItem
                       key={doc.id}
                       document={doc}
+                      editalName={
+                        doc.edital_id === null
+                          ? "Standard"
+                          : (editalNamesMap[doc.edital_id] || doc.edital_id)
+                      }
                       onView={onViewDocument}
                       onDelete={onDeleteDocument}
                     />
@@ -149,6 +173,11 @@ export function DocumentList({
                 <DocumentListItemCard
                   key={doc.id}
                   document={doc}
+                  editalName={
+                    doc.edital_id === null
+                      ? "Standard"
+                      : (editalNamesMap[doc.edital_id] || doc.edital_id)
+                  }
                   onView={onViewDocument}
                   onDelete={onDeleteDocument}
                 />
