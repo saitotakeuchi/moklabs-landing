@@ -39,7 +39,8 @@ export function DocumentListItem({
         </button>
       </td>
       <td className="px-6 py-4 text-sm text-gray-600">
-        {editalName || (document.edital_id === null ? "Standard" : document.edital_id)}
+        {editalName ||
+          (document.edital_id === null ? "Standard" : document.edital_id)}
       </td>
       <td className="px-6 py-4 text-sm text-gray-600 text-center">
         {document.chunks_count}
@@ -95,7 +96,9 @@ export function DocumentListItemCard({
       </div>
       <div className="space-y-1 text-sm text-gray-600">
         <p>
-          <span className="font-medium">Edital:</span> {editalName || (document.edital_id === null ? "Standard" : document.edital_id)}
+          <span className="font-medium">Edital:</span>{" "}
+          {editalName ||
+            (document.edital_id === null ? "Standard" : document.edital_id)}
         </p>
         <p>
           <span className="font-medium">Chunks:</span> {document.chunks_count}

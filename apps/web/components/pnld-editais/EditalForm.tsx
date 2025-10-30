@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import type { Edital, EditalType, CreateEditalRequest } from "@moklabs/pnld-types";
+import type {
+  Edital,
+  EditalType,
+  CreateEditalRequest,
+} from "@moklabs/pnld-types";
 
 interface EditalFormProps {
   edital?: Edital | null;

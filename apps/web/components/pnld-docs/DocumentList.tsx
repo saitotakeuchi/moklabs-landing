@@ -31,7 +31,7 @@ export function DocumentList({
   const limit = 20;
 
   const { documents, total, isLoading, error, refetch } = useDocuments({
-    editalId: editalFilter === "standard" ? "null" : (editalFilter || undefined),
+    editalId: editalFilter === "standard" ? "null" : editalFilter || undefined,
     limit,
     offset: page * limit,
   });
@@ -40,10 +40,13 @@ export function DocumentList({
 
   // Create a map of edital ID to edital name for quick lookup
   const editalNamesMap = useMemo(() => {
-    return editais.reduce((acc, edital) => {
-      acc[edital.id] = edital.name;
-      return acc;
-    }, {} as Record<string, string>);
+    return editais.reduce(
+      (acc, edital) => {
+        acc[edital.id] = edital.name;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
   }, [editais]);
 
   const totalPages = Math.ceil(total / limit);
@@ -157,7 +160,7 @@ export function DocumentList({
                       editalName={
                         doc.edital_id === null
                           ? "Standard"
-                          : (editalNamesMap[doc.edital_id] || doc.edital_id)
+                          : editalNamesMap[doc.edital_id] || doc.edital_id
                       }
                       onView={onViewDocument}
                       onDelete={onDeleteDocument}
@@ -176,7 +179,7 @@ export function DocumentList({
                   editalName={
                     doc.edital_id === null
                       ? "Standard"
-                      : (editalNamesMap[doc.edital_id] || doc.edital_id)
+                      : editalNamesMap[doc.edital_id] || doc.edital_id
                   }
                   onView={onViewDocument}
                   onDelete={onDeleteDocument}

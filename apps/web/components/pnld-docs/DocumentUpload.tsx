@@ -185,12 +185,15 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
             </select>
             {editais.length === 0 && !isLoadingEditais && (
               <p className="mt-1 text-xs text-amber-600">
-                Nenhum edital específico cadastrado. Você pode usar &quot;Standard&quot; ou cadastrar editais na aba &quot;Editais&quot;.
+                Nenhum edital específico cadastrado. Você pode usar
+                &quot;Standard&quot; ou cadastrar editais na aba
+                &quot;Editais&quot;.
               </p>
             )}
             {editalId === "standard" && (
               <p className="mt-1 text-xs text-blue-600">
-                Este documento estará disponível em todas as buscas, independente do edital selecionado.
+                Este documento estará disponível em todas as buscas,
+                independente do edital selecionado.
               </p>
             )}
           </div>

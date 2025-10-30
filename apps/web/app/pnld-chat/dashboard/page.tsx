@@ -13,12 +13,18 @@ import { DocumentList } from "@/components/pnld-docs/DocumentList";
 import { DocumentDetail } from "@/components/pnld-docs/DocumentDetail";
 import { DocumentDeleteDialog } from "@/components/pnld-docs/DocumentDeleteDialog";
 import { useDocumentDelete, useDocuments } from "@/hooks/useDocuments";
-import { EditalList, EditalDialog, DeleteEditalDialog } from "@/components/pnld-editais";
+import {
+  EditalList,
+  EditalDialog,
+  DeleteEditalDialog,
+} from "@/components/pnld-editais";
 import { useEditais } from "@/hooks/useEditais";
 import type { Edital, CreateEditalRequest } from "@moklabs/pnld-types";
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState<"upload" | "list" | "editais">("list");
+  const [activeTab, setActiveTab] = useState<"upload" | "list" | "editais">(
+    "list"
+  );
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(
     null
   );
@@ -32,11 +38,20 @@ export default function DashboardPage() {
   const [editalToEdit, setEditalToEdit] = useState<Edital | null>(null);
   const [editalToDelete, setEditalToDelete] = useState<Edital | null>(null);
   const [isEditalSubmitting, setIsEditalSubmitting] = useState(false);
-  const [deleteEditalError, setDeleteEditalError] = useState<string | null>(null);
+  const [deleteEditalError, setDeleteEditalError] = useState<string | null>(
+    null
+  );
 
   const { refetch } = useDocuments({ autoFetch: false });
   const { deleteDocument, isDeleting } = useDocumentDelete();
-  const { editais, isLoading: isLoadingEditais, createEdital, updateEdital, deleteEdital, fetchEditais } = useEditais();
+  const {
+    editais,
+    isLoading: isLoadingEditais,
+    createEdital,
+    updateEdital,
+    deleteEdital,
+    fetchEditais,
+  } = useEditais();
 
   const handleUploadComplete = () => {
     // Switch to list view and refresh the list
@@ -101,7 +116,9 @@ export default function DashboardPage() {
       setEditalToEdit(null);
       fetchEditais();
     } catch (error) {
-      toast.error(editalToEdit ? "Erro ao atualizar edital" : "Erro ao criar edital");
+      toast.error(
+        editalToEdit ? "Erro ao atualizar edital" : "Erro ao criar edital"
+      );
       console.error("Error submitting edital:", error);
     } finally {
       setIsEditalSubmitting(false);

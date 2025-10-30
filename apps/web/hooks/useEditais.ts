@@ -68,7 +68,8 @@ export function useEditais(): UseEditaisReturn {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
-            errorData.detail || `Failed to create edital: ${response.statusText}`
+            errorData.detail ||
+              `Failed to create edital: ${response.statusText}`
           );
         }
 
@@ -103,7 +104,8 @@ export function useEditais(): UseEditaisReturn {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
-            errorData.detail || `Failed to update edital: ${response.statusText}`
+            errorData.detail ||
+              `Failed to update edital: ${response.statusText}`
           );
         }
 
@@ -111,9 +113,7 @@ export function useEditais(): UseEditaisReturn {
 
         // Update local state
         setEditais((prev) =>
-          prev.map((edital) =>
-            edital.id === id ? updatedEdital : edital
-          )
+          prev.map((edital) => (edital.id === id ? updatedEdital : edital))
         );
 
         return updatedEdital;
