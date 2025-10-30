@@ -37,7 +37,18 @@
       "Bash(export PATH=\"$PATH:/c/Users/DESKTOP/AppData/Local/flyctl/bin\")",
       "Bash(flyctl status:*)",
       "Bash(flyctl secrets:*)",
-      "Bash(vercel --version:*)"
+      "Bash(vercel --version:*)",
+      "Bash(flyctl deploy:*)",
+      "Bash(flyctl logs:*)",
+      "Bash(find . -type d -name __pycache__ -exec rm -rf {} +)",
+      "Bash(pkill:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(docker build:*)",
+      "Bash(find:*)",
+      "Bash(git stash:*)",
+      "Bash(git rebase:*)"
     ],
     "deny": [],
     "ask": []
