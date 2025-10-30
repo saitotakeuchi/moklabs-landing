@@ -16,14 +16,14 @@ const API_VERSION = "/api/v1";
 
 export interface DocumentUploadRequest {
   file: File;
-  editalId: string;
+  editalId?: string;
   title: string;
   metadata?: Record<string, any>;
 }
 
 export interface DocumentUploadResponse {
   document_id: string;
-  edital_id: string;
+  edital_id: string | null;
   title: string;
   filename: string;
   pages_processed?: number;
@@ -70,7 +70,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
 
         // Track validation error
         trackDocumentUploadError({
-          editalId: request.editalId,
+          editalId: request.editalId || "standard",
           fileSizeBytes: request.file.size,
           errorType: "ValidationError",
           errorMessage: err.message,
@@ -88,7 +88,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
 
         // Track validation error
         trackDocumentUploadError({
-          editalId: request.editalId,
+          editalId: request.editalId || "standard",
           fileSizeBytes: request.file.size,
           errorType: "ValidationError",
           errorMessage: err.message,
@@ -100,7 +100,9 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
       return new Promise((resolve, reject) => {
         const formData = new FormData();
         formData.append("file", request.file);
-        formData.append("edital_id", request.editalId);
+        if (request.editalId) {
+          formData.append("edital_id", request.editalId);
+        }
         formData.append("title", request.title);
         if (request.metadata) {
           formData.append("metadata", JSON.stringify(request.metadata));
@@ -130,7 +132,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
               // Track successful upload
               trackDocumentUploaded({
                 documentId: response.document_id,
-                editalId: response.edital_id,
+                editalId: response.edital_id || "standard",
                 fileSizeBytes: request.file.size,
                 chunksCount: response.chunks_created,
                 processingTimeMs: processingTime,
@@ -146,7 +148,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
 
               // Track parse error
               trackDocumentUploadError({
-                editalId: request.editalId,
+                editalId: request.editalId || "standard",
                 fileSizeBytes: request.file.size,
                 errorType: "ParseError",
                 errorMessage: err.message,
@@ -165,7 +167,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
 
               // Track upload error
               trackDocumentUploadError({
-                editalId: request.editalId,
+                editalId: request.editalId || "standard",
                 fileSizeBytes: request.file.size,
                 errorType: `HTTPError_${xhr.status}`,
                 errorMessage: err.message,
@@ -179,7 +181,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
 
               // Track upload error
               trackDocumentUploadError({
-                editalId: request.editalId,
+                editalId: request.editalId || "standard",
                 fileSizeBytes: request.file.size,
                 errorType: `HTTPError_${xhr.status}`,
                 errorMessage: err.message,
@@ -198,7 +200,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
 
           // Track network error
           trackDocumentUploadError({
-            editalId: request.editalId,
+            editalId: request.editalId || "standard",
             fileSizeBytes: request.file.size,
             errorType: "NetworkError",
             errorMessage: err.message,
@@ -215,7 +217,7 @@ export function useDocumentUpload(): UseDocumentUploadReturn {
 
           // Track cancellation
           trackDocumentUploadError({
-            editalId: request.editalId,
+            editalId: request.editalId || "standard",
             fileSizeBytes: request.file.size,
             errorType: "UploadCancelled",
             errorMessage: err.message,

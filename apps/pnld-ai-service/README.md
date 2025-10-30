@@ -138,10 +138,32 @@ The service will be available at:
 
 ### Docker
 
-Build the Docker image:
+#### Building the Docker Image
+
+The Dockerfile uses a multi-stage build for optimal image size and includes configurations for reproducible builds:
 
 ```bash
 docker build -t pnld-ai-service .
+```
+
+**Reproducibility Features:**
+- `poetry.lock` is included in the build (not excluded by .dockerignore) to ensure exact dependency versions
+- pip and setuptools are pinned to specific versions (pip==24.3.1, setuptools==75.6.0)
+- Poetry validates the lockfile with `poetry check --lock` during build
+- Environment variables ensure consistent Poetry behavior:
+  - `POETRY_VIRTUALENVS_IN_PROJECT=true`
+  - `POETRY_NO_INTERACTION=1`
+  - `POETRY_VIRTUALENVS_CREATE=false`
+
+**Build Process:**
+1. **Builder stage**: Installs Poetry and dependencies using poetry.lock
+2. **Runtime stage**: Copies installed packages and application code, runs as non-root user
+
+**Verifying the Build:**
+
+Check if poetry.lock is being used:
+```bash
+docker build --progress=plain -t pnld-ai-service . 2>&1 | grep "poetry.lock"
 ```
 
 Run the container:
@@ -149,6 +171,9 @@ Run the container:
 ```bash
 docker run -p 8000:8000 --env-file .env pnld-ai-service
 ```
+
+**CI/CD:**
+The GitHub Actions workflow includes a Docker build smoke test that verifies the image builds successfully with deterministic dependencies. See `.github/workflows/ci.yml` for details.
 
 ## API Endpoints
 
@@ -210,14 +235,56 @@ This service is designed to be deployed separately from the frontend (not on Ver
 
 ## Database Schema
 
-The service uses four main tables:
+The service uses five main tables:
 
-1. **pnld_documents**: Stores PNLD edital documents
-2. **pnld_embeddings**: Stores vector embeddings for similarity search
-3. **chat_conversations**: Stores conversation metadata
-4. **chat_messages**: Stores individual chat messages
+1. **editais**: Stores PNLD edital metadata (types: didático, literário, outros)
+2. **pnld_documents**: Stores PNLD edital documents (references editais via foreign key)
+3. **pnld_embeddings**: Stores vector embeddings for similarity search
+4. **chat_conversations**: Stores conversation metadata (references editais via foreign key)
+5. **chat_messages**: Stores individual chat messages
 
-See `supabase/migrations/20250101000000_initial_schema.sql` for the complete schema.
+### Referential Integrity
+
+The database enforces referential integrity between editais and related tables:
+
+- **pnld_documents.edital_id** → **editais.id** (foreign key)
+  - NULL values allowed for "standard documents" that apply to all editais
+  - Non-NULL values must reference a valid edital
+  - ON DELETE RESTRICT: Cannot delete an edital if documents reference it
+  - ON UPDATE CASCADE: Updates document references if edital slug changes
+
+- **chat_conversations.edital_id** → **editais.id** (foreign key)
+  - NULL values allowed for general conversations
+  - Non-NULL values must reference a valid edital
+  - Same ON DELETE/UPDATE behavior as documents
+
+The API validates edital existence before creating documents or conversations, providing user-friendly error messages when referencing non-existent editais.
+
+See migration files in `supabase/migrations/` for the complete schema:
+- `20250101000000_initial_schema.sql` - Core tables and pgvector setup
+- `20250128000000_create_editais_table.sql` - Editais table
+- `20250129000000_add_documents_edital_fk.sql` - Foreign key constraints
+- `20250129000001_enable_rls_all_tables.sql` - Row Level Security policies
+
+### Row Level Security (RLS)
+
+All tables have Row Level Security enabled with the following access patterns:
+
+**Service Role (Backend API):**
+- Full access (SELECT, INSERT, UPDATE, DELETE) to all tables
+- Uses `SUPABASE_SERVICE_KEY` for authentication
+- Required for RAG operations, document indexing, and chat functionality
+
+**Public/Anon Access (Frontend):**
+- Read-only access to: `editais`, `pnld_documents`, `chat_conversations`, `chat_messages`
+- No access to: `pnld_embeddings` (internal use only)
+- Uses `SUPABASE_ANON_KEY` for authentication
+
+This ensures that:
+- Direct database access is restricted by default
+- Backend API has full control via service role
+- Frontend can read data for display but cannot modify
+- Embeddings are kept private for security
 
 ## Environment Variables Reference
 
@@ -232,6 +299,21 @@ See `supabase/migrations/20250101000000_initial_schema.sql` for the complete sch
 | `OPENAI_API_KEY` | OpenAI API key | `sk-...` |
 | `OPENAI_MODEL` | OpenAI chat model | `gpt-4-turbo-preview` |
 | `OPENAI_EMBEDDING_MODEL` | OpenAI embedding model | `text-embedding-3-small` |
+
+## Logging and Observability
+
+The service implements structured logging with request tracing. All components use a centralized logging configuration that provides:
+
+- Request ID tracking across all operations
+- Conversation ID tracking for chat endpoints
+- Structured log formats (JSON in production, human-readable in development)
+- Contextual metadata for debugging
+
+See [LOGGING_OBSERVABILITY.md](./LOGGING_OBSERVABILITY.md) for detailed documentation on:
+- Logging best practices
+- Error handling patterns
+- Conversation state management
+- Monitoring and alerting strategies
 
 ## Troubleshooting
 
@@ -252,6 +334,18 @@ See `supabase/migrations/20250101000000_initial_schema.sql` for the complete sch
 **Issue**: OpenAI API rate limit errors
 
 **Solution**: Implement rate limiting in your application or upgrade your OpenAI plan.
+
+---
+
+**Issue**: Logs not appearing or missing context
+
+**Solution**: Check [LOGGING_OBSERVABILITY.md](./LOGGING_OBSERVABILITY.md) for logging configuration and troubleshooting.
+
+## Documentation
+
+- [LOGGING_OBSERVABILITY.md](./LOGGING_OBSERVABILITY.md) - Logging and observability documentation
+- [QUERY_OPTIMIZATIONS.md](./QUERY_OPTIMIZATIONS.md) - Database query performance improvements
+- [CONTAINER_REPRODUCIBILITY.md](./CONTAINER_REPRODUCIBILITY.md) - Docker build reproducibility
 
 ## License
 

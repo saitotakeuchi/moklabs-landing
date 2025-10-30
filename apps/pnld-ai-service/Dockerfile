@@ -12,15 +12,25 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Pin pip and setuptools for reproducibility
+RUN python -m pip install --no-cache-dir --upgrade \
+    pip==24.3.1 \
+    setuptools==75.6.0
+
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 - \
     && ln -s /root/.local/bin/poetry /usr/local/bin/poetry
 
-# Copy dependency files
-COPY pyproject.toml poetry.lock* ./
+# Configure Poetry for reproducible builds
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_CREATE=false
 
-# Configure poetry to not create virtual environment (we're already in a container)
-RUN poetry config virtualenvs.create false
+# Copy dependency files (poetry.lock is required for reproducibility)
+COPY pyproject.toml poetry.lock README.md ./
+
+# Validate Poetry configuration and lockfile
+RUN poetry check --lock
 
 # Install dependencies only (not the project itself, we'll copy app code later)
 RUN poetry install --only main --no-root --no-interaction --no-ansi

@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useDocumentUpload } from "@/hooks/useDocumentUpload";
+import { useEditais } from "@/hooks/useEditais";
 import { UploadProgress } from "./UploadProgress";
 import { toast } from "sonner";
 
@@ -22,6 +23,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { upload, isUploading, progress, error, reset } = useDocumentUpload();
+  const { editais, isLoading: isLoadingEditais } = useEditais();
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -52,7 +54,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
     }
 
     if (!editalId.trim()) {
-      toast.error("Please enter an Edital ID");
+      toast.error("Please select an edital or choose 'Standard'");
       return;
     }
 
@@ -64,7 +66,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
     try {
       const result = await upload({
         file: selectedFile,
-        editalId: editalId.trim(),
+        editalId: editalId === "standard" ? undefined : editalId.trim(),
         title: title.trim(),
       });
 
@@ -161,18 +163,39 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
               htmlFor="editalId"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Edital ID <span className="text-red-500">*</span>
+              Edital <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
+            <select
               id="editalId"
               value={editalId}
               onChange={(e) => setEditalId(e.target.value)}
-              disabled={isUploading}
-              placeholder="e.g., PNLD-2025"
+              disabled={isUploading || isLoadingEditais}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               required
-            />
+            >
+              <option value="">Selecione um edital...</option>
+              <option value="standard" className="font-semibold text-blue-600">
+                📌 Standard (applies to all editais)
+              </option>
+              {editais.map((edital) => (
+                <option key={edital.id} value={edital.id}>
+                  {edital.name} ({edital.year})
+                </option>
+              ))}
+            </select>
+            {editais.length === 0 && !isLoadingEditais && (
+              <p className="mt-1 text-xs text-amber-600">
+                Nenhum edital específico cadastrado. Você pode usar
+                &quot;Standard&quot; ou cadastrar editais na aba
+                &quot;Editais&quot;.
+              </p>
+            )}
+            {editalId === "standard" && (
+              <p className="mt-1 text-xs text-blue-600">
+                Este documento estará disponível em todas as buscas,
+                independente do edital selecionado.
+              </p>
+            )}
           </div>
 
           <div>
