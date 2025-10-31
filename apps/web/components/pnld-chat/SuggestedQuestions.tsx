@@ -16,7 +16,7 @@ export function SuggestedQuestions({
           key={index}
           onClick={() => onQuestionClick(question)}
           className="bg-white border-2 border-[#0013ff]
-                     rounded-[20px] sm:rounded-[24px]
+                     rounded-[12px]
                      px-4 sm:px-4 py-3 sm:py-4
                      min-h-[44px]
                      hover:bg-[#0013ff] hover:text-white
