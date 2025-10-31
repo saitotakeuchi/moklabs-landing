@@ -136,6 +136,17 @@ const Header = () => {
               >
                 Blog
               </Link>
+              <Link
+                href="/pnld-chat"
+                className={`font-small hover:text-mok-green/80 transition-colors cursor-pointer text-sm sm:text-base ${
+                  pathname.startsWith("/pnld-chat")
+                    ? "text-mok-green"
+                    : "text-mok-green/60"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Copiloto
+              </Link>
             </nav>
 
             {/* PNLD Button - Highlighted */}
@@ -217,6 +228,17 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Blog
+              </Link>
+              <Link
+                href="/pnld-chat"
+                className={`font-medium hover:bg-black/10 transition-all cursor-pointer text-base py-3 px-2 rounded ${
+                  pathname.startsWith("/pnld-chat")
+                    ? "text-mok-blue"
+                    : "text-mok-blue/60"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Copiloto
               </Link>
 
               {/* PNLD Button - Highlighted for Mobile */}
