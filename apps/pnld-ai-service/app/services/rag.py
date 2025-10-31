@@ -35,10 +35,11 @@ async def generate_rag_response(
     # Step 1: Retrieve relevant documents
     # Using threshold of 0.3 for better recall with Portuguese text
     # Lower threshold helps catch semantically relevant documents
+    # Increased limit to 10 to get more context for the LLM
     similar_docs = await search_similar_documents(
         query=query,
         edital_id=edital_id,
-        limit=5,
+        limit=10,
         similarity_threshold=0.3,
     )
 
@@ -166,10 +167,11 @@ async def generate_rag_response_stream(
     """
     # Step 1: Retrieve relevant documents
     # Using threshold of 0.3 for better recall with Portuguese text
+    # Increased limit to 10 to get more context for the LLM
     similar_docs = await search_similar_documents(
         query=query,
         edital_id=edital_id,
-        limit=5,
+        limit=10,
         similarity_threshold=0.3,
     )
 
