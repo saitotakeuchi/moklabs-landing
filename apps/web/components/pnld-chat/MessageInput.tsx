@@ -52,7 +52,7 @@ export function MessageInput({
           disabled={disabled}
           placeholder={placeholder}
           rows={1}
-          style={{ scrollbarWidth: 'none' }}
+          style={{ scrollbarWidth: "none" }}
           className="w-full bg-white border-2 border-gray-300
                      rounded-[12px]
                      pl-3 sm:pl-4 md:pl-4

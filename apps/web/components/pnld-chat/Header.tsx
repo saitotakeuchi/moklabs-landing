@@ -120,11 +120,7 @@ export function Header({
                           hover:bg-[#eee] transition-colors
                           touch-manipulation
                           text-[#0013ff]
-                          ${
-                            selectedEdital === edital.id
-                              ? "font-bold"
-                              : ""
-                          }
+                          ${selectedEdital === edital.id ? "font-bold" : ""}
                         `}
                       >
                         {edital.name}
