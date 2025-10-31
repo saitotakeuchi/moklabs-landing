@@ -10,21 +10,27 @@ export default function PNLDChatPage() {
   const [availableEditais, setAvailableEditais] = useState<
     Array<{ id: string; name: string }>
   >([]);
+  const [isLoadingEditais, setIsLoadingEditais] = useState(true);
 
   // Fetch available editais on mount
   useEffect(() => {
     async function fetchEditais() {
       try {
+        console.log("Fetching editais...");
         const response = await pnldAiClient.listEditais();
+        console.log("Editais response:", response);
         const editais = response.editais.map((edital: Edital) => ({
           id: edital.id,
           name: edital.name,
         }));
+        console.log("Mapped editais:", editais);
         setAvailableEditais(editais);
       } catch (error) {
         console.error("Failed to fetch editais:", error);
         // Optionally set empty array or show error state
         setAvailableEditais([]);
+      } finally {
+        setIsLoadingEditais(false);
       }
     }
 
@@ -42,6 +48,7 @@ export default function PNLDChatPage() {
         selectedEdital={selectedEdital}
         onEditalSelect={handleEditalSelect}
         availableEditais={availableEditais}
+        isLoadingEditais={isLoadingEditais}
       />
 
       {/* Chat - flexible height */}

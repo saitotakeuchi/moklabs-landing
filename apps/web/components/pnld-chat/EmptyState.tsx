@@ -63,7 +63,7 @@ export function EmptyState({
       {!selectedEdital && (
         <div
           className="bg-white border-2 border-[#0013ff]
-                        rounded-[20px] sm:rounded-[24px]
+                        rounded-[12px]
                         flex gap-2 items-center justify-center
                         px-4 sm:px-4 py-4 sm:py-6
                         min-h-[44px]"

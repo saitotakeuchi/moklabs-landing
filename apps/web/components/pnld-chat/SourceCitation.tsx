@@ -18,7 +18,7 @@ export function SourceCitation({ sources }: SourceCitationProps) {
   const displaySources = expanded ? sources : topSources;
 
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-[16px] p-4 text-sm">
+    <div className="bg-gray-50 border border-gray-200 rounded-[12px] p-4 text-sm">
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-sans font-bold text-[#0013ff] text-sm">
           📄 Fontes Oficiais ({sources.length})
@@ -33,41 +33,24 @@ export function SourceCitation({ sources }: SourceCitationProps) {
         )}
       </div>
 
-      <div className="space-y-3">
+      <ul className="space-y-2">
         {displaySources.map((source, index) => (
-          <div
+          <li
             key={`${source.document_id}-${index}`}
-            className="bg-white border border-gray-200 rounded-[12px] p-3"
+            className="flex items-center gap-2 text-sm"
           >
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <p className="font-sans font-semibold text-[#0013ff] text-sm flex-1">
-                {source.title}
-              </p>
-              {source.page_number && (
-                <span
-                  className="bg-[#0013ff] text-white text-xs px-2 py-1 rounded-full
-                                 font-sans whitespace-nowrap"
-                >
-                  Pág. {source.page_number}
-                </span>
-              )}
-            </div>
-
-            <p className="text-gray-700 text-xs line-clamp-2 font-['Inter'] mb-2">
-              {source.content_excerpt}
-            </p>
-
-            <div className="flex items-center gap-2 text-xs text-gray-500 font-sans">
-              <span>
-                Relevância: {Math.round(source.relevance_score * 100)}%
+            <span className="text-gray-600">•</span>
+            <span className="font-sans text-[#0013ff] flex-1">
+              {source.title}
+            </span>
+            {source.page_number && (
+              <span className="text-gray-600 text-xs whitespace-nowrap">
+                (Pág. {source.page_number})
               </span>
-              {source.chunk_index !== undefined && (
-                <span>• Trecho {source.chunk_index + 1}</span>
-              )}
-            </div>
-          </div>
+            )}
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

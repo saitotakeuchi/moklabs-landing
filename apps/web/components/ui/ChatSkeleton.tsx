@@ -58,39 +58,26 @@ export function ChatSkeleton({
 }
 
 /**
- * ChatMessageSkeleton - Typing indicator alternative
+ * ChatMessageSkeleton - Minimal typing indicator
  *
- * Shows a pulsing message bubble while waiting for AI response
+ * Shows simple bouncing dots while waiting for AI response
  */
 export function ChatMessageSkeleton() {
   return (
-    <div className="flex justify-start w-full">
-      <div className="max-w-[70%] items-start flex flex-col gap-2">
-        {/* Pulsing message bubble */}
+    <div className="flex justify-start w-full px-2 sm:px-0">
+      <div className="flex gap-1 py-2">
         <div
-          className="
-            bg-white border-2 border-[#0013ff]
-            rounded-[24px] px-6 py-4
-            min-w-[120px]
-          "
-        >
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1">
-              <Skeleton
-                className="h-2 w-2 rounded-full animate-pulse"
-                style={{ animationDelay: "0ms" }}
-              />
-              <Skeleton
-                className="h-2 w-2 rounded-full animate-pulse"
-                style={{ animationDelay: "150ms" }}
-              />
-              <Skeleton
-                className="h-2 w-2 rounded-full animate-pulse"
-                style={{ animationDelay: "300ms" }}
-              />
-            </div>
-          </div>
-        </div>
+          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+          style={{ animationDelay: "0ms", animationDuration: "1s" }}
+        />
+        <div
+          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+          style={{ animationDelay: "150ms", animationDuration: "1s" }}
+        />
+        <div
+          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+          style={{ animationDelay: "300ms", animationDuration: "1s" }}
+        />
       </div>
     </div>
   );
