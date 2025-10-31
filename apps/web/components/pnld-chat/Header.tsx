@@ -85,7 +85,7 @@ export function Header({
 
                 {/* Dropdown Menu */}
                 <div
-                  className="absolute top-full right-0 left-0 mt-2 z-20
+                  className="absolute top-0 right-0 left-0 z-20
                                 bg-white border-2 border-[#0013ff] rounded-[12px]
                                 shadow-lg max-h-[300px] overflow-y-auto"
                 >
