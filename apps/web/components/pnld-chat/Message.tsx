@@ -33,13 +33,10 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
           className={`
             ${
               isUser
-                ? "bg-[#0013ff] text-white"
-                : "bg-white text-[#0013ff] border-2 border-[#0013ff]"
+                ? "bg-[#0013ff] text-white rounded-[20px] sm:rounded-[24px] px-4 sm:px-5 md:px-6 py-3 sm:py-3.5 md:py-4"
+                : "text-gray-800"
             }
-            rounded-[20px] sm:rounded-[24px]
-            px-4 sm:px-5 md:px-6
-            py-3 sm:py-3.5 md:py-4
-            font-inter text-sm sm:text-base leading-[1.4]
+            font-inter text-sm sm:text-base leading-[1.6]
             break-words
           `}
         >
