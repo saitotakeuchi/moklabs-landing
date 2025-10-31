@@ -33,12 +33,13 @@ async def generate_rag_response(
         Tuple of (response_text, source_documents)
     """
     # Step 1: Retrieve relevant documents
-    # Using lower threshold (0.5) to be more permissive during initial testing
+    # Using threshold of 0.3 for better recall with Portuguese text
+    # Lower threshold helps catch semantically relevant documents
     similar_docs = await search_similar_documents(
         query=query,
         edital_id=edital_id,
         limit=5,
-        similarity_threshold=0.5,
+        similarity_threshold=0.3,
     )
 
     # Step 2: Build context from retrieved documents
@@ -164,15 +165,16 @@ async def generate_rag_response_stream(
         Tuples of (event_type, data) for streaming
     """
     # Step 1: Retrieve relevant documents
+    # Using threshold of 0.3 for better recall with Portuguese text
     similar_docs = await search_similar_documents(
         query=query,
         edital_id=edital_id,
         limit=5,
-        similarity_threshold=0.5,
+        similarity_threshold=0.3,
     )
 
     # Yield sources immediately
-    yield ('sources', similar_docs)
+    yield ("sources", similar_docs)
 
     # Step 2: Build context from retrieved documents
     context = build_context(similar_docs)
@@ -185,10 +187,10 @@ async def generate_rag_response_stream(
         max_tokens=max_tokens,
         temperature=temperature,
     ):
-        yield ('token', token)
+        yield ("token", token)
 
     # Signal completion
-    yield ('done', None)
+    yield ("done", None)
 
 
 async def generate_llm_response_stream(
