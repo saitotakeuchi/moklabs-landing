@@ -135,7 +135,8 @@ export default function DashboardPage() {
       setDeleteEditalError(null);
       fetchEditais();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao excluir edital";
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao excluir edital";
       setDeleteEditalError(errorMessage);
       toast.error(errorMessage);
     }
