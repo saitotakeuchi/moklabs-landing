@@ -13,14 +13,17 @@ export function CompactFooter() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Logo + Contact Icons */}
           <div className="flex items-center gap-6">
-            <div className="relative w-[140px] h-[22px]">
+            <a
+              href="https://moklabs.com.br/pnld"
+              className="relative w-[140px] h-[22px] hover:opacity-80 transition-opacity"
+            >
               <Image
                 src="/logo-moklabs.svg"
                 alt="Mok Labs"
                 fill
                 className="object-contain"
               />
-            </div>
+            </a>
             <span className="text-gray-300">|</span>
             <a
               href="https://wa.me/5541936182622"

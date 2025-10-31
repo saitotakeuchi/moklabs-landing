@@ -28,7 +28,10 @@ export function Header({
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-32 py-4 md:py-6">
         <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6">
           {/* Logo + Copiloto PNLD Title */}
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0">
+          <a
+            href="https://moklabs.com.br/pnld"
+            className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0 hover:opacity-80 transition-opacity"
+          >
             <div className="relative w-[120px] sm:w-[150px] md:w-[180px] h-[20px] sm:h-[24px] md:h-[28px] flex-shrink-0">
               <Image
                 src="/logo-moklabs.svg"
@@ -43,7 +46,7 @@ export function Header({
             >
               | Copiloto PNLD
             </p>
-          </div>
+          </a>
 
           {/* Edital Selector - replaces menu */}
           <div className="relative flex-shrink-0 max-w-[50%] sm:max-w-none">
@@ -114,8 +117,8 @@ export function Header({
                         className={`
                           w-full px-4 py-3 text-left font-inter text-sm md:text-base
                           min-h-[44px] flex items-center
-                          hover:bg-[#cbff63] transition-colors
-                          active:bg-[#b8e860] touch-manipulation
+                          hover:bg-[#eee] transition-colors
+                          touch-manipulation
                           text-[#0013ff]
                           ${
                             selectedEdital === edital.id
