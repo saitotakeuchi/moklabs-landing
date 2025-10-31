@@ -32,7 +32,7 @@ export function MessageInput({
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex gap-2 sm:gap-3 md:gap-4 items-start justify-center w-full">
+      <div className="relative w-full">
         {/* Input Field */}
         <input
           type="text"
@@ -41,31 +41,31 @@ export function MessageInput({
           onKeyDown={handleKeyDown}
           disabled={disabled}
           placeholder={placeholder}
-          className="flex-1 bg-white border-2 border-[#0013ff]
+          className="w-full bg-white border-2 border-gray-300
                      rounded-[12px]
-                     px-3 sm:px-4 md:px-4
+                     pl-3 sm:pl-4 md:pl-4
+                     pr-12 sm:pr-14
                      py-3 sm:py-3.5 md:py-4
-                     font-inter text-sm sm:text-base leading-[1.4] text-[#0013ff]
-                     placeholder:text-[#0013ff] placeholder:opacity-50
+                     font-inter text-sm sm:text-base leading-[1.4] text-gray-900
+                     placeholder:text-gray-400
                      disabled:opacity-50 disabled:cursor-not-allowed
-                     focus:outline-none focus:ring-2 focus:ring-[#0013ff] focus:ring-offset-2
+                     focus:outline-none focus:border-gray-400
                      min-h-[44px]
                      touch-manipulation"
           aria-label="Digite sua pergunta"
         />
 
-        {/* Send Button */}
+        {/* Send Button - Inside Input */}
         <button
           type="submit"
           disabled={disabled || !message.trim()}
-          className={`rounded-[12px]
-                     px-4 sm:px-5 md:px-6
-                     py-3 sm:py-3.5 md:py-[15px]
-                     min-h-[44px] sm:h-[50px] md:h-[54px]
-                     font-sans font-bold text-sm sm:text-base leading-[1.2] text-[#0013ff]
-                     whitespace-nowrap
+          className={`absolute right-1 top-1/2 -translate-y-1/2
+                     rounded-[8px]
+                     w-9 h-9 sm:w-10 sm:h-10
+                     flex items-center justify-center
+                     font-bold text-lg text-[#0013ff]
                      transition-colors
-                     focus:outline-none focus:ring-2 focus:ring-[#cbff63] focus:ring-offset-2
+                     focus:outline-none
                      touch-manipulation
                      ${
                        disabled || !message.trim()
@@ -74,7 +74,7 @@ export function MessageInput({
                      }`}
           aria-label="Enviar mensagem"
         >
-          Enviar
+          &gt;
         </button>
       </div>
 
