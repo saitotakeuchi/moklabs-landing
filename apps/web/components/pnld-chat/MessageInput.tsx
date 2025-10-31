@@ -42,7 +42,7 @@ export function MessageInput({
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="relative w-full flex items-end gap-2">
+      <div className="relative w-full">
         {/* Textarea Field */}
         <textarea
           ref={textareaRef}
@@ -52,10 +52,10 @@ export function MessageInput({
           disabled={disabled}
           placeholder={placeholder}
           rows={1}
-          className="flex-1 bg-white border-2 border-gray-300
+          className="w-full bg-white border-2 border-gray-300
                      rounded-[12px]
                      pl-3 sm:pl-4 md:pl-4
-                     pr-3 sm:pr-4 md:pr-4
+                     pr-12 sm:pr-14
                      py-3 sm:py-3.5 md:py-4
                      font-inter text-sm sm:text-base leading-[1.4] text-gray-900
                      placeholder:text-gray-400
@@ -69,11 +69,11 @@ export function MessageInput({
           aria-label="Digite sua pergunta"
         />
 
-        {/* Send Button - Aligned to Bottom */}
+        {/* Send Button - Inside, Bottom-Aligned */}
         <button
           type="submit"
           disabled={disabled || !message.trim()}
-          className={`flex-shrink-0 mb-[3px] sm:mb-[3.5px] md:mb-1
+          className={`absolute right-3 sm:right-4 bottom-3 sm:bottom-3.5 md:bottom-4
                      rounded-full
                      w-8 h-8 sm:w-9 sm:h-9
                      flex items-center justify-center
