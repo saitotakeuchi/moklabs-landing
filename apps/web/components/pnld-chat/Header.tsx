@@ -7,18 +7,21 @@ interface HeaderProps {
   selectedEdital: string | null;
   onEditalSelect: (editalId: string) => void;
   availableEditais: Array<{ id: string; name: string }>;
+  isLoadingEditais?: boolean;
 }
 
 export function Header({
   selectedEdital,
   onEditalSelect,
   availableEditais,
+  isLoadingEditais = false,
 }: HeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const selectedEditalName =
-    availableEditais.find((e) => e.id === selectedEdital)?.name ||
-    "Escolha o edital de interesse...";
+  const selectedEditalName = isLoadingEditais
+    ? "Carregando editais..."
+    : availableEditais.find((e) => e.id === selectedEdital)?.name ||
+      "Escolha o edital de interesse...";
 
   return (
     <div className="bg-[#0013ff] w-full">
@@ -86,7 +89,14 @@ export function Header({
                                 bg-white border-2 border-[#0013ff] rounded-[16px]
                                 shadow-lg max-h-[300px] overflow-y-auto"
                 >
-                  {availableEditais.length === 0 ? (
+                  {isLoadingEditais ? (
+                    <div
+                      className="px-4 py-3 text-center text-gray-500
+                                    font-sans text-sm"
+                    >
+                      Carregando...
+                    </div>
+                  ) : availableEditais.length === 0 ? (
                     <div
                       className="px-4 py-3 text-center text-gray-500
                                     font-sans text-sm"
