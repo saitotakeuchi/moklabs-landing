@@ -114,12 +114,13 @@ export function Header({
                         className={`
                           w-full px-4 py-3 text-left font-inter text-sm md:text-base
                           min-h-[44px] flex items-center
-                          hover:bg-[#0013ff] hover:text-white transition-colors
-                          active:bg-[#0013cc] touch-manipulation
+                          hover:bg-[#cbff63] transition-colors
+                          active:bg-[#b8e860] touch-manipulation
+                          text-[#0013ff]
                           ${
                             selectedEdital === edital.id
-                              ? "bg-[#cbff63] text-[#0013ff]"
-                              : "text-[#0013ff]"
+                              ? "font-bold"
+                              : ""
                           }
                         `}
                       >
