@@ -10,7 +10,6 @@ export default function PNLDChatPage() {
   const [availableEditais, setAvailableEditais] = useState<
     Array<{ id: string; name: string }>
   >([]);
-  const [isLoadingEditais, setIsLoadingEditais] = useState(true);
 
   // Fetch available editais on mount
   useEffect(() => {
@@ -26,8 +25,6 @@ export default function PNLDChatPage() {
         console.error("Failed to fetch editais:", error);
         // Optionally set empty array or show error state
         setAvailableEditais([]);
-      } finally {
-        setIsLoadingEditais(false);
       }
     }
 
