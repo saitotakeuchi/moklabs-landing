@@ -11,6 +11,7 @@ import type {
   DocumentIndexRequest,
   DocumentIndexResponse,
   DocumentListResponse,
+  ListEditaisResponse,
 } from "@moklabs/pnld-types";
 
 const AI_SERVICE_URL =
@@ -245,6 +246,24 @@ class PnldAiClient {
 
     if (!response.ok) {
       throw new Error(`Failed to list documents: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * List all available editais
+   */
+  async listEditais(): Promise<ListEditaisResponse> {
+    const response = await fetch(`${this.baseUrl}/editais`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to list editais: ${response.statusText}`);
     }
 
     return response.json();
