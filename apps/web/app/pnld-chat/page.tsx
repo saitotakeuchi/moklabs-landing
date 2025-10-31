@@ -1,17 +1,38 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Header, ChatInterface, CompactFooter } from "@/components/pnld-chat";
-
-// Mock data for available editais - will be replaced with real data from API
-const MOCK_EDITAIS = [
-  { id: "PNLD-2027-2030-ANOS-INICIAIS", name: "PNLD 2027-2030 Anos Iniciais" },
-  { id: "PNLD-2027-2030-ANOS-FINAIS", name: "PNLD 2027-2030 Anos Finais" },
-  { id: "PNLD-2027-2030-ENSINO-MEDIO", name: "PNLD 2027-2030 Ensino Médio" },
-];
+import { pnldAiClient } from "@/lib/pnld-ai-client";
+import type { Edital } from "@moklabs/pnld-types";
 
 export default function PNLDChatPage() {
   const [selectedEdital, setSelectedEdital] = useState<string | null>(null);
+  const [availableEditais, setAvailableEditais] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [isLoadingEditais, setIsLoadingEditais] = useState(true);
+
+  // Fetch available editais on mount
+  useEffect(() => {
+    async function fetchEditais() {
+      try {
+        const response = await pnldAiClient.listEditais();
+        const editais = response.editais.map((edital: Edital) => ({
+          id: edital.id,
+          name: edital.name,
+        }));
+        setAvailableEditais(editais);
+      } catch (error) {
+        console.error("Failed to fetch editais:", error);
+        // Optionally set empty array or show error state
+        setAvailableEditais([]);
+      } finally {
+        setIsLoadingEditais(false);
+      }
+    }
+
+    fetchEditais();
+  }, []);
 
   const handleEditalSelect = useCallback((editalId: string) => {
     setSelectedEdital(editalId);
@@ -23,7 +44,7 @@ export default function PNLDChatPage() {
       <Header
         selectedEdital={selectedEdital}
         onEditalSelect={handleEditalSelect}
-        availableEditais={MOCK_EDITAIS}
+        availableEditais={availableEditais}
       />
 
       {/* Chat - flexible height */}
