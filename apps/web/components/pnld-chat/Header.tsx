@@ -49,7 +49,7 @@ export function Header({
           <div className="relative flex-shrink-0 max-w-[50%] sm:max-w-none">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="bg-white border-2 border-[#0013ff] rounded-[16px]
+              className="bg-white border-2 border-[#0013ff] rounded-[12px]
                          flex items-center justify-between gap-2 sm:gap-3 md:gap-4
                          px-3 sm:px-4 py-2.5 sm:py-3
                          min-w-[140px] sm:min-w-[200px] md:min-w-[300px] lg:min-w-[350px]
@@ -86,7 +86,7 @@ export function Header({
                 {/* Dropdown Menu */}
                 <div
                   className="absolute top-full right-0 left-0 mt-2 z-20
-                                bg-white border-2 border-[#0013ff] rounded-[16px]
+                                bg-white border-2 border-[#0013ff] rounded-[12px]
                                 shadow-lg max-h-[300px] overflow-y-auto"
                 >
                   {isLoadingEditais ? (

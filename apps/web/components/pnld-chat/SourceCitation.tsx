@@ -18,7 +18,7 @@ export function SourceCitation({ sources }: SourceCitationProps) {
   const displaySources = expanded ? sources : topSources;
 
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-[16px] p-4 text-sm">
+    <div className="bg-gray-50 border border-gray-200 rounded-[12px] p-4 text-sm">
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-sans font-bold text-[#0013ff] text-sm">
           📄 Fontes Oficiais ({sources.length})
