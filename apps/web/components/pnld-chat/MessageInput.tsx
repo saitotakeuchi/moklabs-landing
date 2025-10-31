@@ -65,7 +65,12 @@ export function MessageInput({
                      max-h-[200px]
                      resize-none
                      overflow-y-auto
-                     touch-manipulation"
+                     overflow-x-hidden
+                     touch-manipulation
+                     [&::-webkit-scrollbar]:w-2
+                     [&::-webkit-scrollbar-track]:bg-transparent
+                     [&::-webkit-scrollbar-thumb]:bg-gray-300
+                     [&::-webkit-scrollbar-thumb]:rounded-full"
           aria-label="Digite sua pergunta"
         />
 
