@@ -21,7 +21,7 @@ export function Header({
   const selectedEditalName = isLoadingEditais
     ? "Carregando editais..."
     : availableEditais.find((e) => e.id === selectedEdital)?.name ||
-      "Escolha o edital de interesse...";
+      "Selecione um edital...";
 
   return (
     <div className="bg-[#0013ff] w-full">
