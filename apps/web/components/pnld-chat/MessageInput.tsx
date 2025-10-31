@@ -52,6 +52,7 @@ export function MessageInput({
           disabled={disabled}
           placeholder={placeholder}
           rows={1}
+          style={{ scrollbarWidth: 'none' }}
           className="w-full bg-white border-2 border-gray-300
                      rounded-[12px]
                      pl-3 sm:pl-4 md:pl-4
@@ -62,15 +63,12 @@ export function MessageInput({
                      disabled:opacity-50 disabled:cursor-not-allowed
                      focus:outline-none focus:border-gray-400
                      min-h-[44px]
-                     max-h-[200px]
+                     max-h-[120px]
                      resize-none
                      overflow-y-auto
                      overflow-x-hidden
                      touch-manipulation
-                     [&::-webkit-scrollbar]:w-2
-                     [&::-webkit-scrollbar-track]:bg-transparent
-                     [&::-webkit-scrollbar-thumb]:bg-gray-300
-                     [&::-webkit-scrollbar-thumb]:rounded-full"
+                     [&::-webkit-scrollbar]:hidden"
           aria-label="Digite sua pergunta"
         />
 
