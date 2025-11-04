@@ -8,10 +8,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=True,
-        extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
 
     # Application
@@ -32,6 +29,12 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
     OPENAI_MODEL: str = "gpt-4-turbo-preview"
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
+
+    # Hybrid Search Configuration
+    USE_HYBRID_SEARCH: bool = True
+    HYBRID_VECTOR_WEIGHT: float = 0.6
+    HYBRID_BM25_WEIGHT: float = 0.4
+    HYBRID_RRF_K: int = 60
 
     @property
     def cors_origins_list(self) -> List[str]:

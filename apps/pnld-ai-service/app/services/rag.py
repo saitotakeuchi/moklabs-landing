@@ -6,6 +6,7 @@ from app.config import settings
 from app.services.embeddings import get_async_openai_client
 from app.services.vector_search import search_similar_documents
 from app.services.query_processor import get_query_processor
+from app.services.hybrid_search import get_hybrid_searcher
 from app.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -51,16 +52,31 @@ async def generate_rag_response(
         },
     )
 
-    # Step 2: Retrieve relevant documents using expanded query
-    # Using threshold of 0.3 for better recall with Portuguese text
-    # Lower threshold helps catch semantically relevant documents
-    # Increased limit to 10 to get more context for the LLM
-    similar_docs = await search_similar_documents(
-        query=processed_query.expanded,  # Use expanded query for better recall
-        edital_id=edital_id,
-        limit=10,
-        similarity_threshold=0.3,
-    )
+    # Step 2: Retrieve relevant documents
+    # Use hybrid search if enabled, otherwise fall back to vector-only
+    if settings.USE_HYBRID_SEARCH:
+        logger.debug("Using hybrid search (vector + BM25)")
+        hybrid_searcher = get_hybrid_searcher(
+            vector_weight=settings.HYBRID_VECTOR_WEIGHT,
+            bm25_weight=settings.HYBRID_BM25_WEIGHT,
+            rrf_k=settings.HYBRID_RRF_K,
+        )
+        similar_docs = await hybrid_searcher.search(
+            vector_query=processed_query.expanded,  # Use expanded for vector
+            bm25_query=processed_query.expanded,  # Use expanded for BM25
+            edital_id=edital_id,
+            limit=10,
+            vector_threshold=0.3,
+            bm25_min_score=0.01,
+        )
+    else:
+        logger.debug("Using vector-only search")
+        similar_docs = await search_similar_documents(
+            query=processed_query.expanded,
+            edital_id=edital_id,
+            limit=10,
+            similarity_threshold=0.3,
+        )
 
     # Step 3: Build context from retrieved documents
     context = build_context(similar_docs)
@@ -198,15 +214,31 @@ async def generate_rag_response_stream(
         },
     )
 
-    # Step 2: Retrieve relevant documents using expanded query
-    # Using threshold of 0.3 for better recall with Portuguese text
-    # Increased limit to 10 to get more context for the LLM
-    similar_docs = await search_similar_documents(
-        query=processed_query.expanded,  # Use expanded query for better recall
-        edital_id=edital_id,
-        limit=10,
-        similarity_threshold=0.3,
-    )
+    # Step 2: Retrieve relevant documents
+    # Use hybrid search if enabled, otherwise fall back to vector-only
+    if settings.USE_HYBRID_SEARCH:
+        logger.debug("Using hybrid search (streaming)")
+        hybrid_searcher = get_hybrid_searcher(
+            vector_weight=settings.HYBRID_VECTOR_WEIGHT,
+            bm25_weight=settings.HYBRID_BM25_WEIGHT,
+            rrf_k=settings.HYBRID_RRF_K,
+        )
+        similar_docs = await hybrid_searcher.search(
+            vector_query=processed_query.expanded,
+            bm25_query=processed_query.expanded,
+            edital_id=edital_id,
+            limit=10,
+            vector_threshold=0.3,
+            bm25_min_score=0.01,
+        )
+    else:
+        logger.debug("Using vector-only search (streaming)")
+        similar_docs = await search_similar_documents(
+            query=processed_query.expanded,
+            edital_id=edital_id,
+            limit=10,
+            similarity_threshold=0.3,
+        )
 
     # Yield sources immediately
     yield ("sources", similar_docs)
