@@ -8,10 +8,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=True,
-        extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
 
     # Application
@@ -32,6 +29,38 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
     OPENAI_MODEL: str = "gpt-4-turbo-preview"
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
+
+    # Redis Cache Configuration
+    REDIS_URL: str = "redis://localhost:6379"
+    USE_CACHING: bool = True
+    CACHE_SIMILARITY_THRESHOLD: float = 0.95
+    CACHE_MAX_INDEX_SIZE: int = 10000
+    CACHE_EMBEDDING_TTL: int = 86400  # 24 hours
+    CACHE_SEARCH_RESULTS_TTL: int = 3600  # 1 hour
+    CACHE_LLM_RESPONSE_TTL: int = 1800  # 30 minutes
+    CACHE_PROCESSED_QUERY_TTL: int = 7200  # 2 hours
+    CACHE_RAG_RESPONSE_TTL: int = 1800  # 30 minutes
+
+    # Query Processing Configuration
+    USE_QUERY_EXPANSION: bool = True
+    USE_HYDE: bool = True
+
+    # Reranking Configuration
+    USE_RERANKING: bool = True
+    RERANKER_MODEL: str = "BAAI/bge-reranker-v2-m3"
+    RERANKER_TOP_K: int = 10
+
+    # MMR Configuration
+    USE_MMR: bool = True
+    MMR_LAMBDA: float = 0.7
+    MMR_MAX_TOKENS: int = 4000
+
+    # Semantic Chunking Configuration
+    USE_SEMANTIC_CHUNKING: bool = True
+    SEMANTIC_CHUNK_MIN_SIZE: int = 500
+    SEMANTIC_CHUNK_MAX_SIZE: int = 1500
+    SEMANTIC_CHUNK_TARGET_SIZE: int = 1000
+    SEMANTIC_OVERLAP_SENTENCES: int = 1
 
     @property
     def cors_origins_list(self) -> List[str]:
