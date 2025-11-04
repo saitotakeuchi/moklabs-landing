@@ -5,6 +5,10 @@ from openai import AsyncOpenAI
 from app.config import settings
 from app.services.embeddings import get_async_openai_client
 from app.services.vector_search import search_similar_documents
+from app.services.query_processor import get_query_processor
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 async def generate_rag_response(
@@ -18,9 +22,10 @@ async def generate_rag_response(
     Generate a response using RAG pipeline.
 
     Steps:
-    1. Retrieve relevant documents using vector search
-    2. Build context from retrieved documents
-    3. Generate response using LLM with context
+    1. Preprocess and expand query
+    2. Retrieve relevant documents using vector search
+    3. Build context from retrieved documents
+    4. Generate response using LLM with context
 
     Args:
         query: User's question
@@ -32,23 +37,37 @@ async def generate_rag_response(
     Returns:
         Tuple of (response_text, source_documents)
     """
-    # Step 1: Retrieve relevant documents
+    # Step 1: Preprocess query
+    query_processor = get_query_processor()
+    processed_query = await query_processor.process(query)
+
+    logger.info(
+        "Query preprocessing completed",
+        extra={
+            "original_query": query,
+            "intent": processed_query.intent.category if processed_query.intent else None,
+            "entities_count": len(processed_query.entities),
+            "synonyms_count": len(processed_query.synonyms),
+        },
+    )
+
+    # Step 2: Retrieve relevant documents using expanded query
     # Using threshold of 0.3 for better recall with Portuguese text
     # Lower threshold helps catch semantically relevant documents
     # Increased limit to 10 to get more context for the LLM
     similar_docs = await search_similar_documents(
-        query=query,
+        query=processed_query.expanded,  # Use expanded query for better recall
         edital_id=edital_id,
         limit=10,
         similarity_threshold=0.3,
     )
 
-    # Step 2: Build context from retrieved documents
+    # Step 3: Build context from retrieved documents
     context = build_context(similar_docs)
 
-    # Step 3: Generate response using LLM
+    # Step 4: Generate response using LLM
     response_text = await generate_llm_response(
-        query=query,
+        query=query,  # Use original query for LLM (more natural)
         context=context,
         conversation_history=conversation_history or [],
         max_tokens=max_tokens,
@@ -165,11 +184,25 @@ async def generate_rag_response_stream(
     Yields:
         Tuples of (event_type, data) for streaming
     """
-    # Step 1: Retrieve relevant documents
+    # Step 1: Preprocess query
+    query_processor = get_query_processor()
+    processed_query = await query_processor.process(query)
+
+    logger.info(
+        "Query preprocessing completed (streaming)",
+        extra={
+            "original_query": query,
+            "intent": processed_query.intent.category if processed_query.intent else None,
+            "entities_count": len(processed_query.entities),
+            "synonyms_count": len(processed_query.synonyms),
+        },
+    )
+
+    # Step 2: Retrieve relevant documents using expanded query
     # Using threshold of 0.3 for better recall with Portuguese text
     # Increased limit to 10 to get more context for the LLM
     similar_docs = await search_similar_documents(
-        query=query,
+        query=processed_query.expanded,  # Use expanded query for better recall
         edital_id=edital_id,
         limit=10,
         similarity_threshold=0.3,
