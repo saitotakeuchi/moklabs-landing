@@ -36,6 +36,15 @@ class Settings(BaseSettings):
     HYBRID_BM25_WEIGHT: float = 0.4
     HYBRID_RRF_K: int = 60
 
+    # Reranking Configuration
+    USE_RERANKING: bool = True
+    RERANKER_MODEL: str = "unicamp-dl/mMiniLM-L6-v2-mmarco-v1"
+    RERANKER_TOP_K: int = 10
+    RERANKER_BATCH_SIZE: int = 16
+    RERANKER_MAX_LENGTH: int = 512
+    RERANKER_ORIGINAL_SCORE_WEIGHT: float = 0.3
+    RERANKER_SCORE_WEIGHT: float = 0.7
+
     @property
     def cors_origins_list(self) -> List[str]:
         """Parse CORS origins string into list."""

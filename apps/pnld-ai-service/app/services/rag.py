@@ -7,6 +7,7 @@ from app.services.embeddings import get_async_openai_client
 from app.services.vector_search import search_similar_documents
 from app.services.query_processor import get_query_processor
 from app.services.hybrid_search import get_hybrid_searcher
+from app.services.reranker import get_reranker
 from app.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -78,10 +79,33 @@ async def generate_rag_response(
             similarity_threshold=0.3,
         )
 
-    # Step 3: Build context from retrieved documents
+    # Step 3: Apply reranking if enabled
+    if settings.USE_RERANKING and similar_docs:
+        logger.debug("Applying cross-encoder reranking")
+        reranker = get_reranker(
+            model_name=settings.RERANKER_MODEL,
+            max_length=settings.RERANKER_MAX_LENGTH,
+            batch_size=settings.RERANKER_BATCH_SIZE,
+        )
+        similar_docs = await reranker.rerank(
+            query=query,  # Use original query for reranking
+            documents=similar_docs,
+            top_k=settings.RERANKER_TOP_K,
+            original_score_weight=settings.RERANKER_ORIGINAL_SCORE_WEIGHT,
+            rerank_score_weight=settings.RERANKER_SCORE_WEIGHT,
+        )
+        logger.info(
+            "Reranking applied",
+            extra={
+                "final_count": len(similar_docs),
+                "top_final_score": similar_docs[0].get("final_score") if similar_docs else None,
+            },
+        )
+
+    # Step 4: Build context from retrieved documents
     context = build_context(similar_docs)
 
-    # Step 4: Generate response using LLM
+    # Step 5: Generate response using LLM
     response_text = await generate_llm_response(
         query=query,  # Use original query for LLM (more natural)
         context=context,
@@ -240,13 +264,29 @@ async def generate_rag_response_stream(
             similarity_threshold=0.3,
         )
 
-    # Yield sources immediately
+    # Step 3: Apply reranking if enabled
+    if settings.USE_RERANKING and similar_docs:
+        logger.debug("Applying cross-encoder reranking (streaming)")
+        reranker = get_reranker(
+            model_name=settings.RERANKER_MODEL,
+            max_length=settings.RERANKER_MAX_LENGTH,
+            batch_size=settings.RERANKER_BATCH_SIZE,
+        )
+        similar_docs = await reranker.rerank(
+            query=query,
+            documents=similar_docs,
+            top_k=settings.RERANKER_TOP_K,
+            original_score_weight=settings.RERANKER_ORIGINAL_SCORE_WEIGHT,
+            rerank_score_weight=settings.RERANKER_SCORE_WEIGHT,
+        )
+
+    # Yield sources after reranking
     yield ("sources", similar_docs)
 
-    # Step 2: Build context from retrieved documents
+    # Step 4: Build context from retrieved documents
     context = build_context(similar_docs)
 
-    # Step 3: Stream LLM response
+    # Step 5: Stream LLM response
     async for token in generate_llm_response_stream(
         query=query,
         context=context,
