@@ -45,6 +45,11 @@ class Settings(BaseSettings):
     RERANKER_ORIGINAL_SCORE_WEIGHT: float = 0.3
     RERANKER_SCORE_WEIGHT: float = 0.7
 
+    # MMR (Maximal Marginal Relevance) Configuration
+    USE_MMR: bool = True
+    MMR_LAMBDA: float = 0.7  # 0=max diversity, 1=max relevance
+    MMR_MAX_TOKENS: int = 3000
+
     @property
     def cors_origins_list(self) -> List[str]:
         """Parse CORS origins string into list."""

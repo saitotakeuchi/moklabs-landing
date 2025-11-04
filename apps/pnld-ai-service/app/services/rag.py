@@ -3,11 +3,12 @@
 from typing import List, Optional, AsyncGenerator
 from openai import AsyncOpenAI
 from app.config import settings
-from app.services.embeddings import get_async_openai_client
+from app.services.embeddings import get_async_openai_client, get_embedding
 from app.services.vector_search import search_similar_documents
 from app.services.query_processor import get_query_processor
 from app.services.hybrid_search import get_hybrid_searcher
 from app.services.reranker import get_reranker
+from app.services.mmr_selector import get_mmr_selector
 from app.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -102,10 +103,38 @@ async def generate_rag_response(
             },
         )
 
-    # Step 4: Build context from retrieved documents
+    # Step 4: Apply MMR for diverse context selection if enabled
+    if settings.USE_MMR and similar_docs:
+        logger.debug("Applying MMR for diverse context selection")
+        mmr_selector = get_mmr_selector(lambda_param=settings.MMR_LAMBDA)
+
+        # Generate query embedding for MMR
+        query_embedding = await get_embedding(processed_query.expanded)
+
+        # Select diverse documents
+        similar_docs = await mmr_selector.select_diverse(
+            query_embedding=query_embedding,
+            documents=similar_docs,
+            max_documents=10,
+            max_tokens=settings.MMR_MAX_TOKENS,
+        )
+
+        # Calculate and log diversity metrics
+        diversity_metrics = mmr_selector.calculate_diversity_metrics(similar_docs)
+        logger.info(
+            "MMR selection applied",
+            extra={
+                "final_count": len(similar_docs),
+                "avg_similarity": diversity_metrics.get("avg_pairwise_similarity"),
+                "min_similarity": diversity_metrics.get("min_pairwise_similarity"),
+                "max_similarity": diversity_metrics.get("max_pairwise_similarity"),
+            },
+        )
+
+    # Step 5: Build context from retrieved documents
     context = build_context(similar_docs)
 
-    # Step 5: Generate response using LLM
+    # Step 6: Generate response using LLM
     response_text = await generate_llm_response(
         query=query,  # Use original query for LLM (more natural)
         context=context,
@@ -280,7 +309,35 @@ async def generate_rag_response_stream(
             rerank_score_weight=settings.RERANKER_SCORE_WEIGHT,
         )
 
-    # Yield sources after reranking
+    # Step 4: Apply MMR for diverse context selection if enabled
+    if settings.USE_MMR and similar_docs:
+        logger.debug("Applying MMR for diverse context selection (streaming)")
+        mmr_selector = get_mmr_selector(lambda_param=settings.MMR_LAMBDA)
+
+        # Generate query embedding for MMR
+        query_embedding = await get_embedding(processed_query.expanded)
+
+        # Select diverse documents
+        similar_docs = await mmr_selector.select_diverse(
+            query_embedding=query_embedding,
+            documents=similar_docs,
+            max_documents=10,
+            max_tokens=settings.MMR_MAX_TOKENS,
+        )
+
+        # Calculate and log diversity metrics
+        diversity_metrics = mmr_selector.calculate_diversity_metrics(similar_docs)
+        logger.info(
+            "MMR selection applied (streaming)",
+            extra={
+                "final_count": len(similar_docs),
+                "avg_similarity": diversity_metrics.get("avg_pairwise_similarity"),
+                "min_similarity": diversity_metrics.get("min_pairwise_similarity"),
+                "max_similarity": diversity_metrics.get("max_pairwise_similarity"),
+            },
+        )
+
+    # Yield sources after MMR selection
     yield ("sources", similar_docs)
 
     # Step 4: Build context from retrieved documents
