@@ -50,6 +50,13 @@ class Settings(BaseSettings):
     MMR_LAMBDA: float = 0.7  # 0=max diversity, 1=max relevance
     MMR_MAX_TOKENS: int = 3000
 
+    # Semantic Chunking Configuration
+    USE_SEMANTIC_CHUNKING: bool = True
+    SEMANTIC_CHUNK_MIN_SIZE: int = 500
+    SEMANTIC_CHUNK_MAX_SIZE: int = 1500
+    SEMANTIC_CHUNK_TARGET_SIZE: int = 1000
+    SEMANTIC_OVERLAP_SENTENCES: int = 1
+
     @property
     def cors_origins_list(self) -> List[str]:
         """Parse CORS origins string into list."""
