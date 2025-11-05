@@ -3,7 +3,7 @@
 from typing import List, Optional, AsyncGenerator
 from openai import AsyncOpenAI
 from app.config import settings
-from app.services.embeddings import get_async_openai_client, get_embedding
+from app.services.embeddings import get_async_openai_client, generate_embedding
 from app.services.vector_search import search_similar_documents
 from app.services.query_processor import get_query_processor
 from app.services.hybrid_search import get_hybrid_searcher
@@ -109,7 +109,7 @@ async def generate_rag_response(
         mmr_selector = get_mmr_selector(lambda_param=settings.MMR_LAMBDA)
 
         # Generate query embedding for MMR
-        query_embedding = await get_embedding(processed_query.expanded)
+        query_embedding = await generate_embedding(processed_query.expanded)
 
         # Select diverse documents
         similar_docs = await mmr_selector.select_diverse(
@@ -315,7 +315,7 @@ async def generate_rag_response_stream(
         mmr_selector = get_mmr_selector(lambda_param=settings.MMR_LAMBDA)
 
         # Generate query embedding for MMR
-        query_embedding = await get_embedding(processed_query.expanded)
+        query_embedding = await generate_embedding(processed_query.expanded)
 
         # Select diverse documents
         similar_docs = await mmr_selector.select_diverse(
