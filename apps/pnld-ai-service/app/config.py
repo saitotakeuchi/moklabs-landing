@@ -45,15 +45,25 @@ class Settings(BaseSettings):
     USE_QUERY_EXPANSION: bool = True
     USE_HYDE: bool = True
 
+    # Hybrid Search Configuration
+    USE_HYBRID_SEARCH: bool = True
+    HYBRID_VECTOR_WEIGHT: float = 0.6
+    HYBRID_BM25_WEIGHT: float = 0.4
+    HYBRID_RRF_K: int = 60
+
     # Reranking Configuration
     USE_RERANKING: bool = True
-    RERANKER_MODEL: str = "BAAI/bge-reranker-v2-m3"
+    RERANKER_MODEL: str = "unicamp-dl/mMiniLM-L6-v2-mmarco-v1"
     RERANKER_TOP_K: int = 10
+    RERANKER_BATCH_SIZE: int = 16
+    RERANKER_MAX_LENGTH: int = 512
+    RERANKER_ORIGINAL_SCORE_WEIGHT: float = 0.3
+    RERANKER_SCORE_WEIGHT: float = 0.7
 
-    # MMR Configuration
+    # MMR (Maximal Marginal Relevance) Configuration
     USE_MMR: bool = True
-    MMR_LAMBDA: float = 0.7
-    MMR_MAX_TOKENS: int = 4000
+    MMR_LAMBDA: float = 0.7  # 0=max diversity, 1=max relevance
+    MMR_MAX_TOKENS: int = 3000
 
     # Semantic Chunking Configuration
     USE_SEMANTIC_CHUNKING: bool = True

@@ -1,13 +1,14 @@
 """RAG (Retrieval-Augmented Generation) service."""
 
 from typing import List, Optional, AsyncGenerator
-import hashlib
-import json
 from openai import AsyncOpenAI
 from app.config import settings
 from app.services.embeddings import get_async_openai_client, generate_embedding
 from app.services.vector_search import search_similar_documents
-from app.services.cache_manager import get_semantic_cache
+from app.services.query_processor import get_query_processor
+from app.services.hybrid_search import get_hybrid_searcher
+from app.services.reranker import get_reranker
+from app.services.mmr_selector import get_mmr_selector
 from app.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -24,9 +25,10 @@ async def generate_rag_response(
     Generate a response using RAG pipeline.
 
     Steps:
-    1. Retrieve relevant documents using vector search (with caching)
-    2. Build context from retrieved documents
-    3. Generate response using LLM with context (with caching)
+    1. Preprocess and expand query
+    2. Retrieve relevant documents using vector search
+    3. Build context from retrieved documents
+    4. Generate response using LLM with context
 
     Args:
         query: User's question
@@ -38,75 +40,107 @@ async def generate_rag_response(
     Returns:
         Tuple of (response_text, source_documents)
     """
-    # Check if caching is enabled
-    if not settings.USE_CACHING:
-        # Original implementation without caching
-        similar_docs = await search_similar_documents(
-            query=query,
-            edital_id=edital_id,
-            limit=10,
-            similarity_threshold=0.3,
-        )
-        context = build_context(similar_docs)
-        response_text = await generate_llm_response(
-            query=query,
-            context=context,
-            conversation_history=conversation_history or [],
-            max_tokens=max_tokens,
-            temperature=temperature,
-        )
-        return response_text, similar_docs
+    # Step 1: Preprocess query
+    query_processor = get_query_processor()
+    processed_query = await query_processor.process(query)
 
-    # Get cache instance
-    cache = await get_semantic_cache()
-
-    # Step 1: Retrieve relevant documents with semantic caching
-    # Generate query embedding for semantic cache matching
-    query_embedding = await generate_embedding(query)
-
-    # Create cache key for search results
-    search_cache_key = _generate_search_cache_key(query, edital_id)
-
-    async def search_func():
-        return await search_similar_documents(
-            query=query,
-            edital_id=edital_id,
-            limit=10,
-            similarity_threshold=0.3,
-        )
-
-    similar_docs = await cache.get_or_compute(
-        key=search_cache_key,
-        compute_func=search_func,
-        semantic_key=query_embedding,
-        cache_type="search_results",
+    logger.info(
+        "Query preprocessing completed",
+        extra={
+            "original_query": query,
+            "intent": processed_query.intent.category if processed_query.intent else None,
+            "entities_count": len(processed_query.entities),
+            "synonyms_count": len(processed_query.synonyms),
+        },
     )
 
-    logger.debug(f"Retrieved {len(similar_docs)} documents for query")
+    # Step 2: Retrieve relevant documents
+    # Use hybrid search if enabled, otherwise fall back to vector-only
+    if settings.USE_HYBRID_SEARCH:
+        logger.debug("Using hybrid search (vector + BM25)")
+        hybrid_searcher = get_hybrid_searcher(
+            vector_weight=settings.HYBRID_VECTOR_WEIGHT,
+            bm25_weight=settings.HYBRID_BM25_WEIGHT,
+            rrf_k=settings.HYBRID_RRF_K,
+        )
+        similar_docs = await hybrid_searcher.search(
+            vector_query=processed_query.expanded,  # Use expanded for vector
+            bm25_query=processed_query.expanded,  # Use expanded for BM25
+            edital_id=edital_id,
+            limit=10,
+            vector_threshold=0.3,
+            bm25_min_score=0.01,
+        )
+    else:
+        logger.debug("Using vector-only search")
+        similar_docs = await search_similar_documents(
+            query=processed_query.expanded,
+            edital_id=edital_id,
+            limit=10,
+            similarity_threshold=0.3,
+        )
 
-    # Step 2: Build context from retrieved documents
+    # Step 3: Apply reranking if enabled
+    if settings.USE_RERANKING and similar_docs:
+        logger.debug("Applying cross-encoder reranking")
+        reranker = get_reranker(
+            model_name=settings.RERANKER_MODEL,
+            max_length=settings.RERANKER_MAX_LENGTH,
+            batch_size=settings.RERANKER_BATCH_SIZE,
+        )
+        similar_docs = await reranker.rerank(
+            query=query,  # Use original query for reranking
+            documents=similar_docs,
+            top_k=settings.RERANKER_TOP_K,
+            original_score_weight=settings.RERANKER_ORIGINAL_SCORE_WEIGHT,
+            rerank_score_weight=settings.RERANKER_SCORE_WEIGHT,
+        )
+        logger.info(
+            "Reranking applied",
+            extra={
+                "final_count": len(similar_docs),
+                "top_final_score": similar_docs[0].get("final_score") if similar_docs else None,
+            },
+        )
+
+    # Step 4: Apply MMR for diverse context selection if enabled
+    if settings.USE_MMR and similar_docs:
+        logger.debug("Applying MMR for diverse context selection")
+        mmr_selector = get_mmr_selector(lambda_param=settings.MMR_LAMBDA)
+
+        # Generate query embedding for MMR
+        query_embedding = await generate_embedding(processed_query.expanded)
+
+        # Select diverse documents
+        similar_docs = await mmr_selector.select_diverse(
+            query_embedding=query_embedding,
+            documents=similar_docs,
+            max_documents=10,
+            max_tokens=settings.MMR_MAX_TOKENS,
+        )
+
+        # Calculate and log diversity metrics
+        diversity_metrics = mmr_selector.calculate_diversity_metrics(similar_docs)
+        logger.info(
+            "MMR selection applied",
+            extra={
+                "final_count": len(similar_docs),
+                "avg_similarity": diversity_metrics.get("avg_pairwise_similarity"),
+                "min_similarity": diversity_metrics.get("min_pairwise_similarity"),
+                "max_similarity": diversity_metrics.get("max_pairwise_similarity"),
+            },
+        )
+
+    # Step 5: Build context from retrieved documents
     context = build_context(similar_docs)
 
-    # Step 3: Generate response using LLM with caching
-    # Create cache key for LLM response
-    llm_cache_key = _generate_llm_cache_key(
-        query, context, conversation_history, max_tokens, temperature
-    )
-
-    async def llm_func():
-        return await generate_llm_response(
-            query=query,
-            context=context,
-            conversation_history=conversation_history or [],
-            max_tokens=max_tokens,
-            temperature=temperature,
-        )
-
-    response_text = await cache.get_or_compute(
-        key=llm_cache_key,
-        compute_func=llm_func,
-        semantic_key=query_embedding,
-        cache_type="rag_response",
+    # Step 6: Generate response using LLM
+    response_text = await generate_llm_response(
+        query=query,  # Use original query for LLM (more natural)
+        context=context,
+        conversation_history=conversation_history or [],
+        max_tokens=max_tokens,
+        temperature=temperature,
     )
 
     return response_text, similar_docs
@@ -219,42 +253,97 @@ async def generate_rag_response_stream(
     Yields:
         Tuples of (event_type, data) for streaming
     """
-    # Check if caching is enabled for search results
-    if settings.USE_CACHING:
-        cache = await get_semantic_cache()
-        query_embedding = await generate_embedding(query)
-        search_cache_key = _generate_search_cache_key(query, edital_id)
+    # Step 1: Preprocess query
+    query_processor = get_query_processor()
+    processed_query = await query_processor.process(query)
 
-        async def search_func():
-            return await search_similar_documents(
-                query=query,
-                edital_id=edital_id,
-                limit=10,
-                similarity_threshold=0.3,
-            )
+    logger.info(
+        "Query preprocessing completed (streaming)",
+        extra={
+            "original_query": query,
+            "intent": processed_query.intent.category if processed_query.intent else None,
+            "entities_count": len(processed_query.entities),
+            "synonyms_count": len(processed_query.synonyms),
+        },
+    )
 
-        similar_docs = await cache.get_or_compute(
-            key=search_cache_key,
-            compute_func=search_func,
-            semantic_key=query_embedding,
-            cache_type="search_results",
+    # Step 2: Retrieve relevant documents
+    # Use hybrid search if enabled, otherwise fall back to vector-only
+    if settings.USE_HYBRID_SEARCH:
+        logger.debug("Using hybrid search (streaming)")
+        hybrid_searcher = get_hybrid_searcher(
+            vector_weight=settings.HYBRID_VECTOR_WEIGHT,
+            bm25_weight=settings.HYBRID_BM25_WEIGHT,
+            rrf_k=settings.HYBRID_RRF_K,
+        )
+        similar_docs = await hybrid_searcher.search(
+            vector_query=processed_query.expanded,
+            bm25_query=processed_query.expanded,
+            edital_id=edital_id,
+            limit=10,
+            vector_threshold=0.3,
+            bm25_min_score=0.01,
         )
     else:
-        # Original implementation without caching
+        logger.debug("Using vector-only search (streaming)")
         similar_docs = await search_similar_documents(
-            query=query,
+            query=processed_query.expanded,
             edital_id=edital_id,
             limit=10,
             similarity_threshold=0.3,
         )
 
-    # Yield sources immediately
+    # Step 3: Apply reranking if enabled
+    if settings.USE_RERANKING and similar_docs:
+        logger.debug("Applying cross-encoder reranking (streaming)")
+        reranker = get_reranker(
+            model_name=settings.RERANKER_MODEL,
+            max_length=settings.RERANKER_MAX_LENGTH,
+            batch_size=settings.RERANKER_BATCH_SIZE,
+        )
+        similar_docs = await reranker.rerank(
+            query=query,
+            documents=similar_docs,
+            top_k=settings.RERANKER_TOP_K,
+            original_score_weight=settings.RERANKER_ORIGINAL_SCORE_WEIGHT,
+            rerank_score_weight=settings.RERANKER_SCORE_WEIGHT,
+        )
+
+    # Step 4: Apply MMR for diverse context selection if enabled
+    if settings.USE_MMR and similar_docs:
+        logger.debug("Applying MMR for diverse context selection (streaming)")
+        mmr_selector = get_mmr_selector(lambda_param=settings.MMR_LAMBDA)
+
+        # Generate query embedding for MMR
+        query_embedding = await generate_embedding(processed_query.expanded)
+
+        # Select diverse documents
+        similar_docs = await mmr_selector.select_diverse(
+            query_embedding=query_embedding,
+            documents=similar_docs,
+            max_documents=10,
+            max_tokens=settings.MMR_MAX_TOKENS,
+        )
+
+        # Calculate and log diversity metrics
+        diversity_metrics = mmr_selector.calculate_diversity_metrics(similar_docs)
+        logger.info(
+            "MMR selection applied (streaming)",
+            extra={
+                "final_count": len(similar_docs),
+                "avg_similarity": diversity_metrics.get("avg_pairwise_similarity"),
+                "min_similarity": diversity_metrics.get("min_pairwise_similarity"),
+                "max_similarity": diversity_metrics.get("max_pairwise_similarity"),
+            },
+        )
+
+    # Yield sources after MMR selection
     yield ("sources", similar_docs)
 
-    # Step 2: Build context from retrieved documents
+    # Step 4: Build context from retrieved documents
     context = build_context(similar_docs)
 
-    # Step 3: Stream LLM response (streaming responses are not cached)
+    # Step 5: Stream LLM response
     async for token in generate_llm_response_stream(
         query=query,
         context=context,
@@ -321,64 +410,3 @@ Context:
     async for chunk in stream:
         if chunk.choices[0].delta.content:
             yield chunk.choices[0].delta.content
-
-
-def _generate_search_cache_key(query: str, edital_id: Optional[str]) -> str:
-    """
-    Generate cache key for search results.
-
-    Args:
-        query: Search query
-        edital_id: Optional edital ID
-
-    Returns:
-        Deterministic cache key
-    """
-    key_data = {
-        "query": query.strip().lower(),
-        "edital_id": edital_id,
-        "limit": 10,
-        "threshold": 0.3,
-    }
-    key_string = json.dumps(key_data, sort_keys=True)
-    key_hash = hashlib.md5(key_string.encode()).hexdigest()
-    return f"search_results:{key_hash}"
-
-
-def _generate_llm_cache_key(
-    query: str,
-    context: str,
-    conversation_history: List[dict],
-    max_tokens: int,
-    temperature: float,
-) -> str:
-    """
-    Generate cache key for LLM response.
-
-    Args:
-        query: User query
-        context: Context string
-        conversation_history: Conversation history
-        max_tokens: Max tokens parameter
-        temperature: Temperature parameter
-
-    Returns:
-        Deterministic cache key
-    """
-    # Hash the context to keep key size manageable
-    context_hash = hashlib.md5(context.encode()).hexdigest()
-
-    # Hash conversation history
-    history_str = json.dumps(conversation_history, sort_keys=True)
-    history_hash = hashlib.md5(history_str.encode()).hexdigest()
-
-    key_data = {
-        "query": query.strip().lower(),
-        "context_hash": context_hash,
-        "history_hash": history_hash,
-        "max_tokens": max_tokens,
-        "temperature": temperature,
-    }
-    key_string = json.dumps(key_data, sort_keys=True)
-    key_hash = hashlib.md5(key_string.encode()).hexdigest()
-    return f"rag_response:{key_hash}"
