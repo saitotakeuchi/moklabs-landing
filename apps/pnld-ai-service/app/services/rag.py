@@ -5,7 +5,7 @@ import hashlib
 import json
 from openai import AsyncOpenAI
 from app.config import settings
-from app.services.embeddings import get_async_openai_client, get_embedding
+from app.services.embeddings import get_async_openai_client, generate_embedding
 from app.services.vector_search import search_similar_documents
 from app.services.cache_manager import get_semantic_cache
 from app.utils.logging import get_logger
@@ -62,7 +62,7 @@ async def generate_rag_response(
 
     # Step 1: Retrieve relevant documents with semantic caching
     # Generate query embedding for semantic cache matching
-    query_embedding = await get_embedding(query)
+    query_embedding = await generate_embedding(query)
 
     # Create cache key for search results
     search_cache_key = _generate_search_cache_key(query, edital_id)
@@ -222,7 +222,7 @@ async def generate_rag_response_stream(
     # Check if caching is enabled for search results
     if settings.USE_CACHING:
         cache = await get_semantic_cache()
-        query_embedding = await get_embedding(query)
+        query_embedding = await generate_embedding(query)
         search_cache_key = _generate_search_cache_key(query, edital_id)
 
         async def search_func():
