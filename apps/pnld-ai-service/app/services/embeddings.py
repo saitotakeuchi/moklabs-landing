@@ -5,6 +5,9 @@ from openai import AsyncOpenAI
 from pypdf import PdfReader
 from app.config import settings
 from app.models.document import PageChunk
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class TextlessPdfError(Exception):
@@ -18,6 +21,7 @@ class TextlessPdfError(Exception):
 
     Resolution requires OCR processing to extract text from images.
     """
+
     pass
 
 
@@ -193,6 +197,8 @@ def process_pdf_to_chunks(
     This is the main function for PDF processing. It extracts pages and
     splits large pages into multiple chunks while maintaining page references.
 
+    Uses semantic chunking if enabled, otherwise falls back to character-based chunking.
+
     Args:
         pdf_file: Binary file object containing the PDF
         max_chunk_size: Maximum characters per chunk
@@ -211,7 +217,18 @@ def process_pdf_to_chunks(
     # Extract pages from PDF (raises TextlessPdfError if no text found)
     page_chunks = extract_pages_from_pdf(pdf_file)
 
-    # Further chunk pages that are too large
+    # Use semantic chunking if enabled
+    if settings.USE_SEMANTIC_CHUNKING:
+        try:
+            return process_pdf_to_chunks_semantic(page_chunks)
+        except Exception as e:
+            logger.warning(
+                f"Semantic chunking failed, falling back to character-based chunking",
+                extra={"error": str(e), "error_type": type(e).__name__},
+            )
+            # Fall through to character-based chunking
+
+    # Character-based chunking (legacy)
     all_chunks = []
     for page_chunk in page_chunks:
         if len(page_chunk.content) > max_chunk_size:
@@ -225,6 +242,68 @@ def process_pdf_to_chunks(
             all_chunks.extend(sub_chunks)
         else:
             all_chunks.append(page_chunk)
+
+    return all_chunks
+
+
+def process_pdf_to_chunks_semantic(page_chunks: List[PageChunk]) -> List[PageChunk]:
+    """
+    Process PDF pages using semantic chunking.
+
+    This method:
+    1. Chunks each page using semantic boundaries (sentences, paragraphs)
+    2. Respects document structure (headers, lists)
+    3. Adds semantic overlap between chunks
+
+    Args:
+        page_chunks: List of PageChunk objects (one per page)
+
+    Returns:
+        List of PageChunk objects with semantic chunking applied
+
+    Raises:
+        ImportError: If semantic_chunker module cannot be imported
+    """
+    from app.services.semantic_chunker import get_semantic_chunker
+
+    chunker = get_semantic_chunker()
+    all_chunks = []
+    global_chunk_index = 0
+
+    for page_chunk in page_chunks:
+        # Apply semantic chunking to page content
+        semantic_chunks = chunker.chunk_document(
+            text=page_chunk.content,
+            page_number=page_chunk.page_number,
+            min_size=settings.SEMANTIC_CHUNK_MIN_SIZE,
+            max_size=settings.SEMANTIC_CHUNK_MAX_SIZE,
+            target_size=settings.SEMANTIC_CHUNK_TARGET_SIZE,
+        )
+
+        # Add semantic overlap if requested
+        if settings.SEMANTIC_OVERLAP_SENTENCES > 0:
+            semantic_chunks = chunker.add_semantic_overlap(
+                semantic_chunks,
+                overlap_sentences=settings.SEMANTIC_OVERLAP_SENTENCES,
+            )
+
+        # Convert to PageChunk objects
+        for semantic_chunk in semantic_chunks:
+            page_chunk = chunker.semantic_chunk_to_page_chunk(
+                semantic_chunk,
+                chunk_index=global_chunk_index,
+            )
+            all_chunks.append(page_chunk)
+            global_chunk_index += 1
+
+    logger.info(
+        f"Semantic chunking completed",
+        extra={
+            "pages": len(page_chunks),
+            "semantic_chunks": len(all_chunks),
+            "avg_chunks_per_page": len(all_chunks) / len(page_chunks) if page_chunks else 0,
+        },
+    )
 
     return all_chunks
 

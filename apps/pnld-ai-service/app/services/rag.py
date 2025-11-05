@@ -3,8 +3,15 @@
 from typing import List, Optional, AsyncGenerator
 from openai import AsyncOpenAI
 from app.config import settings
-from app.services.embeddings import get_async_openai_client
+from app.services.embeddings import get_async_openai_client, get_embedding
 from app.services.vector_search import search_similar_documents
+from app.services.query_processor import get_query_processor
+from app.services.hybrid_search import get_hybrid_searcher
+from app.services.reranker import get_reranker
+from app.services.mmr_selector import get_mmr_selector
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 async def generate_rag_response(
@@ -18,9 +25,10 @@ async def generate_rag_response(
     Generate a response using RAG pipeline.
 
     Steps:
-    1. Retrieve relevant documents using vector search
-    2. Build context from retrieved documents
-    3. Generate response using LLM with context
+    1. Preprocess and expand query
+    2. Retrieve relevant documents using vector search
+    3. Build context from retrieved documents
+    4. Generate response using LLM with context
 
     Args:
         query: User's question
@@ -32,23 +40,103 @@ async def generate_rag_response(
     Returns:
         Tuple of (response_text, source_documents)
     """
-    # Step 1: Retrieve relevant documents
-    # Using threshold of 0.3 for better recall with Portuguese text
-    # Lower threshold helps catch semantically relevant documents
-    # Increased limit to 10 to get more context for the LLM
-    similar_docs = await search_similar_documents(
-        query=query,
-        edital_id=edital_id,
-        limit=10,
-        similarity_threshold=0.3,
+    # Step 1: Preprocess query
+    query_processor = get_query_processor()
+    processed_query = await query_processor.process(query)
+
+    logger.info(
+        "Query preprocessing completed",
+        extra={
+            "original_query": query,
+            "intent": processed_query.intent.category if processed_query.intent else None,
+            "entities_count": len(processed_query.entities),
+            "synonyms_count": len(processed_query.synonyms),
+        },
     )
 
-    # Step 2: Build context from retrieved documents
+    # Step 2: Retrieve relevant documents
+    # Use hybrid search if enabled, otherwise fall back to vector-only
+    if settings.USE_HYBRID_SEARCH:
+        logger.debug("Using hybrid search (vector + BM25)")
+        hybrid_searcher = get_hybrid_searcher(
+            vector_weight=settings.HYBRID_VECTOR_WEIGHT,
+            bm25_weight=settings.HYBRID_BM25_WEIGHT,
+            rrf_k=settings.HYBRID_RRF_K,
+        )
+        similar_docs = await hybrid_searcher.search(
+            vector_query=processed_query.expanded,  # Use expanded for vector
+            bm25_query=processed_query.expanded,  # Use expanded for BM25
+            edital_id=edital_id,
+            limit=10,
+            vector_threshold=0.3,
+            bm25_min_score=0.01,
+        )
+    else:
+        logger.debug("Using vector-only search")
+        similar_docs = await search_similar_documents(
+            query=processed_query.expanded,
+            edital_id=edital_id,
+            limit=10,
+            similarity_threshold=0.3,
+        )
+
+    # Step 3: Apply reranking if enabled
+    if settings.USE_RERANKING and similar_docs:
+        logger.debug("Applying cross-encoder reranking")
+        reranker = get_reranker(
+            model_name=settings.RERANKER_MODEL,
+            max_length=settings.RERANKER_MAX_LENGTH,
+            batch_size=settings.RERANKER_BATCH_SIZE,
+        )
+        similar_docs = await reranker.rerank(
+            query=query,  # Use original query for reranking
+            documents=similar_docs,
+            top_k=settings.RERANKER_TOP_K,
+            original_score_weight=settings.RERANKER_ORIGINAL_SCORE_WEIGHT,
+            rerank_score_weight=settings.RERANKER_SCORE_WEIGHT,
+        )
+        logger.info(
+            "Reranking applied",
+            extra={
+                "final_count": len(similar_docs),
+                "top_final_score": similar_docs[0].get("final_score") if similar_docs else None,
+            },
+        )
+
+    # Step 4: Apply MMR for diverse context selection if enabled
+    if settings.USE_MMR and similar_docs:
+        logger.debug("Applying MMR for diverse context selection")
+        mmr_selector = get_mmr_selector(lambda_param=settings.MMR_LAMBDA)
+
+        # Generate query embedding for MMR
+        query_embedding = await get_embedding(processed_query.expanded)
+
+        # Select diverse documents
+        similar_docs = await mmr_selector.select_diverse(
+            query_embedding=query_embedding,
+            documents=similar_docs,
+            max_documents=10,
+            max_tokens=settings.MMR_MAX_TOKENS,
+        )
+
+        # Calculate and log diversity metrics
+        diversity_metrics = mmr_selector.calculate_diversity_metrics(similar_docs)
+        logger.info(
+            "MMR selection applied",
+            extra={
+                "final_count": len(similar_docs),
+                "avg_similarity": diversity_metrics.get("avg_pairwise_similarity"),
+                "min_similarity": diversity_metrics.get("min_pairwise_similarity"),
+                "max_similarity": diversity_metrics.get("max_pairwise_similarity"),
+            },
+        )
+
+    # Step 5: Build context from retrieved documents
     context = build_context(similar_docs)
 
-    # Step 3: Generate response using LLM
+    # Step 6: Generate response using LLM
     response_text = await generate_llm_response(
-        query=query,
+        query=query,  # Use original query for LLM (more natural)
         context=context,
         conversation_history=conversation_history or [],
         max_tokens=max_tokens,
@@ -165,23 +253,97 @@ async def generate_rag_response_stream(
     Yields:
         Tuples of (event_type, data) for streaming
     """
-    # Step 1: Retrieve relevant documents
-    # Using threshold of 0.3 for better recall with Portuguese text
-    # Increased limit to 10 to get more context for the LLM
-    similar_docs = await search_similar_documents(
-        query=query,
-        edital_id=edital_id,
-        limit=10,
-        similarity_threshold=0.3,
+    # Step 1: Preprocess query
+    query_processor = get_query_processor()
+    processed_query = await query_processor.process(query)
+
+    logger.info(
+        "Query preprocessing completed (streaming)",
+        extra={
+            "original_query": query,
+            "intent": processed_query.intent.category if processed_query.intent else None,
+            "entities_count": len(processed_query.entities),
+            "synonyms_count": len(processed_query.synonyms),
+        },
     )
 
-    # Yield sources immediately
+    # Step 2: Retrieve relevant documents
+    # Use hybrid search if enabled, otherwise fall back to vector-only
+    if settings.USE_HYBRID_SEARCH:
+        logger.debug("Using hybrid search (streaming)")
+        hybrid_searcher = get_hybrid_searcher(
+            vector_weight=settings.HYBRID_VECTOR_WEIGHT,
+            bm25_weight=settings.HYBRID_BM25_WEIGHT,
+            rrf_k=settings.HYBRID_RRF_K,
+        )
+        similar_docs = await hybrid_searcher.search(
+            vector_query=processed_query.expanded,
+            bm25_query=processed_query.expanded,
+            edital_id=edital_id,
+            limit=10,
+            vector_threshold=0.3,
+            bm25_min_score=0.01,
+        )
+    else:
+        logger.debug("Using vector-only search (streaming)")
+        similar_docs = await search_similar_documents(
+            query=processed_query.expanded,
+            edital_id=edital_id,
+            limit=10,
+            similarity_threshold=0.3,
+        )
+
+    # Step 3: Apply reranking if enabled
+    if settings.USE_RERANKING and similar_docs:
+        logger.debug("Applying cross-encoder reranking (streaming)")
+        reranker = get_reranker(
+            model_name=settings.RERANKER_MODEL,
+            max_length=settings.RERANKER_MAX_LENGTH,
+            batch_size=settings.RERANKER_BATCH_SIZE,
+        )
+        similar_docs = await reranker.rerank(
+            query=query,
+            documents=similar_docs,
+            top_k=settings.RERANKER_TOP_K,
+            original_score_weight=settings.RERANKER_ORIGINAL_SCORE_WEIGHT,
+            rerank_score_weight=settings.RERANKER_SCORE_WEIGHT,
+        )
+
+    # Step 4: Apply MMR for diverse context selection if enabled
+    if settings.USE_MMR and similar_docs:
+        logger.debug("Applying MMR for diverse context selection (streaming)")
+        mmr_selector = get_mmr_selector(lambda_param=settings.MMR_LAMBDA)
+
+        # Generate query embedding for MMR
+        query_embedding = await get_embedding(processed_query.expanded)
+
+        # Select diverse documents
+        similar_docs = await mmr_selector.select_diverse(
+            query_embedding=query_embedding,
+            documents=similar_docs,
+            max_documents=10,
+            max_tokens=settings.MMR_MAX_TOKENS,
+        )
+
+        # Calculate and log diversity metrics
+        diversity_metrics = mmr_selector.calculate_diversity_metrics(similar_docs)
+        logger.info(
+            "MMR selection applied (streaming)",
+            extra={
+                "final_count": len(similar_docs),
+                "avg_similarity": diversity_metrics.get("avg_pairwise_similarity"),
+                "min_similarity": diversity_metrics.get("min_pairwise_similarity"),
+                "max_similarity": diversity_metrics.get("max_pairwise_similarity"),
+            },
+        )
+
+    # Yield sources after MMR selection
     yield ("sources", similar_docs)
 
-    # Step 2: Build context from retrieved documents
+    # Step 4: Build context from retrieved documents
     context = build_context(similar_docs)
 
-    # Step 3: Stream LLM response
+    # Step 5: Stream LLM response
     async for token in generate_llm_response_stream(
         query=query,
         context=context,
