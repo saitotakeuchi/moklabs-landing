@@ -29,8 +29,8 @@ ENV POETRY_VIRTUALENVS_IN_PROJECT=true \
 # Copy dependency files (poetry.lock is required for reproducibility)
 COPY pyproject.toml poetry.lock README.md ./
 
-# Validate Poetry configuration and lockfile
-# RUN poetry check --lock  # Temporarily disabled - lock file needs regeneration
+# Regenerate lock file if needed
+RUN poetry lock --no-update
 
 # Install dependencies only (not the project itself, we'll copy app code later)
 RUN poetry install --only main --no-root --no-interaction --no-ansi
