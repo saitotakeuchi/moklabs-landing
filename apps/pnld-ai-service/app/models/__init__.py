@@ -7,7 +7,7 @@ from app.models.document import (
     DocumentIndexResponse,
     PageChunk,
 )
-from app.models.chat import ChatRequest, ChatResponse, DocumentSource
+from app.models.chat import ChatRequest, DocumentSource
 
 __all__ = [
     "Document",
@@ -16,6 +16,5 @@ __all__ = [
     "DocumentIndexResponse",
     "PageChunk",
     "ChatRequest",
-    "ChatResponse",
     "DocumentSource",
 ]

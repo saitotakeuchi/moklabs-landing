@@ -20,9 +20,7 @@ class ChatRequest(BaseModel):
     conversation_id: Optional[str] = Field(
         None, description="Optional conversation ID to continue an existing conversation"
     )
-    edital_id: Optional[str] = Field(
-        None, description="Optional edital ID to scope the search"
-    )
+    edital_id: Optional[str] = Field(None, description="Optional edital ID to scope the search")
     max_tokens: Optional[int] = Field(1000, ge=1, le=4000)
     temperature: Optional[float] = Field(0.7, ge=0.0, le=2.0)
 
@@ -37,15 +35,6 @@ class DocumentSource(BaseModel):
     page_number: Optional[int] = Field(None, description="Page number for citation")
     chunk_index: Optional[int] = Field(None, description="Chunk index within page")
     edital_id: Optional[str] = Field(None, description="Associated edital ID")
-
-
-class ChatResponse(BaseModel):
-    """Response model for chat endpoint."""
-
-    conversation_id: str
-    message: ChatMessage
-    sources: List[DocumentSource] = Field(default_factory=list)
-    metadata: Optional[dict] = None
 
 
 class ConversationHistory(BaseModel):

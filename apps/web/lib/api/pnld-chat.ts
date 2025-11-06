@@ -61,32 +61,6 @@ export type StreamEvent =
   | { type: "error"; data: { error: string; conversation_id?: string } };
 
 /**
- * Send a chat message (non-streaming)
- */
-export async function sendChatMessage(
-  request: ChatRequest
-): Promise<ChatResponse> {
-  const response = await fetch(`${API_BASE_URL}${API_VERSION}/chat`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(request),
-  });
-
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ detail: "Unknown error" }));
-    throw new Error(
-      error.detail || `HTTP ${response.status}: ${response.statusText}`
-    );
-  }
-
-  return response.json();
-}
-
-/**
  * Send a chat message with streaming response
  * Returns an async generator that yields stream events
  */
