@@ -6,8 +6,6 @@
  */
 
 import type {
-  ChatRequest,
-  ChatResponse,
   DocumentIndexRequest,
   DocumentIndexResponse,
   DocumentListResponse,
@@ -24,25 +22,6 @@ class PnldAiClient {
 
   constructor(baseUrl: string = API_BASE_URL) {
     this.baseUrl = baseUrl;
-  }
-
-  /**
-   * Send a chat message and receive an AI-generated response
-   */
-  async chat(request: ChatRequest): Promise<ChatResponse> {
-    const response = await fetch(`${this.baseUrl}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Chat request failed: ${response.statusText}`);
-    }
-
-    return response.json();
   }
 
   /**
