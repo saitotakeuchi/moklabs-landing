@@ -6,8 +6,13 @@ from datetime import datetime
 from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
-from app.models.chat import ChatRequest, ChatResponse, ChatMessage, DocumentSource, ConversationHistory
-from app.services.rag import generate_rag_response, generate_rag_response_stream
+from app.models.chat import (
+    ChatRequest,
+    ChatMessage,
+    DocumentSource,
+    ConversationHistory,
+)
+from app.services.rag import generate_rag_response_stream
 from app.services.supabase import get_async_supabase_client
 from app.utils.logging import get_logger, set_request_context
 
@@ -39,7 +44,7 @@ async def validate_edital_exists(edital_id: Optional[str]) -> None:
     if not result.data:
         logger.warning(
             f"Attempted to reference non-existent edital in conversation",
-            extra={"edital_id": edital_id}
+            extra={"edital_id": edital_id},
         )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -68,7 +73,10 @@ async def update_conversation_timestamp(conversation_id: str) -> None:
         logger.debug(f"Updated conversation timestamp", extra={"conversation_id": conversation_id})
     except Exception as e:
         # Log but don't fail the request if timestamp update fails
-        logger.warning(f"Failed to update conversation timestamp", extra={"conversation_id": conversation_id, "error": str(e)})
+        logger.warning(
+            f"Failed to update conversation timestamp",
+            extra={"conversation_id": conversation_id, "error": str(e)},
+        )
 
 
 async def load_conversation_history(conversation_id: str) -> List[dict]:
@@ -100,134 +108,9 @@ async def load_conversation_history(conversation_id: str) -> List[dict]:
     conversation_history = []
     for msg in messages_result.data:
         if msg["role"] in ["user", "assistant"]:
-            conversation_history.append({
-                "role": msg["role"],
-                "content": msg["content"]
-            })
+            conversation_history.append({"role": msg["role"], "content": msg["content"]})
 
     return conversation_history
-
-
-@router.post("", response_model=ChatResponse, status_code=status.HTTP_200_OK)
-async def chat(request: ChatRequest) -> ChatResponse:
-    """
-    Process a chat message and return an AI-generated response using RAG.
-
-    This endpoint:
-    1. Retrieves relevant documents from vector store
-    2. Builds context from retrieved documents
-    3. Generates response using LLM with page citations
-    4. Stores conversation in Supabase
-
-    Args:
-        request: Chat request containing message and optional conversation context
-
-    Returns:
-        ChatResponse with AI-generated message and source citations
-    """
-    try:
-        # Validate that edital exists (if edital_id is not None)
-        await validate_edital_exists(request.edital_id)
-
-        supabase = await get_async_supabase_client()
-
-        # Get or create conversation
-        conversation_id = request.conversation_id
-        if not conversation_id:
-            # Create new conversation
-            conv_result = await (
-                supabase.table("chat_conversations")
-                .insert(
-                    {
-                        "edital_id": request.edital_id,
-                        "metadata": {},
-                    }
-                )
-                .execute()
-            )
-            if conv_result.data:
-                conversation_id = conv_result.data[0]["id"]
-            else:
-                conversation_id = str(uuid.uuid4())
-            logger.info(f"Created new conversation", extra={"conversation_id": conversation_id, "edital_id": request.edital_id})
-
-        # Set conversation context for logging
-        set_request_context(conversation_id=conversation_id)
-
-        # Load conversation history if continuing existing conversation
-        if conversation_id:
-            conversation_history = await load_conversation_history(conversation_id)
-        else:
-            conversation_history = []
-
-        # Generate RAG response
-        response_text, source_docs = await generate_rag_response(
-            query=request.message,
-            edital_id=request.edital_id,
-            conversation_history=conversation_history,
-            max_tokens=request.max_tokens or 1000,
-            temperature=request.temperature or 0.7,
-        )
-
-        # Format source documents with page information
-        sources = []
-        for doc in source_docs:
-            source = DocumentSource(
-                document_id=doc.get("document_id", ""),
-                title=doc.get("document_title", "Unknown"),
-                content_excerpt=doc.get("content", "")[:200],  # Limit excerpt length
-                relevance_score=doc.get("similarity", 0.0),
-                page_number=doc.get("page_number"),
-                chunk_index=doc.get("chunk_index"),
-                edital_id=doc.get("edital_id"),
-            )
-            sources.append(source)
-
-        # Store user message
-        await supabase.table("chat_messages").insert(
-            {
-                "conversation_id": conversation_id,
-                "role": "user",
-                "content": request.message,
-                "metadata": {},
-            }
-        ).execute()
-
-        # Store assistant response
-        await supabase.table("chat_messages").insert(
-            {
-                "conversation_id": conversation_id,
-                "role": "assistant",
-                "content": response_text,
-                "metadata": {"sources": [s.dict() for s in sources]},
-            }
-        ).execute()
-
-        # Update conversation timestamp to reflect latest activity
-        await update_conversation_timestamp(conversation_id)
-
-        logger.info(f"Chat completed successfully", extra={"message_length": len(response_text), "sources_count": len(sources)})
-
-        return ChatResponse(
-            conversation_id=conversation_id,
-            message=ChatMessage(
-                role="assistant",
-                content=response_text,
-                timestamp=datetime.now(),
-            ),
-            sources=sources,
-            metadata={"edital_id": request.edital_id},
-        )
-
-    except HTTPException:
-        # Re-raise HTTP exceptions
-        raise
-    except Exception as e:
-        logger.error(f"Chat request failed", extra={"error": str(e), "error_type": type(e).__name__})
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to process chat request: {str(e)}",
-        )
 
 
 @router.post("/stream", status_code=status.HTTP_200_OK)
@@ -254,6 +137,7 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
     Returns:
         StreamingResponse with text/event-stream content type
     """
+
     async def event_generator():
         """Generate SSE events for the chat stream."""
         conversation_id = None
@@ -284,7 +168,10 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
                     conversation_id = conv_result.data[0]["id"]
                 else:
                     conversation_id = str(uuid.uuid4())
-                logger.info(f"Created new conversation (streaming)", extra={"conversation_id": conversation_id, "edital_id": request.edital_id})
+                logger.info(
+                    f"Created new conversation (streaming)",
+                    extra={"conversation_id": conversation_id, "edital_id": request.edital_id},
+                )
 
             # Set conversation context for logging
             set_request_context(conversation_id=conversation_id)
@@ -299,14 +186,18 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
                 conversation_history = []
 
             # Store user message
-            await supabase.table("chat_messages").insert(
-                {
-                    "conversation_id": conversation_id,
-                    "role": "user",
-                    "content": request.message,
-                    "metadata": {},
-                }
-            ).execute()
+            await (
+                supabase.table("chat_messages")
+                .insert(
+                    {
+                        "conversation_id": conversation_id,
+                        "role": "user",
+                        "content": request.message,
+                        "metadata": {},
+                    }
+                )
+                .execute()
+            )
 
             # Stream RAG response
             async for event_type, data in generate_rag_response_stream(
@@ -316,7 +207,7 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
                 max_tokens=request.max_tokens or 1000,
                 temperature=request.temperature or 0.7,
             ):
-                if event_type == 'sources':
+                if event_type == "sources":
                     # Format source documents
                     source_docs = data
                     for doc in source_docs:
@@ -335,33 +226,50 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
                     sources_data = [s.dict() for s in sources]
                     yield f"event: sources\ndata: {json.dumps(sources_data)}\n\n"
 
-                elif event_type == 'token':
+                elif event_type == "token":
                     # Accumulate complete response
                     complete_response += data
                     # Send token event
                     yield f"event: token\ndata: {json.dumps({'content': data})}\n\n"
 
-                elif event_type == 'done':
+                elif event_type == "done":
                     # Store assistant response in database
-                    await supabase.table("chat_messages").insert(
-                        {
-                            "conversation_id": conversation_id,
-                            "role": "assistant",
-                            "content": complete_response,
-                            "metadata": {"sources": [s.dict() for s in sources]},
-                        }
-                    ).execute()
+                    await (
+                        supabase.table("chat_messages")
+                        .insert(
+                            {
+                                "conversation_id": conversation_id,
+                                "role": "assistant",
+                                "content": complete_response,
+                                "metadata": {"sources": [s.dict() for s in sources]},
+                            }
+                        )
+                        .execute()
+                    )
 
                     # Update conversation timestamp to reflect latest activity
                     await update_conversation_timestamp(conversation_id)
 
-                    logger.info(f"Streaming chat completed successfully", extra={"message_length": len(complete_response), "sources_count": len(sources)})
+                    logger.info(
+                        f"Streaming chat completed successfully",
+                        extra={
+                            "message_length": len(complete_response),
+                            "sources_count": len(sources),
+                        },
+                    )
 
                     # Send done event
                     yield f"event: done\ndata: {json.dumps({'conversation_id': conversation_id})}\n\n"
 
         except Exception as e:
-            logger.error(f"Streaming chat failed", extra={"conversation_id": conversation_id, "error": str(e), "error_type": type(e).__name__})
+            logger.error(
+                f"Streaming chat failed",
+                extra={
+                    "conversation_id": conversation_id,
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                },
+            )
             # Send error event
             error_data = {
                 "error": str(e),
@@ -380,7 +288,9 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
     )
 
 
-@router.get("/{conversation_id}", response_model=ConversationHistory, status_code=status.HTTP_200_OK)
+@router.get(
+    "/{conversation_id}", response_model=ConversationHistory, status_code=status.HTTP_200_OK
+)
 async def get_conversation(conversation_id: str) -> ConversationHistory:
     """
     Retrieve full conversation history by ID.
@@ -405,10 +315,7 @@ async def get_conversation(conversation_id: str) -> ConversationHistory:
 
         # Fetch conversation metadata
         conv_result = await (
-            supabase.table("chat_conversations")
-            .select("*")
-            .eq("id", conversation_id)
-            .execute()
+            supabase.table("chat_conversations").select("*").eq("id", conversation_id).execute()
         )
 
         if not conv_result.data or len(conv_result.data) == 0:
