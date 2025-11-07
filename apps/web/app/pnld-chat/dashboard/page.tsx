@@ -7,6 +7,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
 import { DocumentUpload } from "@/components/pnld-docs/DocumentUpload";
 import { DocumentList } from "@/components/pnld-docs/DocumentList";
@@ -20,8 +21,11 @@ import {
 } from "@/components/pnld-editais";
 import { useEditais } from "@/hooks/useEditais";
 import type { Edital, CreateEditalRequest } from "@moklabs/pnld-types";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
-export default function DashboardPage() {
+function DashboardContent() {
+  const { user, loading, signOut } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"upload" | "list" | "editais">(
     "list"
   );
@@ -52,6 +56,18 @@ export default function DashboardPage() {
     deleteEdital,
     fetchEditais,
   } = useEditais();
+
+  // Show loading state while checking authentication (after all hooks)
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleUploadComplete = () => {
     // Switch to list view and refresh the list
@@ -147,6 +163,17 @@ export default function DashboardPage() {
     setDeleteEditalError(null);
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast.success("Logged out successfully");
+      router.push("/admin/login");
+    } catch (error) {
+      toast.error("Failed to log out");
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Toast notifications */}
@@ -155,12 +182,30 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            PNLD Document Management
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Upload, manage, and view your PNLD documents and embeddings
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                PNLD Document Management
+              </h1>
+              <p className="mt-2 text-sm text-gray-600">
+                Upload, manage, and view your PNLD documents and embeddings
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.email}
+                </p>
+                <p className="text-xs text-gray-500">Administrator</p>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors font-medium text-sm"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -284,5 +329,13 @@ export default function DashboardPage() {
         error={deleteEditalError}
       />
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <AuthProvider>
+      <DashboardContent />
+    </AuthProvider>
   );
 }
