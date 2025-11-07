@@ -10,5 +10,10 @@ export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  // Provide placeholder values if not configured (prevents runtime errors)
+  // In production, these should be set in environment variables
+  const url = supabaseUrl || "https://placeholder.supabase.co";
+  const key = supabaseAnonKey || "placeholder-key";
+
+  return createBrowserClient(url, key);
 }

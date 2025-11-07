@@ -15,7 +15,11 @@ export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+  // Provide placeholder values if not configured (prevents runtime errors)
+  const url = supabaseUrl || "https://placeholder.supabase.co";
+  const key = supabaseAnonKey || "placeholder-key";
+
+  const supabase = createServerClient(url, key, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
