@@ -13,11 +13,22 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   // Check if Supabase is configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Debug logging to see what values we're getting
+  useEffect(() => {
+    console.log("=== SUPABASE CONFIG DEBUG ===");
+    console.log("URL present:", !!supabaseUrl);
+    console.log("URL length:", supabaseUrl?.length || 0);
+    console.log("URL value:", supabaseUrl);
+    console.log("Key present:", !!supabaseKey);
+    console.log("Key length:", supabaseKey?.length || 0);
+    console.log("============================");
+  }, []);
+
   const isSupabaseConfigured =
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "";
+    supabaseUrl && supabaseKey && supabaseUrl !== "" && supabaseKey !== "";
 
   const supabase = isSupabaseConfigured ? createClient() : null;
 
