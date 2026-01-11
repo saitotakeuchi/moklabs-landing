@@ -14,12 +14,56 @@ from app.utils.logging import get_logger
 logger = get_logger(__name__)
 
 
-def build_context(documents: List[dict]) -> str:
+def prioritize_edital_documents(documents: List[dict], edital_id: Optional[str]) -> List[dict]:
+    """
+    Prioritize documents that match the specific edital_id over standard documents.
+
+    Standard documents (NULL edital_id) are useful but should come after
+    edital-specific documents when a specific edital is being queried.
+
+    Args:
+        documents: List of document chunks with content and metadata
+        edital_id: The specific edital being queried (None for general queries)
+
+    Returns:
+        Reordered list with edital-specific documents first
+    """
+    if not edital_id or not documents:
+        return documents
+
+    # Separate edital-specific and standard documents
+    edital_specific = []
+    standard_docs = []
+
+    for doc in documents:
+        doc_edital = doc.get("edital_id")
+        if doc_edital == edital_id:
+            edital_specific.append(doc)
+        else:
+            # NULL edital_id or different edital
+            standard_docs.append(doc)
+
+    # Log the prioritization
+    logger.debug(
+        "Document prioritization applied",
+        extra={
+            "edital_id": edital_id,
+            "edital_specific_count": len(edital_specific),
+            "standard_count": len(standard_docs),
+        }
+    )
+
+    # Return edital-specific first, then standard documents
+    return edital_specific + standard_docs
+
+
+def build_context(documents: List[dict], edital_id: Optional[str] = None) -> str:
     """
     Build context string from retrieved documents with page citations.
 
     Args:
         documents: List of document chunks with content and metadata
+        edital_id: Optional edital ID for marking edital-specific documents
 
     Returns:
         Formatted context string with page references
@@ -32,11 +76,20 @@ def build_context(documents: List[dict]) -> str:
         content = doc.get("content", "")
         title = doc.get("document_title", "Unknown")
         page_number = doc.get("page_number")
+        doc_edital = doc.get("edital_id")
 
-        # Build citation header
+        # Build citation header with edital indicator
         citation = f"[Document {i}: {title}"
         if page_number is not None:
             citation += f", Page {page_number}"
+        # Mark if this is from the specific edital or a standard document
+        if edital_id:
+            if doc_edital == edital_id:
+                citation += " (EDITAL-SPECIFIC)"
+            elif doc_edital is None:
+                citation += " (STANDARD DOCUMENT)"
+            else:
+                citation += f" (FROM: {doc_edital})"
         citation += "]"
 
         context_parts.append(f"{citation}\n{content}\n")
@@ -92,22 +145,45 @@ async def generate_rag_response_stream(
             bm25_weight=settings.HYBRID_BM25_WEIGHT,
             rrf_k=settings.HYBRID_RRF_K,
         )
+        # First try with normal thresholds
         similar_docs = await hybrid_searcher.search(
             vector_query=processed_query.expanded,
             bm25_query=processed_query.expanded,
             edital_id=edital_id,
             limit=10,
-            vector_threshold=0.3,
-            bm25_min_score=0.01,
+            vector_threshold=0.15,  # Lowered from 0.3
+            bm25_min_score=0.001,   # Lowered from 0.01
         )
+
+        # Fallback: If no results, try with original query (not expanded)
+        if not similar_docs:
+            logger.info("No results with expanded query, trying original query")
+            similar_docs = await hybrid_searcher.search(
+                vector_query=query,  # Use original query
+                bm25_query=query,
+                edital_id=edital_id,
+                limit=10,
+                vector_threshold=0.1,  # Even lower threshold
+                bm25_min_score=0.0001,
+            )
     else:
         logger.debug("Using vector-only search (streaming)")
         similar_docs = await search_similar_documents(
             query=processed_query.expanded,
             edital_id=edital_id,
             limit=10,
-            similarity_threshold=0.3,
+            similarity_threshold=0.15,  # Lowered from 0.3
         )
+
+        # Fallback with original query
+        if not similar_docs:
+            logger.info("No results with expanded query, trying original query")
+            similar_docs = await search_similar_documents(
+                query=query,  # Use original query
+                edital_id=edital_id,
+                limit=10,
+                similarity_threshold=0.1,
+            )
 
     # Step 3: Apply reranking if enabled
     if settings.USE_RERANKING and similar_docs:
@@ -153,16 +229,25 @@ async def generate_rag_response_stream(
             },
         )
 
-    # Yield sources after MMR selection
+    # Step 5: Prioritize edital-specific documents over standard documents
+    if edital_id and similar_docs:
+        similar_docs = prioritize_edital_documents(similar_docs, edital_id)
+        logger.info(
+            "Documents prioritized for edital",
+            extra={"edital_id": edital_id, "total_docs": len(similar_docs)},
+        )
+
+    # Yield sources after prioritization
     yield ("sources", similar_docs)
 
-    # Step 4: Build context from retrieved documents
-    context = build_context(similar_docs)
+    # Step 6: Build context from retrieved documents
+    context = build_context(similar_docs, edital_id)
 
-    # Step 5: Stream LLM response
+    # Step 7: Stream LLM response
     async for token in generate_llm_response_stream(
         query=query,
         context=context,
+        edital_id=edital_id,
         conversation_history=conversation_history or [],
         max_tokens=max_tokens,
         temperature=temperature,
@@ -176,7 +261,8 @@ async def generate_rag_response_stream(
 async def generate_llm_response_stream(
     query: str,
     context: str,
-    conversation_history: List[dict],
+    edital_id: Optional[str] = None,
+    conversation_history: Optional[List[dict]] = None,
     max_tokens: int = 1000,
     temperature: float = 0.7,
 ) -> AsyncGenerator[str, None]:
@@ -186,6 +272,7 @@ async def generate_llm_response_stream(
     Args:
         query: User's question
         context: Retrieved context from documents
+        edital_id: The specific edital being queried
         conversation_history: Previous conversation messages
         max_tokens: Maximum tokens for response
         temperature: LLM temperature parameter
@@ -195,11 +282,25 @@ async def generate_llm_response_stream(
     """
     client = get_async_openai_client()
 
+    # Build edital-aware instructions
+    edital_instruction = ""
+    if edital_id:
+        edital_instruction = f"""
+IMPORTANT: The user is asking about a SPECIFIC edital: "{edital_id}"
+- Documents marked "(EDITAL-SPECIFIC)" are from this exact edital - PRIORITIZE these for answers
+- Documents marked "(STANDARD DOCUMENT)" contain general PNLD information that may apply to multiple editais
+- Documents marked "(FROM: other-edital)" are from a DIFFERENT edital - use with caution, information may not apply
+
+When dates, deadlines, requirements or specifications are mentioned, ALWAYS use information from EDITAL-SPECIFIC documents first.
+If the answer is not in EDITAL-SPECIFIC documents, you may use STANDARD DOCUMENT information, but clarify it's general guidance.
+NEVER use information from a different edital to answer about this one.
+"""
+
     # Build system message with context
     system_message = f"""You are a helpful assistant that answers questions about PNLD (Programa Nacional do Livro Didático) editals.
 Use the following context to answer the user's question. If the context doesn't contain relevant information, say so.
-
-When citing information, always reference the page number if available (e.g., "According to page 5 of the document...").
+{edital_instruction}
+When citing information, always reference the document title and page number if available (e.g., "According to [Document Title], page 5...").
 
 Context:
 {context}
@@ -209,7 +310,8 @@ Context:
     messages = [{"role": "system", "content": system_message}]
 
     # Add conversation history
-    messages.extend(conversation_history)
+    if conversation_history:
+        messages.extend(conversation_history)
 
     # Add current query
     messages.append({"role": "user", "content": query})
@@ -218,7 +320,7 @@ Context:
     stream = await client.chat.completions.create(
         model=settings.OPENAI_MODEL,
         messages=messages,
-        max_tokens=max_tokens,
+        max_completion_tokens=max_tokens,
         temperature=temperature,
         stream=True,
     )

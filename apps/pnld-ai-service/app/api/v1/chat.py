@@ -4,6 +4,7 @@ import uuid
 import json
 from datetime import datetime
 from typing import List, Optional
+from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
 from app.models.chat import (
@@ -14,10 +15,116 @@ from app.models.chat import (
 )
 from app.services.rag import generate_rag_response_stream
 from app.services.supabase import get_async_supabase_client
+from app.services.vector_search import search_similar_documents
+from app.services.bm25_search import search_bm25
+from app.services.hybrid_search import get_hybrid_searcher
+from app.services.query_processor import get_query_processor
+from app.services.embeddings import generate_embedding
+from app.config import settings
 from app.utils.logging import get_logger, set_request_context
 
 router = APIRouter()
 logger = get_logger(__name__)
+
+
+class DebugSearchRequest(BaseModel):
+    """Request model for debug search endpoint."""
+    query: str
+    edital_id: Optional[str] = None
+
+
+class DebugSearchResponse(BaseModel):
+    """Response model for debug search endpoint."""
+    original_query: str
+    processed_query: str
+    edital_id: Optional[str]
+    vector_results_count: int
+    bm25_results_count: int
+    hybrid_results_count: int
+    vector_results: List[dict]
+    bm25_results: List[dict]
+    hybrid_results: List[dict]
+    config: dict
+
+
+@router.post("/debug-search")
+async def debug_search(request: DebugSearchRequest) -> DebugSearchResponse:
+    """
+    Debug endpoint to diagnose search/retrieval issues.
+
+    Returns raw results from each search stage to identify where retrieval fails.
+    """
+    # Step 1: Process query
+    query_processor = get_query_processor()
+    processed_query = await query_processor.process(request.query)
+
+    # Step 2: Vector search with LOW threshold
+    vector_results = await search_similar_documents(
+        query=processed_query.expanded,
+        edital_id=request.edital_id,
+        limit=10,
+        similarity_threshold=0.1,  # Very low threshold for debugging
+    )
+
+    # Step 3: BM25 search
+    bm25_results = await search_bm25(
+        query=processed_query.expanded,
+        edital_id=request.edital_id,
+        limit=10,
+        min_score=0.001,  # Very low threshold for debugging
+    )
+
+    # Step 4: Hybrid search
+    hybrid_searcher = get_hybrid_searcher(
+        vector_weight=settings.HYBRID_VECTOR_WEIGHT,
+        bm25_weight=settings.HYBRID_BM25_WEIGHT,
+        rrf_k=settings.HYBRID_RRF_K,
+    )
+    hybrid_results = await hybrid_searcher.search(
+        vector_query=processed_query.expanded,
+        bm25_query=processed_query.expanded,
+        edital_id=request.edital_id,
+        limit=10,
+        vector_threshold=0.1,  # Very low threshold for debugging
+        bm25_min_score=0.001,
+    )
+
+    # Format results for response
+    def format_results(results):
+        formatted = []
+        for r in results[:5]:  # Limit to first 5 for brevity
+            formatted.append({
+                "id": str(r.get("id", "")),
+                "document_title": r.get("document_title", ""),
+                "edital_id": r.get("edital_id", ""),
+                "page_number": r.get("page_number"),
+                "similarity": r.get("similarity", 0),
+                "bm25_score": r.get("bm25_score", 0),
+                "rrf_score": r.get("rrf_score", 0),
+                "content_preview": r.get("content", "")[:150] + "..." if r.get("content") else "",
+            })
+        return formatted
+
+    return DebugSearchResponse(
+        original_query=request.query,
+        processed_query=processed_query.expanded,
+        edital_id=request.edital_id,
+        vector_results_count=len(vector_results),
+        bm25_results_count=len(bm25_results),
+        hybrid_results_count=len(hybrid_results),
+        vector_results=format_results(vector_results),
+        bm25_results=format_results(bm25_results),
+        hybrid_results=format_results(hybrid_results),
+        config={
+            "USE_HYBRID_SEARCH": settings.USE_HYBRID_SEARCH,
+            "USE_RERANKING": settings.USE_RERANKING,
+            "USE_MMR": settings.USE_MMR,
+            "HYBRID_VECTOR_WEIGHT": settings.HYBRID_VECTOR_WEIGHT,
+            "HYBRID_BM25_WEIGHT": settings.HYBRID_BM25_WEIGHT,
+            "current_vector_threshold": 0.3,  # What's used in production
+            "debug_vector_threshold": 0.1,  # What we used for this test
+        },
+    )
 
 
 async def validate_edital_exists(edital_id: Optional[str]) -> None:

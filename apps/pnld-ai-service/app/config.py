@@ -27,7 +27,7 @@ class Settings(BaseSettings):
 
     # OpenAI
     OPENAI_API_KEY: str
-    OPENAI_MODEL: str = "gpt-4-turbo-preview"
+    OPENAI_MODEL: str = "gpt-5.1"
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
 
     # Redis Cache Configuration
@@ -52,16 +52,16 @@ class Settings(BaseSettings):
     HYBRID_RRF_K: int = 60
 
     # Reranking Configuration
-    USE_RERANKING: bool = True
+    USE_RERANKING: bool = False  # Disabled - missing sentence-transformers dependency
     RERANKER_MODEL: str = "unicamp-dl/mMiniLM-L6-v2-mmarco-v1"
     RERANKER_TOP_K: int = 10
     RERANKER_BATCH_SIZE: int = 16
     RERANKER_MAX_LENGTH: int = 512
-    RERANKER_ORIGINAL_SCORE_WEIGHT: float = 0.3
-    RERANKER_SCORE_WEIGHT: float = 0.7
+    RERANKER_ORIGINAL_SCORE_WEIGHT: float = 0.5  # Increased from 0.3 - trust retrieval more
+    RERANKER_SCORE_WEIGHT: float = 0.5           # Reduced from 0.7 - balance with reranker
 
     # MMR (Maximal Marginal Relevance) Configuration
-    USE_MMR: bool = True
+    USE_MMR: bool = False  # Disabled - documents from search don't include embedding vectors
     MMR_LAMBDA: float = 0.7  # 0=max diversity, 1=max relevance
     MMR_MAX_TOKENS: int = 3000
 

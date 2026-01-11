@@ -1,5 +1,7 @@
 "use client";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { SourceCitation } from "./SourceCitation";
 
 export interface MessageSource {
@@ -40,13 +42,29 @@ export function Message({ role, content, sources, timestamp }: MessageProps) {
             break-words
           `}
         >
-          <div className="prose prose-sm max-w-none">
-            {content.split("\n").map((paragraph, idx) => (
-              <p key={idx} className="mb-2 last:mb-0">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          {isUser ? (
+            // User messages: plain text with preserved whitespace
+            <div className="whitespace-pre-wrap">{content}</div>
+          ) : (
+            // Assistant messages: full markdown rendering
+            <div className="prose prose-sm max-w-none
+              prose-p:my-2 prose-p:leading-relaxed
+              prose-headings:my-3 prose-headings:font-semibold
+              prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5
+              prose-pre:my-2 prose-pre:bg-gray-100 prose-pre:p-3 prose-pre:rounded-lg
+              prose-code:text-blue-700 prose-code:bg-blue-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+              prose-code:before:content-none prose-code:after:content-none
+              prose-a:text-blue-600 prose-a:underline
+              prose-strong:font-semibold
+              prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic
+              prose-table:border-collapse prose-th:border prose-th:border-gray-300 prose-th:p-2 prose-th:bg-gray-50
+              prose-td:border prose-td:border-gray-300 prose-td:p-2
+            ">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {content}
+              </ReactMarkdown>
+            </div>
+          )}
         </div>
 
         {/* Sources (only for assistant messages) */}
