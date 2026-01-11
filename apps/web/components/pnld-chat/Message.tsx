@@ -35,9 +35,7 @@ const markdownComponents: Components = {
   ),
 
   // Emphasis/italic
-  em: ({ children }) => (
-    <em className="italic text-gray-700">{children}</em>
-  ),
+  em: ({ children }) => <em className="italic text-gray-700">{children}</em>,
 
   // Ordered lists with professional styling
   ol: ({ children }) => (
@@ -66,7 +64,9 @@ const markdownComponents: Components = {
     <h2 className="text-lg font-bold text-gray-900 mt-5 mb-2">{children}</h2>
   ),
   h3: ({ children }) => (
-    <h3 className="text-base font-semibold text-gray-900 mt-4 mb-2">{children}</h3>
+    <h3 className="text-base font-semibold text-gray-900 mt-4 mb-2">
+      {children}
+    </h3>
   ),
 
   // Code blocks
@@ -120,9 +120,7 @@ const markdownComponents: Components = {
       </table>
     </div>
   ),
-  thead: ({ children }) => (
-    <thead className="bg-gray-50">{children}</thead>
-  ),
+  thead: ({ children }) => <thead className="bg-gray-50">{children}</thead>,
   th: ({ children }) => (
     <th className="px-4 py-2 text-left text-sm font-semibold text-gray-900 border-b border-gray-200">
       {children}
