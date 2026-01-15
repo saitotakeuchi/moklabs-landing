@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import Script from "next/script";
 
 type GtagArguments = unknown[];
 
@@ -11,65 +11,32 @@ declare global {
   }
 }
 
-const ensureAnalyticsGlobals = (target: Window) => {
-  const dataLayer = target.dataLayer ?? [];
-  target.dataLayer = dataLayer;
-
-  if (!target.gtag) {
-    target.gtag = (...args: GtagArguments) => {
-      dataLayer.push(args);
-    };
-  }
-};
+const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
 
 const GoogleAnalytics = () => {
-  const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
+  // Skip if no tracking ID is configured
+  if (!GA_TRACKING_ID) {
+    return null;
+  }
 
-  useEffect(() => {
-    // Only load Google Analytics in production and if tracking ID is provided
-    if (!GA_TRACKING_ID || process.env.NODE_ENV === "development") {
-      console.log("Google Analytics: Skipped in development environment");
-      return;
-    }
-
-    // Load Google Analytics script
-    const script1 = document.createElement("script");
-    script1.async = true;
-    script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
-    document.head.appendChild(script1);
-
-    // Initialize gtag
-    const script2 = document.createElement("script");
-    script2.innerHTML = `
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '${GA_TRACKING_ID}', {
-        page_title: document.title,
-        page_location: window.location.href,
-      });
-    `;
-    document.head.appendChild(script2);
-
-    // Make gtag available globally
-    if (typeof window !== "undefined") {
-      ensureAnalyticsGlobals(window);
-    }
-
-    console.log("Google Analytics initialized with ID:", GA_TRACKING_ID);
-
-    // Cleanup function
-    return () => {
-      if (script1.parentNode) {
-        script1.parentNode.removeChild(script1);
-      }
-      if (script2.parentNode) {
-        script2.parentNode.removeChild(script2);
-      }
-    };
-  }, [GA_TRACKING_ID]);
-
-  return null; // This component doesn't render anything
+  return (
+    <>
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_TRACKING_ID}', {
+            page_path: window.location.pathname,
+          });
+        `}
+      </Script>
+    </>
+  );
 };
 
 export default GoogleAnalytics;
