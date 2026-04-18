@@ -83,13 +83,24 @@ const ContactForm = () => {
     const timeoutId = setTimeout(() => controller.abort(), 20000);
     const startedAt = Date.now();
 
+    const payload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+    };
+
+    // console.warn survives Next's production build; console.info is stripped.
+    console.warn("[contact-form] submit dispatched", {
+      apiUrl: "/api/contact",
+    });
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
         signal: controller.signal,
       });
 
@@ -219,6 +230,7 @@ const ContactForm = () => {
       <button
         type="submit"
         disabled={isSubmitting}
+        onClick={() => console.warn("[contact-form] submit button clicked")}
         className="bg-[#0013ff] text-white px-6 py-2 rounded-3xl text-base font-bold hover:bg-blue-800 transition-colors disabled:opacity-50"
       >
         {isSubmitting ? "Enviando..." : "Enviar"}
