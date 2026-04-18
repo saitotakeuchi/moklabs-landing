@@ -165,7 +165,13 @@ export async function POST(request: NextRequest) {
       const { data, error } = await resend.emails.send(emailPayload);
 
       if (error || !data) {
-        console.error("Resend error:", error);
+        console.error("[contact] Resend send failed", {
+          name: error?.name,
+          message: error?.message,
+          from: emailPayload.from,
+          to: emailPayload.to,
+          subject: emailPayload.subject,
+        });
         return NextResponse.json(
           {
             error:
@@ -175,6 +181,10 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      console.info("[contact] Resend send succeeded", {
+        id: data.id,
+        to: emailPayload.to,
+      });
       result = data;
     }
 
@@ -188,7 +198,11 @@ export async function POST(request: NextRequest) {
       { status: 200, headers }
     );
   } catch (error) {
-    console.error("Server error:", error);
+    console.error("[contact] Unhandled server error", {
+      name: error instanceof Error ? error.name : undefined,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json(
       {
         error: "Erro interno do servidor",

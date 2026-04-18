@@ -76,34 +76,66 @@ const ContactForm = () => {
     }
 
     setIsSubmitting(true);
+    setErrors({});
+
+    // Abort hung requests so the button never gets stuck on "Enviando..."
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    const startedAt = Date.now();
 
     try {
-      // API endpoint
-      const apiUrl = "/api/contact";
-      const response = await fetch(apiUrl, {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
+        signal: controller.signal,
       });
 
+      const durationMs = Date.now() - startedAt;
+
       if (response.ok) {
+        console.info(
+          `[contact-form] Submitted successfully in ${durationMs}ms`
+        );
         setIsSubmitted(true);
         setFormData({ name: "", email: "", message: "" });
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Erro ao enviar mensagem");
+        return;
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+
+      const errorData = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
+      console.error(
+        `[contact-form] Server returned ${response.status} in ${durationMs}ms`,
+        errorData
+      );
       setErrors({
         submit:
-          error instanceof Error
-            ? error.message
-            : "Erro ao enviar mensagem. Tente novamente.",
+          errorData.error ||
+          `Erro ao enviar mensagem (HTTP ${response.status}). Tente novamente.`,
       });
+    } catch (error) {
+      const durationMs = Date.now() - startedAt;
+      console.error(
+        `[contact-form] Request failed after ${durationMs}ms:`,
+        error
+      );
+
+      let message = "Erro ao enviar mensagem. Tente novamente.";
+      if (error instanceof DOMException && error.name === "AbortError") {
+        message =
+          "Tempo limite excedido. Verifique sua conexão e tente novamente.";
+      } else if (error instanceof TypeError) {
+        message = "Falha de conexão. Verifique sua internet e tente novamente.";
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+
+      setErrors({ submit: message });
     } finally {
+      clearTimeout(timeoutId);
       setIsSubmitting(false);
     }
   };
