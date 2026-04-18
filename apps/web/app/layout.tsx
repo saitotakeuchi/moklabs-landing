@@ -5,6 +5,8 @@ import { ConditionalLayout } from "@/components/layout";
 import {
   CookieConsent,
   GoogleAnalytics,
+  GoogleTagManager,
+  GoogleTagManagerNoscript,
   VercelAnalytics,
 } from "@/components/common";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -113,6 +115,8 @@ export default function RootLayout({
         <meta name="theme-color" content="#0013FF" />
       </head>
       <body className={`${firaCode.variable} ${inter.variable} antialiased`}>
+        <GoogleTagManagerNoscript />
+        <GoogleTagManager />
         <GoogleAnalytics />
         <div className="min-h-screen bg-white">
           <ConditionalLayout>{children}</ConditionalLayout>

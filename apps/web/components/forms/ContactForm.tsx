@@ -76,34 +76,77 @@ const ContactForm = () => {
     }
 
     setIsSubmitting(true);
+    setErrors({});
+
+    // Abort hung requests so the button never gets stuck on "Enviando..."
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    const startedAt = Date.now();
+
+    const payload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+    };
+
+    // console.warn survives Next's production build; console.info is stripped.
+    console.warn("[contact-form] submit dispatched", {
+      apiUrl: "/api/contact",
+    });
 
     try {
-      // API endpoint
-      const apiUrl = "/api/contact";
-      const response = await fetch(apiUrl, {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
+        signal: controller.signal,
       });
 
+      const durationMs = Date.now() - startedAt;
+
       if (response.ok) {
+        console.info(
+          `[contact-form] Submitted successfully in ${durationMs}ms`
+        );
         setIsSubmitted(true);
         setFormData({ name: "", email: "", message: "" });
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Erro ao enviar mensagem");
+        return;
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+
+      const errorData = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
+      console.error(
+        `[contact-form] Server returned ${response.status} in ${durationMs}ms`,
+        errorData
+      );
       setErrors({
         submit:
-          error instanceof Error
-            ? error.message
-            : "Erro ao enviar mensagem. Tente novamente.",
+          errorData.error ||
+          `Erro ao enviar mensagem (HTTP ${response.status}). Tente novamente.`,
       });
+    } catch (error) {
+      const durationMs = Date.now() - startedAt;
+      console.error(
+        `[contact-form] Request failed after ${durationMs}ms:`,
+        error
+      );
+
+      let message = "Erro ao enviar mensagem. Tente novamente.";
+      if (error instanceof DOMException && error.name === "AbortError") {
+        message =
+          "Tempo limite excedido. Verifique sua conexão e tente novamente.";
+      } else if (error instanceof TypeError) {
+        message = "Falha de conexão. Verifique sua internet e tente novamente.";
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+
+      setErrors({ submit: message });
     } finally {
+      clearTimeout(timeoutId);
       setIsSubmitting(false);
     }
   };
@@ -187,6 +230,7 @@ const ContactForm = () => {
       <button
         type="submit"
         disabled={isSubmitting}
+        onClick={() => console.warn("[contact-form] submit button clicked")}
         className="bg-[#0013ff] text-white px-6 py-2 rounded-3xl text-base font-bold hover:bg-blue-800 transition-colors disabled:opacity-50"
       >
         {isSubmitting ? "Enviando..." : "Enviar"}

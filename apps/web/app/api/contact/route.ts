@@ -1,6 +1,9 @@
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import type { CreateEmailOptions, CreateEmailResponseSuccess } from "resend";
+
+export const runtime = "nodejs";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
@@ -12,6 +15,14 @@ type SimulatedEmailResponse = {
   id: string;
   simulated: true;
 };
+
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
 interface ContactFormPayload {
   name: string;
@@ -121,31 +132,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Email configuration
-    const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
-    const toEmail = process.env.TO_EMAIL || "contato@moklabs.com.br";
+    // Normalize inputs server-side (defense in depth; client also trims)
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedMessage = message.trim();
+
+    // Email configuration — fall back to safe defaults only in dev/simulation
+    const fromEmailEnv = process.env.FROM_EMAIL;
+    const toEmailEnv = process.env.TO_EMAIL;
+    if (isProd && (!fromEmailEnv || !toEmailEnv)) {
+      console.error("[contact] Missing FROM_EMAIL/TO_EMAIL in production", {
+        hasFrom: !!fromEmailEnv,
+        hasTo: !!toEmailEnv,
+      });
+      return NextResponse.json(
+        {
+          error: "Configuracao de e-mail ausente. Tente novamente mais tarde.",
+        },
+        { status: 500, headers }
+      );
+    }
+    const fromEmail = fromEmailEnv || "onboarding@resend.dev";
+    const toEmail = toEmailEnv || "contato@moklabs.com.br";
     const fromName = process.env.FROM_NAME || "Mok Labs";
 
     const emailPayload: CreateEmailOptions = {
       from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
-      subject: `Novo contato de ${name}`,
-      replyTo: [email],
+      subject: `Novo contato de ${trimmedName}`,
+      replyTo: [trimmedEmail],
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #0013ff;">Novo contato via site</h2>
 
           <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Nome:</strong> ${name}</p>
-            <p><strong>E-mail:</strong> ${email}</p>
+            <p><strong>Nome:</strong> ${escapeHtml(trimmedName)}</p>
+            <p><strong>E-mail:</strong> ${escapeHtml(trimmedEmail)}</p>
           </div>
 
           <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
             <h3 style="margin-top: 0; color: #374151;">Mensagem:</h3>
-            <p style="line-height: 1.6; color: #4b5563;">${message.replace(
-              /\n/g,
-              "<br>"
-            )}</p>
+            <p style="line-height: 1.6; color: #4b5563;">${escapeHtml(
+              trimmedMessage
+            ).replace(/\n/g, "<br>")}</p>
           </div>
 
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;">
@@ -162,10 +191,18 @@ export async function POST(request: NextRequest) {
     if (!resend) {
       result = simulateSend(emailPayload);
     } else {
-      const { data, error } = await resend.emails.send(emailPayload);
+      const { data, error } = await resend.emails.send(emailPayload, {
+        idempotencyKey: randomUUID(),
+      });
 
       if (error || !data) {
-        console.error("Resend error:", error);
+        console.error("[contact] Resend send failed", {
+          name: error?.name,
+          message: error?.message,
+          from: emailPayload.from,
+          to: emailPayload.to,
+          subject: emailPayload.subject,
+        });
         return NextResponse.json(
           {
             error:
@@ -175,6 +212,10 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      console.info("[contact] Resend send succeeded", {
+        id: data.id,
+        to: emailPayload.to,
+      });
       result = data;
     }
 
@@ -188,7 +229,11 @@ export async function POST(request: NextRequest) {
       { status: 200, headers }
     );
   } catch (error) {
-    console.error("Server error:", error);
+    console.error("[contact] Unhandled server error", {
+      name: error instanceof Error ? error.name : undefined,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json(
       {
         error: "Erro interno do servidor",
