@@ -12,6 +12,7 @@ import {
 } from "@/components/sections/shared";
 import { pnldContent } from "@/content";
 import { seoConfig } from "@/config/seoConfig";
+import { buildFAQSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: seoConfig.pnld.title,
@@ -36,6 +37,12 @@ export const metadata: Metadata = {
 export default function PnldPage() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildFAQSchema(pnldContent.faq.items)),
+        }}
+      />
       <HeroSectionPnld content={pnldContent.hero} />
       <ProblemStatementSectionPnld content={pnldContent.problemStatement} />
       <ServicesSectionPnld content={pnldContent.services} />

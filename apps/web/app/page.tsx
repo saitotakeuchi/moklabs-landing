@@ -12,6 +12,7 @@ import {
 } from "@/components/sections/shared";
 import { mainContent } from "@/content";
 import { seoConfig } from "@/config/seoConfig";
+import { buildFAQSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: seoConfig.home.title,
@@ -36,6 +37,12 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildFAQSchema(mainContent.faq.items)),
+        }}
+      />
       <HeroSectionMain content={mainContent.hero} />
       <ProblemStatementSection content={mainContent.problemStatement} />
       <ServicesSection content={mainContent.services} />
