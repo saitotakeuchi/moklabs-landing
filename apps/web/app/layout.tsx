@@ -12,6 +12,7 @@ import {
   PostHogProvider,
   VercelAnalytics,
 } from "@/components/common";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const firaCode = Fira_Code({
@@ -118,6 +119,16 @@ export default function RootLayout({
         <meta name="theme-color" content="#0013FF" />
       </head>
       <body className={`${firaCode.variable} ${inter.variable} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         <GoogleTagManagerNoscript />
         <GoogleTagManager />
         <GoogleAnalytics />
