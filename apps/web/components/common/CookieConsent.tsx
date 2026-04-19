@@ -14,10 +14,22 @@ const CookieConsent = () => {
     }
   }, []);
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
     // Save consent to localStorage
     localStorage.setItem("cookieConsent", "true");
     setIsVisible(false);
+
+    // Upgrade PostHog persistence from in-memory to localStorage+cookie so
+    // we can tie cross-session visits together (needed for multi-touch
+    // attribution of repeat visitors from Google Ads).
+    try {
+      const { default: posthog } = await import("posthog-js");
+      if (posthog.__loaded) {
+        posthog.set_config({ persistence: "localStorage+cookie" });
+      }
+    } catch {
+      // Ignore — PostHog is optional and must never block the UI.
+    }
   };
 
   if (!isVisible) {

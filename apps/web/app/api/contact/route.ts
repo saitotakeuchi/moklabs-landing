@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import type { CreateEmailOptions, CreateEmailResponseSuccess } from "resend";
+import type { Attribution, AttributionTouch } from "@/lib/attribution";
+import { captureServerEvent } from "@/lib/posthog-server";
 
 export const runtime = "nodejs";
 
@@ -44,6 +46,7 @@ interface ContactFormPayload {
   company?: string;
   service: ServiceOption;
   message: string;
+  attribution?: Attribution;
 }
 
 const isServiceOption = (value: unknown): value is ServiceOption =>
@@ -67,6 +70,95 @@ const isContactFormPayload = (value: unknown): value is ContactFormPayload => {
     isServiceOption(service) &&
     typeof message === "string"
   );
+};
+
+const ATTRIBUTION_KEYS = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+  "gclid",
+  "fbclid",
+  "msclkid",
+  "referrer",
+  "landing_path",
+  "landing_timestamp",
+] as const;
+
+const normalizeTouch = (value: unknown): AttributionTouch | null => {
+  if (typeof value !== "object" || value === null) return null;
+  const source = value as Record<string, unknown>;
+  const touch: AttributionTouch = {};
+  for (const key of ATTRIBUTION_KEYS) {
+    const raw = source[key];
+    if (typeof raw === "string" && raw.length > 0 && raw.length < 500) {
+      touch[key] = raw;
+    }
+  }
+  return Object.keys(touch).length > 0 ? touch : null;
+};
+
+const normalizeAttribution = (value: unknown): Attribution => {
+  if (typeof value !== "object" || value === null) {
+    return { first: null, last: null };
+  }
+  const source = value as Record<string, unknown>;
+  return {
+    first: normalizeTouch(source.first),
+    last: normalizeTouch(source.last),
+  };
+};
+
+const attributionRow = (label: string, value?: string): string =>
+  value
+    ? `<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</p>`
+    : "";
+
+const renderAttributionSection = (
+  attribution: Attribution,
+  serverSignals: {
+    userAgent?: string;
+    country?: string;
+    city?: string;
+    ip?: string;
+  }
+): string => {
+  const last = attribution.last ?? {};
+  const first = attribution.first ?? {};
+
+  const rows = [
+    attributionRow("Fonte", last.utm_source),
+    attributionRow("Meio", last.utm_medium),
+    attributionRow("Campanha", last.utm_campaign),
+    attributionRow("Termo", last.utm_term),
+    attributionRow("Conteúdo", last.utm_content),
+    attributionRow("Google Click ID", last.gclid),
+    attributionRow("Facebook Click ID", last.fbclid),
+    attributionRow("Microsoft Click ID", last.msclkid),
+    attributionRow("Página de chegada", last.landing_path),
+    attributionRow("Referrer", last.referrer),
+    attributionRow(
+      "Localização",
+      [serverSignals.city, serverSignals.country].filter(Boolean).join(", ") ||
+        undefined
+    ),
+    attributionRow("User-Agent", serverSignals.userAgent),
+    attributionRow("Primeira visita", first.landing_timestamp),
+    attributionRow("Primeira fonte", first.utm_source),
+    attributionRow("Primeira campanha", first.utm_campaign),
+  ]
+    .filter(Boolean)
+    .join("");
+
+  if (!rows) return "";
+
+  return `
+    <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 20px;">
+      <h3 style="margin-top: 0; color: #374151;">Atribuição</h3>
+      ${rows}
+    </div>
+  `;
 };
 
 const simulateSend = (payload: CreateEmailOptions): SimulatedEmailResponse => {
@@ -124,7 +216,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, company, service, message } = body;
+    const { name, email, company, service, message, attribution } = body;
+    const normalizedAttribution = normalizeAttribution(attribution);
+
+    const serverSignals = {
+      userAgent: request.headers.get("user-agent") ?? undefined,
+      country: request.headers.get("x-vercel-ip-country") ?? undefined,
+      city: (() => {
+        const raw = request.headers.get("x-vercel-ip-city");
+        if (!raw) return undefined;
+        try {
+          return decodeURIComponent(raw);
+        } catch {
+          return raw;
+        }
+      })(),
+      ip:
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+        undefined,
+    };
 
     // Validate required fields
     if (!name || !email || !service || !message) {
@@ -199,6 +309,8 @@ export async function POST(request: NextRequest) {
             ).replace(/\n/g, "<br>")}</p>
           </div>
 
+          ${renderAttributionSection(normalizedAttribution, serverSignals)}
+
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #e2e8f0;">
 
           <p style="font-size: 14px; color: #6b7280;">
@@ -240,6 +352,30 @@ export async function POST(request: NextRequest) {
       });
       result = data;
     }
+
+    // Server-side PostHog capture bypasses ad-blockers so the conversion
+    // count stays close to what Google Ads reports even when clients block
+    // posthog-js. Fire-and-await so Vercel doesn't kill us mid-flush.
+    const flatTouch = normalizedAttribution.last ?? {};
+    await captureServerEvent({
+      distinctId: trimmedEmail,
+      event: "lead_submitted_server",
+      properties: {
+        service,
+        company: trimmedCompany || undefined,
+        country: serverSignals.country,
+        city: serverSignals.city,
+        ...flatTouch,
+        ...(normalizedAttribution.first
+          ? Object.fromEntries(
+              Object.entries(normalizedAttribution.first).map(([k, v]) => [
+                `first_${k}`,
+                v,
+              ])
+            )
+          : {}),
+      },
+    });
 
     return NextResponse.json(
       {

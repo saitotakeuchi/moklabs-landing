@@ -1,7 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import posthog from "posthog-js";
+import {
+  flattenAttribution,
+  getAttribution,
+  type Attribution,
+} from "@/lib/attribution";
+
+const safeCapture = (
+  event: string,
+  properties?: Record<string, unknown>
+): void => {
+  if (typeof window === "undefined") return;
+  if (!posthog.__loaded) return;
+  posthog.capture(event, properties);
+};
 
 const SERVICE_OPTIONS = [
   "Conversão EPUB3",
@@ -46,6 +61,14 @@ const ContactForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    // Defer one tick so the PostHogProvider's init effect runs first.
+    const timer = setTimeout(() => {
+      safeCapture("lead_form_viewed");
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
@@ -109,12 +132,15 @@ const ContactForm = () => {
     const timeoutId = setTimeout(() => controller.abort(), 20000);
     const startedAt = Date.now();
 
+    const attribution: Attribution = getAttribution();
+
     const payload = {
       name: formData.name.trim(),
       email: formData.email.trim(),
       company: formData.company.trim(),
       service: formData.service,
       message: formData.message.trim(),
+      attribution,
     };
 
     // console.warn survives Next's production build; console.info is stripped.
@@ -138,6 +164,21 @@ const ContactForm = () => {
         console.info(
           `[contact-form] Submitted successfully in ${durationMs}ms`
         );
+
+        if (posthog.__loaded) {
+          posthog.identify(payload.email, {
+            name: payload.name,
+            company: payload.company || undefined,
+            service: payload.service,
+          });
+        }
+        safeCapture("lead_submitted", {
+          service: payload.service,
+          company: payload.company || undefined,
+          duration_ms: durationMs,
+          ...flattenAttribution(attribution),
+        });
+
         setIsSubmitted(true);
         setFormData(EMPTY_FORM);
         return;
@@ -313,7 +354,11 @@ const ContactForm = () => {
       <button
         type="submit"
         disabled={isSubmitting}
-        onClick={() => console.warn("[contact-form] submit button clicked")}
+        onClick={() =>
+          safeCapture("lead_form_submit_clicked", {
+            service: formData.service || undefined,
+          })
+        }
         className="bg-[#0013ff] text-white px-6 py-2 rounded-3xl text-base font-bold hover:bg-blue-800 transition-colors disabled:opacity-50"
       >
         {isSubmitting ? "Enviando..." : "Enviar"}
