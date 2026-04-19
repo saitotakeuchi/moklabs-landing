@@ -7,14 +7,12 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - api/contact (public, anonymous endpoint — must not hit Supabase)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
-    "/((?!api/contact|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Only run Supabase auth on routes that actually require a session.
+    // Everything else (marketing pages, blog, /api/contact, etc.) must not
+    // depend on Supabase availability.
+    "/admin",
+    "/admin/:path*",
+    "/pnld-chat/dashboard",
+    "/pnld-chat/dashboard/:path*",
   ],
 };
