@@ -12,6 +12,7 @@ const SERVICE_OPTIONS = [
   "PNLD Digital",
   "Audiodescrição",
   "Ilustração",
+  "Outros",
 ] as const;
 
 interface FormData {
@@ -65,8 +66,6 @@ const ContactForm = () => {
 
     if (!formData.message.trim()) {
       newErrors.message = "Mensagem é obrigatória";
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Mensagem deve ter pelo menos 10 caracteres";
     }
 
     return newErrors;
