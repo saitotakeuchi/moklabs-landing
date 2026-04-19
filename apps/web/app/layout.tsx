@@ -3,10 +3,13 @@ import { Fira_Code, Inter } from "next/font/google";
 import "./globals.css";
 import { ConditionalLayout } from "@/components/layout";
 import {
+  AttributionBootstrap,
   CookieConsent,
   GoogleAnalytics,
   GoogleTagManager,
   GoogleTagManagerNoscript,
+  PostHogPageview,
+  PostHogProvider,
   VercelAnalytics,
 } from "@/components/common";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -118,10 +121,14 @@ export default function RootLayout({
         <GoogleTagManagerNoscript />
         <GoogleTagManager />
         <GoogleAnalytics />
-        <div className="min-h-screen bg-white">
-          <ConditionalLayout>{children}</ConditionalLayout>
-          <CookieConsent />
-        </div>
+        <PostHogProvider>
+          <AttributionBootstrap />
+          <PostHogPageview />
+          <div className="min-h-screen bg-white">
+            <ConditionalLayout>{children}</ConditionalLayout>
+            <CookieConsent />
+          </div>
+        </PostHogProvider>
         <VercelAnalytics />
         <SpeedInsights />
       </body>

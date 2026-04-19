@@ -6,6 +6,7 @@
  */
 
 import { track } from "@vercel/analytics";
+import posthog from "posthog-js";
 
 // Event names matching MOK-44 requirements
 export type AnalyticsEvent =
@@ -17,7 +18,10 @@ export type AnalyticsEvent =
   | "document_upload_error"
   | "api_error"
   | "sse_connection_failed"
-  | "sse_connection_restored";
+  | "sse_connection_restored"
+  | "lead_form_viewed"
+  | "lead_form_submit_clicked"
+  | "lead_submitted";
 
 // Event properties (non-PII, aggregate data only)
 export interface AnalyticsEventProps {
@@ -74,6 +78,12 @@ export function trackEvent(
 
     // Track with Vercel Analytics
     track(event, cleanedProperties);
+
+    // Mirror to PostHog so product-analytics dashboards stay in sync with
+    // Vercel-only surfaces. Safe to call before init — posthog-js no-ops.
+    if (posthog.__loaded) {
+      posthog.capture(event, cleanedProperties);
+    }
 
     // Log to console in development
     if (process.env.NODE_ENV === "development") {

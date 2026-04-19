@@ -155,6 +155,9 @@ export const siteConfig = {
   // Analytics
   analytics: {
     googleAnalyticsId: process.env.NEXT_PUBLIC_GA_TRACKING_ID || "",
+    posthogKey: process.env.NEXT_PUBLIC_POSTHOG_KEY || "",
+    posthogHost:
+      process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
   },
 
   // Business hours

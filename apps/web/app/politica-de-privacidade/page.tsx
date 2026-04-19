@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
           </h1>
 
           <p className="text-gray-600 text-sm mb-8">
-            <strong>Última atualização:</strong> 19/09/2025
+            <strong>Última atualização:</strong> 18/04/2026
           </p>
 
           <section className="mb-8">
@@ -168,6 +168,34 @@ export default function PrivacyPolicyPage() {
                 Em caso de venda, fusão, aquisição ou reorganização societária,
                 os seus dados poderão fazer parte dos ativos transferidos (com
                 compromisso de manter privacidade).
+              </li>
+            </ul>
+            <p className="text-gray-700 leading-relaxed mt-4">
+              Operadores que atualmente tratam dados em nosso nome:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mt-2">
+              <li>
+                <strong>Vercel Inc.</strong> (EUA) — hospedagem do site e
+                métricas de desempenho (Vercel Analytics / Speed Insights).
+              </li>
+              <li>
+                <strong>Google LLC</strong> (EUA) — Google Analytics e Google
+                Tag Manager, utilizados para medição de audiência e atribuição
+                de campanhas de anúncios.
+              </li>
+              <li>
+                <strong>PostHog Inc.</strong> (Estados Unidos,{" "}
+                <code>us.i.posthog.com</code>) — análise de produto e atribuição
+                de leads provenientes de campanhas pagas. Coleta parâmetros de
+                marketing (UTM, gclid), páginas visitadas e, no momento do envio
+                do formulário de contato, associa o e-mail informado à jornada
+                anônima anterior. A transferência internacional dos dados ocorre
+                sob as Cláusulas Contratuais Padrão (SCCs) previstas no DPA da
+                PostHog, em conformidade com o art. 33 da LGPD.
+              </li>
+              <li>
+                <strong>Resend</strong> — envio transacional do e-mail gerado a
+                partir do formulário de contato.
               </li>
             </ul>
           </section>
