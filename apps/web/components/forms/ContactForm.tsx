@@ -3,25 +3,44 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+const SERVICE_OPTIONS = [
+  "Conversão EPUB3",
+  "Recursos Digitais",
+  "Simuladores",
+  "Objetos Digitais",
+  "Livro Digital",
+  "PNLD Digital",
+  "Audiodescrição",
+  "Ilustração",
+] as const;
+
 interface FormData {
   name: string;
   email: string;
+  company: string;
+  service: string;
   message: string;
 }
 
 interface FormErrors {
   name?: string;
   email?: string;
+  company?: string;
+  service?: string;
   message?: string;
   submit?: string;
 }
 
+const EMPTY_FORM: FormData = {
+  name: "",
+  email: "",
+  company: "",
+  service: "",
+  message: "",
+};
+
 const ContactForm = () => {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,6 +59,10 @@ const ContactForm = () => {
       newErrors.email = "E-mail inválido";
     }
 
+    if (!formData.service) {
+      newErrors.service = "Selecione um serviço";
+    }
+
     if (!formData.message.trim()) {
       newErrors.message = "Mensagem é obrigatória";
     } else if (formData.message.trim().length < 10) {
@@ -51,7 +74,9 @@ const ContactForm = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -86,6 +111,8 @@ const ContactForm = () => {
     const payload = {
       name: formData.name.trim(),
       email: formData.email.trim(),
+      company: formData.company.trim(),
+      service: formData.service,
       message: formData.message.trim(),
     };
 
@@ -111,7 +138,7 @@ const ContactForm = () => {
           `[contact-form] Submitted successfully in ${durationMs}ms`
         );
         setIsSubmitted(true);
-        setFormData({ name: "", email: "", message: "" });
+        setFormData(EMPTY_FORM);
         return;
       }
 
@@ -210,6 +237,37 @@ const ContactForm = () => {
           className="bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none"
           required
         />
+
+        <input
+          id="company"
+          name="company"
+          type="text"
+          placeholder="Empresa/Editora (opcional)"
+          value={formData.company}
+          onChange={handleChange}
+          className="bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none"
+        />
+
+        <select
+          id="service"
+          name="service"
+          value={formData.service}
+          onChange={handleChange}
+          aria-label="Serviço de interesse"
+          required
+          className={`bg-white p-2.5 h-[42px] text-xs border-0 outline-none appearance-none bg-[url('data:image/svg+xml;utf8,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2020%2020%22%20fill=%22%23575756%22><path%20d=%22M5.5%208l4.5%204.5L14.5%208z%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] pr-8 ${
+            formData.service ? "text-[#575756]" : "text-[#9a9a99]"
+          }`}
+        >
+          <option value="" disabled>
+            Serviço de interesse
+          </option>
+          {SERVICE_OPTIONS.map((option) => (
+            <option key={option} value={option} className="text-[#575756]">
+              {option}
+            </option>
+          ))}
+        </select>
 
         <textarea
           id="message"

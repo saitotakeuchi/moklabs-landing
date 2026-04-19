@@ -24,22 +24,46 @@ const escapeHtml = (value: string): string =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
+const SERVICE_OPTIONS = [
+  "Conversão EPUB3",
+  "Recursos Digitais",
+  "Simuladores",
+  "Objetos Digitais",
+  "Livro Digital",
+  "PNLD Digital",
+  "Audiodescrição",
+  "Ilustração",
+] as const;
+
+type ServiceOption = (typeof SERVICE_OPTIONS)[number];
+
 interface ContactFormPayload {
   name: string;
   email: string;
+  company?: string;
+  service: ServiceOption;
   message: string;
 }
+
+const isServiceOption = (value: unknown): value is ServiceOption =>
+  typeof value === "string" &&
+  (SERVICE_OPTIONS as readonly string[]).includes(value);
 
 const isContactFormPayload = (value: unknown): value is ContactFormPayload => {
   if (typeof value !== "object" || value === null) {
     return false;
   }
 
-  const { name, email, message } = value as Record<string, unknown>;
+  const { name, email, company, service, message } = value as Record<
+    string,
+    unknown
+  >;
 
   return (
     typeof name === "string" &&
     typeof email === "string" &&
+    (company === undefined || typeof company === "string") &&
+    isServiceOption(service) &&
     typeof message === "string"
   );
 };
@@ -99,10 +123,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, message } = body;
+    const { name, email, company, service, message } = body;
 
     // Validate required fields
-    if (!name || !email || !message) {
+    if (!name || !email || !service || !message) {
       return NextResponse.json(
         {
           error: "Todos os campos são obrigatórios",
@@ -135,6 +159,7 @@ export async function POST(request: NextRequest) {
     // Normalize inputs server-side (defense in depth; client also trims)
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
+    const trimmedCompany = company?.trim() ?? "";
     const trimmedMessage = message.trim();
 
     // Email configuration — fall back to safe defaults only in dev/simulation
@@ -159,7 +184,7 @@ export async function POST(request: NextRequest) {
     const emailPayload: CreateEmailOptions = {
       from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
-      subject: `Novo contato de ${trimmedName}`,
+      subject: `[${service}] Novo contato de ${trimmedName}`,
       replyTo: [trimmedEmail],
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -168,6 +193,12 @@ export async function POST(request: NextRequest) {
           <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>Nome:</strong> ${escapeHtml(trimmedName)}</p>
             <p><strong>E-mail:</strong> ${escapeHtml(trimmedEmail)}</p>
+            ${
+              trimmedCompany
+                ? `<p><strong>Empresa/Editora:</strong> ${escapeHtml(trimmedCompany)}</p>`
+                : ""
+            }
+            <p><strong>Serviço de interesse:</strong> ${escapeHtml(service)}</p>
           </div>
 
           <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
