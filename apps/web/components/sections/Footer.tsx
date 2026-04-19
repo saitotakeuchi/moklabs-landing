@@ -1,6 +1,7 @@
 import { Phone, Mail, Instagram } from "iconoir-react";
 import Link from "next/link";
 import Image from "next/image";
+import { WhatsAppLink } from "@/components/common";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -31,12 +32,13 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-green-400" />
-                <a
-                  href="https://wa.me/5541936182622"
+                <WhatsAppLink
+                  message="Olá! Vim do site da Mok Labs."
+                  placement="footer-phone"
                   className="text-white hover:text-gray-300 transition-colors duration-200 text-sm"
                 >
                   +55 (41) 93618-2622
-                </a>
+                </WhatsAppLink>
               </div>
 
               <div className="flex items-center space-x-3">

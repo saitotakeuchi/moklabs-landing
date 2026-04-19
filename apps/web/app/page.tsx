@@ -49,7 +49,7 @@ export default function Home() {
       <CTASection
         text={mainContent.ctaBanner.text}
         buttonText={mainContent.ctaBanner.buttonText}
-        buttonUrl={mainContent.ctaBanner.buttonUrl}
+        whatsapp={mainContent.ctaBanner.whatsapp}
       />
       <OurWaySection content={mainContent.ourWay} />
       <AnimatedPanelSection content={mainContent.animatedPanel} />

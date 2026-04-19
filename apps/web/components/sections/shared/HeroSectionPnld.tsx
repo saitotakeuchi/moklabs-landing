@@ -2,6 +2,18 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
+import { WhatsAppLink } from "@/components/common";
+
+interface HeroButton {
+  text: string;
+  variant: "primary" | "secondary";
+  url?: string;
+  whatsapp?: {
+    message: string;
+    placement: string;
+  };
+}
 
 interface HeroPnldProps {
   content: {
@@ -9,6 +21,7 @@ interface HeroPnldProps {
     subtitle: string;
     image: string;
     imageAlt: string;
+    buttons?: HeroButton[];
   };
 }
 
@@ -27,6 +40,55 @@ const HeroPnld = ({ content }: HeroPnldProps) => {
               {content.subtitle}
             </p>
           </div>
+
+          {/* CTA Buttons */}
+          {content.buttons && content.buttons.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-8 sm:mb-16">
+              {content.buttons.map((button, index) => {
+                const buttonClasses = `
+                  px-6 py-2 rounded-[24px] text-[16px] font-bold leading-[1.2] text-center whitespace-nowrap
+                  ${
+                    button.variant === "primary"
+                      ? "bg-mok-green text-mok-blue"
+                      : "bg-transparent text-white border-2 border-white"
+                  }
+                  hover:opacity-90 transition-opacity
+                `;
+
+                if (button.whatsapp) {
+                  return (
+                    <WhatsAppLink
+                      key={index}
+                      message={button.whatsapp.message}
+                      placement={button.whatsapp.placement}
+                      className={buttonClasses}
+                    >
+                      {button.text}
+                    </WhatsAppLink>
+                  );
+                }
+
+                const url = button.url ?? "#";
+                const isExternal =
+                  url.startsWith("http") || url.startsWith("mailto:");
+                return isExternal ? (
+                  <a
+                    key={index}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={buttonClasses}
+                  >
+                    {button.text}
+                  </a>
+                ) : (
+                  <Link key={index} href={url} className={buttonClasses}>
+                    {button.text}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
 
           {/* Animated Illustration - Below text with responsive margin */}
           <div className="flex justify-center">

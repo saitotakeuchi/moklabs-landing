@@ -8,3 +8,4 @@ export {
 export { default as PostHogPageview } from "./PostHogPageview";
 export { default as PostHogProvider } from "./PostHogProvider";
 export { default as VercelAnalytics } from "./VercelAnalytics";
+export { default as WhatsAppLink } from "./WhatsAppLink";

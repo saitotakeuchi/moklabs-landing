@@ -50,7 +50,7 @@ export default function PnldPage() {
       <CTASection
         text={pnldContent.ctaBanner.text}
         buttonText={pnldContent.ctaBanner.buttonText}
-        buttonUrl={pnldContent.ctaBanner.buttonUrl}
+        whatsapp={pnldContent.ctaBanner.whatsapp}
       />
       <OurWaySection content={pnldContent.ourWay} />
       <FAQ content={pnldContent.faq} />

@@ -2,11 +2,16 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { WhatsAppLink } from "@/components/common";
 
 interface HeroButton {
   text: string;
-  url: string;
   variant: "primary" | "secondary";
+  url?: string;
+  whatsapp?: {
+    message: string;
+    placement: string;
+  };
 }
 
 interface HeroMainProps {
@@ -42,9 +47,6 @@ const HeroMain = ({ content }: HeroMainProps) => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full sm:w-auto">
               {content.buttons?.map((button, index) => {
-                const isExternal =
-                  button.url.startsWith("http") ||
-                  button.url.startsWith("mailto:");
                 const buttonClasses = `
                   px-6 py-2 rounded-[24px] text-[16px] font-bold leading-[1.2] text-center whitespace-nowrap
                   ${
@@ -55,10 +57,26 @@ const HeroMain = ({ content }: HeroMainProps) => {
                   hover:opacity-90 transition-opacity
                 `;
 
+                if (button.whatsapp) {
+                  return (
+                    <WhatsAppLink
+                      key={index}
+                      message={button.whatsapp.message}
+                      placement={button.whatsapp.placement}
+                      className={buttonClasses}
+                    >
+                      {button.text}
+                    </WhatsAppLink>
+                  );
+                }
+
+                const url = button.url ?? "#";
+                const isExternal =
+                  url.startsWith("http") || url.startsWith("mailto:");
                 return isExternal ? (
                   <a
                     key={index}
-                    href={button.url}
+                    href={url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={buttonClasses}
@@ -66,7 +84,7 @@ const HeroMain = ({ content }: HeroMainProps) => {
                     {button.text}
                   </a>
                 ) : (
-                  <Link key={index} href={button.url} className={buttonClasses}>
+                  <Link key={index} href={url} className={buttonClasses}>
                     {button.text}
                   </Link>
                 );
