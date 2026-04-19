@@ -10,6 +10,14 @@
 # testing
 /coverage
 
+# python
+__pycache__/
+*.pyc
+*.pyo
+
+# tina (generated)
+**/.tina/__generated__/
+
 # next.js
 /.next/
 **/.next/
