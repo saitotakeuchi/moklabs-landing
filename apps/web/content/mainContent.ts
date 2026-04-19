@@ -2,7 +2,7 @@ export const mainContent = {
   hero: {
     title: "Soluções digitais para a educação, sem complicação",
     image: "/main-lp-hero.svg",
-    imageAlt: "Digital solutions illustration",
+    imageAlt: "Ilustração de soluções digitais educacionais — Mok Labs",
     buttons: [
       {
         text: "Vamos conversar!",

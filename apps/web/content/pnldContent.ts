@@ -4,7 +4,8 @@ export const pnldContent = {
     subtitle:
       "No Mok Labs transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
     image: "/hero-hand.svg",
-    imageAlt: "Pixelated hand illustration",
+    imageAlt:
+      "Ilustração de mão pixelada representando adaptação digital de livros didáticos para o PNLD",
     buttons: [
       {
         text: "Vamos conversar!",
