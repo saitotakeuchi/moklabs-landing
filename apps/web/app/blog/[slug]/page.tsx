@@ -14,6 +14,7 @@ import {
   getAdjacentPosts,
 } from "@/lib/blog";
 import { seoConfig } from "@/config/seoConfig";
+import { buildBreadcrumbSchema } from "@/lib/seo";
 
 interface BlogPostPageProps {
   params: {
@@ -215,12 +216,22 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     },
   };
 
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Blog", url: "/blog" },
+    { name: post.title, url: `/blog/${params.slug}` },
+  ]);
+
   return (
     <>
       {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <div className="min-h-screen bg-white">
