@@ -6,8 +6,12 @@ export const mainContent = {
     buttons: [
       {
         text: "Vamos conversar!",
-        url: "https://wa.me/5541936182622",
         variant: "primary" as const,
+        whatsapp: {
+          message:
+            "Olá! Vim do site da Mok Labs e quero saber mais sobre soluções digitais para educação.",
+          placement: "hero-home",
+        },
       },
       {
         text: "Conheça os serviços",
@@ -66,7 +70,11 @@ export const mainContent = {
   ctaBanner: {
     text: "Pronto para tirar sua ideia do papel?",
     buttonText: "Vamos conversar!",
-    buttonUrl: "https://wa.me/5541936182622",
+    whatsapp: {
+      message:
+        "Olá! Pronto para tirar minha ideia do papel. Podemos conversar?",
+      placement: "banner-home",
+    },
   },
 
   ourWay: {

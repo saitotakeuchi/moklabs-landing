@@ -9,8 +9,12 @@ export const pnldContent = {
     buttons: [
       {
         text: "Vamos conversar!",
-        url: "https://wa.me/5541936182622",
         variant: "primary" as const,
+        whatsapp: {
+          message:
+            "Olá! Vim do site da Mok Labs e quero adaptar um livro para o PNLD. Podemos conversar?",
+          placement: "hero-pnld",
+        },
       },
       {
         text: "Conheça os serviços",
@@ -67,7 +71,10 @@ export const pnldContent = {
   ctaBanner: {
     text: "Pronto para começar seu projeto PNLD?",
     buttonText: "Vamos conversar!",
-    buttonUrl: "https://wa.me/5541936182622",
+    whatsapp: {
+      message: "Olá! Pronto para começar meu projeto PNLD. Podemos conversar?",
+      placement: "banner-pnld",
+    },
   },
 
   ourWay: {
