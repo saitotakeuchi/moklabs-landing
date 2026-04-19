@@ -5,7 +5,7 @@ export const seoConfig = {
       "Desenvolvemos soluções tecnológicas personalizadas para o setor educacional: objetos educacionais digitais, livros interativos, plataformas LMS, AVA e projetos de IA aplicados à educação. Expertise em editoras e empresas de educação.",
     keywords:
       "soluções digitais educação, objetos educacionais digitais, livros digitais interativos, plataforma LMS personalizada, AVA educacional, IA para educação, desenvolvimento educacional, editoras digitais, tecnologia educacional, educação digital",
-    url: "https://moklabs.com.br/",
+    url: "https://moklabs.com.br",
     image: "/og-image.svg",
   },
   pnld: {
