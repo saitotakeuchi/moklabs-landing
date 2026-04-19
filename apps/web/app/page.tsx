@@ -17,7 +17,6 @@ import { buildFAQSchema } from "@/lib/seo";
 export const metadata: Metadata = {
   title: seoConfig.home.title,
   description: seoConfig.home.description,
-  keywords: seoConfig.home.keywords,
   openGraph: {
     title: seoConfig.home.title,
     description: seoConfig.home.description,

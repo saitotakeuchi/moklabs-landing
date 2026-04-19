@@ -4,7 +4,6 @@ import { seoConfig } from "@/config/seoConfig";
 export const metadata: Metadata = {
   title: seoConfig.privacy.title,
   description: seoConfig.privacy.description,
-  keywords: seoConfig.privacy.keywords,
   openGraph: {
     title: seoConfig.privacy.title,
     description: seoConfig.privacy.description,

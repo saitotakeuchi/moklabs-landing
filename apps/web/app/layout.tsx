@@ -41,8 +41,6 @@ export const metadata: Metadata = {
     maximumScale: 5,
     userScalable: true,
   },
-  keywords:
-    "PNLD digital, livros digitais acessíveis, conversão PDF, ePUB, materiais educacionais, editais PNLD",
   authors: [{ name: "Mok Labs" }],
   creator: "Mok Labs",
   publisher: "Mok Labs",

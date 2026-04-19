@@ -47,7 +47,6 @@ export async function generateMetadata({
   return {
     title: `${post.title} | Blog Mok Labs`,
     description: post.description,
-    keywords: post.tags,
     authors: [{ name: "Mok Labs", url: seoConfig.home.url }],
     openGraph: {
       title: post.title,
