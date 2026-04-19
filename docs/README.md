@@ -52,6 +52,18 @@ This directory contains comprehensive documentation for the Mok Labs Next.js web
   - Bundle analysis
   - Performance expectations
 
+### Strategy & Roadmap
+
+- **[LANDING_CRO_SEO_PLAN.md](./LANDING_CRO_SEO_PLAN.md)** - Master plan for landing page CRO / SEO / lead-gen improvements
+  - Full critique with file + line references
+  - Prioritization rationale
+  - Success metrics
+  - Sprint index
+- **[sprint_01_tasks.md](./sprint_01_tasks.md)** - Sprint 1: Foundations & Quick Wins (P0 bugs, JSON-LD schemas, OG image, WhatsApp instrumentation)
+- **[sprint_02_tasks.md](./sprint_02_tasks.md)** - Sprint 2: Conversion Mechanics (hero copy, CTA variants, sticky mobile, form context, scroll events)
+- **[sprint_03_tasks.md](./sprint_03_tasks.md)** - Sprint 3: Social Proof & Lead Diversification (logos, testimonials, lead magnet, Cal.com, per-edital landing)
+- **[sprint_04_tasks.md](./sprint_04_tasks.md)** - Sprint 4: Polish, Growth Channels & Instrumentation (retargeting pixels, blog CTAs, a11y, consent granularity)
+
 ## 🚀 Quick Links
 
 ### For Deployment
