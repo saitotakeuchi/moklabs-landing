@@ -4,6 +4,7 @@ import { Resend } from "resend";
 import type { CreateEmailOptions, CreateEmailResponseSuccess } from "resend";
 import type { Attribution, AttributionTouch } from "@/lib/attribution";
 import { captureServerEvent } from "@/lib/posthog-server";
+import { isServiceSlug, type ServiceSlug } from "@/lib/services";
 
 export const runtime = "nodejs";
 
@@ -26,32 +27,14 @@ const escapeHtml = (value: string): string =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
-const SERVICE_OPTIONS = [
-  "Conversão EPUB3",
-  "Recursos Digitais",
-  "Simuladores",
-  "Objetos Digitais",
-  "Livro Digital",
-  "PNLD Digital",
-  "Audiodescrição",
-  "Ilustração",
-  "Outros",
-] as const;
-
-type ServiceOption = (typeof SERVICE_OPTIONS)[number];
-
 interface ContactFormPayload {
   name: string;
   email: string;
   company?: string;
-  service: ServiceOption;
+  service: ServiceSlug;
   message: string;
   attribution?: Attribution;
 }
-
-const isServiceOption = (value: unknown): value is ServiceOption =>
-  typeof value === "string" &&
-  (SERVICE_OPTIONS as readonly string[]).includes(value);
 
 const isContactFormPayload = (value: unknown): value is ContactFormPayload => {
   if (typeof value !== "object" || value === null) {
@@ -67,7 +50,7 @@ const isContactFormPayload = (value: unknown): value is ContactFormPayload => {
     typeof name === "string" &&
     typeof email === "string" &&
     (company === undefined || typeof company === "string") &&
-    isServiceOption(service) &&
+    isServiceSlug(service) &&
     typeof message === "string"
   );
 };
@@ -282,6 +265,10 @@ export async function POST(request: NextRequest) {
     const toEmail = toEmailEnv || "contato@moklabs.com.br";
     const fromName = process.env.FROM_NAME || "Mok Labs";
 
+    const noCompanyBanner = trimmedCompany
+      ? ""
+      : `<div style="background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; padding: 12px 16px; border-radius: 8px; margin: 16px 0; font-weight: 600;">&#9888;&#65039; Lead sem empresa/editora informada &mdash; triagem recomendada antes de responder.</div>`;
+
     const emailPayload: CreateEmailOptions = {
       from: `${fromName} <${fromEmail}>`,
       to: [toEmail],
@@ -290,6 +277,7 @@ export async function POST(request: NextRequest) {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #0013ff;">Novo contato via site</h2>
+          ${noCompanyBanner}
 
           <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>Nome:</strong> ${escapeHtml(trimmedName)}</p>
@@ -363,6 +351,7 @@ export async function POST(request: NextRequest) {
       properties: {
         service,
         company: trimmedCompany || undefined,
+        has_company: trimmedCompany.length > 0,
         country: serverSignals.country,
         city: serverSignals.city,
         ...flatTouch,

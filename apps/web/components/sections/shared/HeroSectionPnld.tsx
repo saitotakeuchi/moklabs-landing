@@ -32,7 +32,7 @@ const HeroPnld = ({ content }: HeroPnldProps) => {
         <div className="flex flex-col items-center text-center">
           {/* Text Content - Vertical Layout */}
           <div className="mb-8 sm:mb-16">
-            <h1 className="text-[32px] max-w-5xl sm:text-[60px] md:text-[80px] lg:text-[98px] font-bold text-white leading-tight mb-4 sm:mb-6">
+            <h1 className="text-[32px] max-w-5xl sm:text-[44px] md:text-[56px] lg:text-[64px] font-bold text-white leading-tight mb-4 sm:mb-6">
               {content.title}
             </h1>
 

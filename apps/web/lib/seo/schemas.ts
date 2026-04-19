@@ -69,6 +69,27 @@ interface BreadcrumbListSchema {
   itemListElement: ListItem[];
 }
 
+interface ServiceSchema {
+  "@context": "https://schema.org";
+  "@type": "Service";
+  name: string;
+  serviceType: string;
+  description: string;
+  provider: {
+    "@type": "Organization";
+    name: string;
+    url: string;
+  };
+  areaServed: {
+    "@type": "Country";
+    name: string;
+  };
+  audience: {
+    "@type": "Audience";
+    audienceType: string;
+  };
+}
+
 export const organizationSchema: OrganizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -131,3 +152,25 @@ export function buildBreadcrumbSchema(
     })),
   };
 }
+
+export const pnldServiceSchema: ServiceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Adaptação de Livros Didáticos para o PNLD Digital",
+  serviceType: "Adaptação de livros didáticos para PNLD",
+  description:
+    "Serviço completo de adaptação de livros didáticos e materiais educacionais para conformidade com os editais PNLD/FNDE — incluindo conversão EPUB3, acessibilidade WCAG 2.1 AA, audiodescrição, interatividade e consultoria técnica.",
+  provider: {
+    "@type": "Organization",
+    name: "Mok Labs",
+    url: BASE_URL,
+  },
+  areaServed: {
+    "@type": "Country",
+    name: "Brasil",
+  },
+  audience: {
+    "@type": "Audience",
+    audienceType: "Editoras Educacionais",
+  },
+};

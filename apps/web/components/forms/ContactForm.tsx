@@ -1,13 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import {
   flattenAttribution,
   getAttribution,
   type Attribution,
 } from "@/lib/attribution";
+import {
+  SERVICE_GROUPS,
+  isServiceSlug,
+  type ServiceSlug,
+} from "@/lib/services";
 
 const safeCapture = (
   event: string,
@@ -18,23 +24,11 @@ const safeCapture = (
   posthog.capture(event, properties);
 };
 
-const SERVICE_OPTIONS = [
-  "Conversão EPUB3",
-  "Recursos Digitais",
-  "Simuladores",
-  "Objetos Digitais",
-  "Livro Digital",
-  "PNLD Digital",
-  "Audiodescrição",
-  "Ilustração",
-  "Outros",
-] as const;
-
 interface FormData {
   name: string;
   email: string;
   company: string;
-  service: string;
+  service: ServiceSlug | "";
   message: string;
 }
 
@@ -57,10 +51,12 @@ const EMPTY_FORM: FormData = {
 
 const ContactForm = () => {
   const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
+  const searchParams = useSearchParams();
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const hasFiredFieldFocus = useRef(false);
 
   useEffect(() => {
     // Defer one tick so the PostHogProvider's init effect runs first.
@@ -69,6 +65,17 @@ const ContactForm = () => {
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    // Source of truth for `?service=...` pre-fill — `useSearchParams` reacts
+    // to client-side navigation (service-card Link clicks re-emit new params).
+    const raw = searchParams?.get("service") ?? null;
+    if (raw && isServiceSlug(raw)) {
+      setFormData((prev) =>
+        prev.service === raw ? prev : { ...prev, service: raw }
+      );
+    }
+  }, [searchParams]);
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
@@ -112,6 +119,20 @@ const ContactForm = () => {
         [name]: "",
       }));
     }
+  };
+
+  const handleFieldFocus = (
+    e: React.FocusEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    if (hasFiredFieldFocus.current) return;
+    hasFiredFieldFocus.current = true;
+    safeCapture("contact_form_field_focused", {
+      first_field: e.target.name,
+      page:
+        typeof window !== "undefined" ? window.location.pathname : undefined,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,6 +196,7 @@ const ContactForm = () => {
         safeCapture("lead_submitted", {
           service: payload.service,
           company: payload.company || undefined,
+          has_company: payload.company.length > 0,
           duration_ms: durationMs,
           ...flattenAttribution(attribution),
         });
@@ -285,6 +307,7 @@ const ContactForm = () => {
               placeholder=" "
               value={formData.name}
               onChange={handleChange}
+              onFocus={handleFieldFocus}
               className={`${inputBase} ${ring(errors.name)}`}
             />
             <label htmlFor="name" className={floatingLabel}>
@@ -303,6 +326,7 @@ const ContactForm = () => {
               placeholder=" "
               value={formData.email}
               onChange={handleChange}
+              onFocus={handleFieldFocus}
               className={`${inputBase} ${ring(errors.email)}`}
             />
             <label htmlFor="email" className={floatingLabel}>
@@ -321,6 +345,7 @@ const ContactForm = () => {
               placeholder=" "
               value={formData.company}
               onChange={handleChange}
+              onFocus={handleFieldFocus}
               className={`${inputBase} ${ring(errors.company)}`}
             />
             <label htmlFor="company" className={floatingLabel}>
@@ -336,6 +361,7 @@ const ContactForm = () => {
               name="service"
               value={formData.service}
               onChange={handleChange}
+              onFocus={handleFieldFocus}
               className={`bg-white w-full h-[56px] px-2.5 pt-5 pb-1.5 text-xs border-0 outline-none appearance-none bg-[url('data:image/svg+xml;utf8,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2020%2020%22%20fill=%22%23575756%22><path%20d=%22M5.5%208l4.5%204.5L14.5%208z%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] pr-8 ${
                 formData.service ? "text-[#575756]" : "text-transparent"
               } ${ring(errors.service)}`}
@@ -343,10 +369,14 @@ const ContactForm = () => {
               <option value="" disabled>
                 {/* Prompt hidden visually — label above replaces it. */}
               </option>
-              {SERVICE_OPTIONS.map((option) => (
-                <option key={option} value={option} className="text-[#575756]">
-                  {option}
-                </option>
+              {SERVICE_GROUPS.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.slugs.map((slug) => (
+                    <option key={slug} value={slug} className="text-[#575756]">
+                      {slug}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
             <label
@@ -368,6 +398,7 @@ const ContactForm = () => {
               rows={8}
               value={formData.message}
               onChange={handleChange}
+              onFocus={handleFieldFocus}
               className={`peer bg-white w-full h-[200px] px-2.5 pt-5 pb-1.5 text-xs text-[#575756] border-0 outline-none resize-none ${ring(
                 errors.message
               )}`}

@@ -4,4 +4,5 @@ export {
   websiteSchema,
   buildFAQSchema,
   buildBreadcrumbSchema,
+  pnldServiceSchema,
 } from "./schemas";

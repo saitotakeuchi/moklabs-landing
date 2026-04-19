@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { motion } from "framer-motion";
 import { ContactForm } from "@/components/forms";
 
@@ -33,7 +34,9 @@ const Contact = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <ContactForm />
+            <Suspense fallback={null}>
+              <ContactForm />
+            </Suspense>
           </motion.div>
         </div>
       </div>

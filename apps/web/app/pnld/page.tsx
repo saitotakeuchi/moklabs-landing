@@ -10,9 +10,11 @@ import {
   OurWaySection,
   BlogSectionList,
 } from "@/components/sections/shared";
+import { SectionTracker } from "@/components/common";
+import { SECTION } from "@/lib/posthog/sections";
 import { pnldContent } from "@/content";
 import { seoConfig } from "@/config/seoConfig";
-import { buildFAQSchema } from "@/lib/seo";
+import { buildFAQSchema, pnldServiceSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: seoConfig.pnld.title,
@@ -42,20 +44,46 @@ export default function PnldPage() {
           __html: JSON.stringify(buildFAQSchema(pnldContent.faq.items)),
         }}
       />
-      <HeroSectionPnld content={pnldContent.hero} />
-      <ProblemStatementSectionPnld content={pnldContent.problemStatement} />
-      <ServicesSectionPnld content={pnldContent.services} />
-      <AnimatedPanelSectionPnld content={pnldContent.animatedPanel} />
-      <HowWorksSectionPnld content={pnldContent.howWorks} />
-      <CTASection
-        text={pnldContent.ctaBanner.text}
-        buttonText={pnldContent.ctaBanner.buttonText}
-        whatsapp={pnldContent.ctaBanner.whatsapp}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(pnldServiceSchema),
+        }}
       />
-      <OurWaySection content={pnldContent.ourWay} />
-      <FAQ content={pnldContent.faq} />
-      <Contact />
-      <BlogSectionList filterTag="PNLD" />
+      <SectionTracker section={SECTION.HERO}>
+        <HeroSectionPnld content={pnldContent.hero} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.PROBLEM}>
+        <ProblemStatementSectionPnld content={pnldContent.problemStatement} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.SERVICES}>
+        <ServicesSectionPnld content={pnldContent.services} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.ANIMATED_PANEL}>
+        <AnimatedPanelSectionPnld content={pnldContent.animatedPanel} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.HOW_WORKS}>
+        <HowWorksSectionPnld content={pnldContent.howWorks} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.CTA_BANNER}>
+        <CTASection
+          text={pnldContent.ctaBanner.text}
+          buttonText={pnldContent.ctaBanner.buttonText}
+          whatsapp={pnldContent.ctaBanner.whatsapp}
+        />
+      </SectionTracker>
+      <SectionTracker section={SECTION.OUR_WAY}>
+        <OurWaySection content={pnldContent.ourWay} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.FAQ}>
+        <FAQ content={pnldContent.faq} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.CONTACT}>
+        <Contact />
+      </SectionTracker>
+      <SectionTracker section={SECTION.BLOG}>
+        <BlogSectionList filterTag="PNLD" />
+      </SectionTracker>
     </main>
   );
 }

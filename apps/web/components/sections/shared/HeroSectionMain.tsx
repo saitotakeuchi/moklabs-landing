@@ -17,6 +17,7 @@ interface HeroButton {
 interface HeroMainProps {
   content: {
     title: string;
+    subtitle?: string;
     buttons?: HeroButton[];
     image: string;
     imageAlt: string;
@@ -43,6 +44,12 @@ const HeroMain = ({ content }: HeroMainProps) => {
             <h1 className="text-[32px] sm:text-[40px] md:text-[52px] lg:text-[60px] font-bold text-mok-blue leading-[1.2] text-left">
               {content.title}
             </h1>
+
+            {content.subtitle && (
+              <p className="text-lg sm:text-xl md:text-2xl text-mok-blue/80 leading-[1.4] max-w-2xl">
+                {content.subtitle}
+              </p>
+            )}
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full sm:w-auto">

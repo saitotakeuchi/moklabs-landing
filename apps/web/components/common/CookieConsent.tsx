@@ -18,6 +18,9 @@ const CookieConsent = () => {
     // Save consent to localStorage
     localStorage.setItem("cookieConsent", "true");
     setIsVisible(false);
+    // Lets the mobile sticky WhatsApp button snap from bottom-24 to bottom-4
+    // deterministically the moment the banner dismisses.
+    window.dispatchEvent(new Event("cookieConsentAccepted"));
 
     // Upgrade PostHog persistence from in-memory to localStorage+cookie so
     // we can tie cross-session visits together (needed for multi-touch

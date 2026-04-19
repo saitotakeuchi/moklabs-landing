@@ -2,13 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Accordion } from "@/components/ui";
+import type { FAQItem } from "@/components/ui/Accordion";
 
 interface FAQContent {
   title: string;
-  items: Array<{
-    question: string;
-    answer: string;
-  }>;
+  items: ReadonlyArray<FAQItem>;
 }
 
 interface FAQProps {

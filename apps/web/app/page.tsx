@@ -10,6 +10,8 @@ import {
   AnimatedPanelSection,
   BlogSectionList,
 } from "@/components/sections/shared";
+import { SectionTracker } from "@/components/common";
+import { SECTION } from "@/lib/posthog/sections";
 import { mainContent } from "@/content";
 import { seoConfig } from "@/config/seoConfig";
 import { buildFAQSchema } from "@/lib/seo";
@@ -42,20 +44,40 @@ export default function Home() {
           __html: JSON.stringify(buildFAQSchema(mainContent.faq.items)),
         }}
       />
-      <HeroSectionMain content={mainContent.hero} />
-      <ProblemStatementSection content={mainContent.problemStatement} />
-      <ServicesSection content={mainContent.services} />
-      <HowWorksSection content={mainContent.howWorks} />
-      <CTASection
-        text={mainContent.ctaBanner.text}
-        buttonText={mainContent.ctaBanner.buttonText}
-        whatsapp={mainContent.ctaBanner.whatsapp}
-      />
-      <OurWaySection content={mainContent.ourWay} />
-      <AnimatedPanelSection content={mainContent.animatedPanel} />
-      <FAQ content={mainContent.faq} />
-      <Contact />
-      <BlogSectionList />
+      <SectionTracker section={SECTION.HERO}>
+        <HeroSectionMain content={mainContent.hero} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.PROBLEM}>
+        <ProblemStatementSection content={mainContent.problemStatement} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.SERVICES}>
+        <ServicesSection content={mainContent.services} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.HOW_WORKS}>
+        <HowWorksSection content={mainContent.howWorks} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.CTA_BANNER}>
+        <CTASection
+          text={mainContent.ctaBanner.text}
+          buttonText={mainContent.ctaBanner.buttonText}
+          whatsapp={mainContent.ctaBanner.whatsapp}
+        />
+      </SectionTracker>
+      <SectionTracker section={SECTION.OUR_WAY}>
+        <OurWaySection content={mainContent.ourWay} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.ANIMATED_PANEL}>
+        <AnimatedPanelSection content={mainContent.animatedPanel} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.FAQ}>
+        <FAQ content={mainContent.faq} />
+      </SectionTracker>
+      <SectionTracker section={SECTION.CONTACT}>
+        <Contact />
+      </SectionTracker>
+      <SectionTracker section={SECTION.BLOG}>
+        <BlogSectionList />
+      </SectionTracker>
     </main>
   );
 }
