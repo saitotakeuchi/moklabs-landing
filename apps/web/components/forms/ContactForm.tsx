@@ -46,7 +46,7 @@ const ContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const validateForm = () => {
+  const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
     if (!formData.name.trim()) {
@@ -69,8 +69,7 @@ const ContactForm = () => {
       newErrors.message = "Mensagem deve ter pelo menos 10 caracteres";
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   };
 
   const handleChange = (
@@ -96,7 +95,10 @@ const ContactForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      console.warn("[contact-form] validation failed", validationErrors);
+      setErrors(validationErrors);
       return;
     }
 
@@ -213,72 +215,96 @@ const ContactForm = () => {
     );
   }
 
+  const fieldError = (error?: string) =>
+    error ? <p className="text-red-600 text-xs mt-1">{error}</p> : null;
+
+  const inputClass = (error?: string) =>
+    `bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none ${
+      error ? "ring-1 ring-red-600" : ""
+    }`;
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8 items-center">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="flex flex-col gap-8 items-center"
+    >
       <div className="flex flex-col gap-4 w-full">
-        <input
-          id="name"
-          name="name"
-          type="text"
-          placeholder="Nome"
-          value={formData.name}
-          onChange={handleChange}
-          className="bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none"
-          required
-        />
+        <div className="flex flex-col">
+          <input
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Nome"
+            value={formData.name}
+            onChange={handleChange}
+            className={inputClass(errors.name)}
+          />
+          {fieldError(errors.name)}
+        </div>
 
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="E-mail"
-          value={formData.email}
-          onChange={handleChange}
-          className="bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none"
-          required
-        />
+        <div className="flex flex-col">
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="E-mail"
+            value={formData.email}
+            onChange={handleChange}
+            className={inputClass(errors.email)}
+          />
+          {fieldError(errors.email)}
+        </div>
 
-        <input
-          id="company"
-          name="company"
-          type="text"
-          placeholder="Empresa/Editora (opcional)"
-          value={formData.company}
-          onChange={handleChange}
-          className="bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none"
-        />
+        <div className="flex flex-col">
+          <input
+            id="company"
+            name="company"
+            type="text"
+            placeholder="Empresa/Editora (opcional)"
+            value={formData.company}
+            onChange={handleChange}
+            className={inputClass(errors.company)}
+          />
+        </div>
 
-        <select
-          id="service"
-          name="service"
-          value={formData.service}
-          onChange={handleChange}
-          aria-label="Serviço de interesse"
-          required
-          className={`bg-white p-2.5 h-[42px] text-xs border-0 outline-none appearance-none bg-[url('data:image/svg+xml;utf8,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2020%2020%22%20fill=%22%23575756%22><path%20d=%22M5.5%208l4.5%204.5L14.5%208z%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] pr-8 ${
-            formData.service ? "text-[#575756]" : "text-[#9a9a99]"
-          }`}
-        >
-          <option value="" disabled>
-            Serviço de interesse
-          </option>
-          {SERVICE_OPTIONS.map((option) => (
-            <option key={option} value={option} className="text-[#575756]">
-              {option}
+        <div className="flex flex-col">
+          <select
+            id="service"
+            name="service"
+            value={formData.service}
+            onChange={handleChange}
+            aria-label="Serviço de interesse"
+            className={`bg-white p-2.5 h-[42px] text-xs border-0 outline-none appearance-none bg-[url('data:image/svg+xml;utf8,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2020%2020%22%20fill=%22%23575756%22><path%20d=%22M5.5%208l4.5%204.5L14.5%208z%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] pr-8 ${
+              formData.service ? "text-[#575756]" : "text-[#9a9a99]"
+            } ${errors.service ? "ring-1 ring-red-600" : ""}`}
+          >
+            <option value="" disabled>
+              Serviço de interesse
             </option>
-          ))}
-        </select>
+            {SERVICE_OPTIONS.map((option) => (
+              <option key={option} value={option} className="text-[#575756]">
+                {option}
+              </option>
+            ))}
+          </select>
+          {fieldError(errors.service)}
+        </div>
 
-        <textarea
-          id="message"
-          name="message"
-          placeholder="Mensagem"
-          rows={8}
-          value={formData.message}
-          onChange={handleChange}
-          className="bg-white p-2.5 h-[200px] text-xs text-[#575756] border-0 outline-none resize-none"
-          required
-        />
+        <div className="flex flex-col">
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Mensagem"
+            rows={8}
+            value={formData.message}
+            onChange={handleChange}
+            className={`bg-white p-2.5 h-[200px] text-xs text-[#575756] border-0 outline-none resize-none ${
+              errors.message ? "ring-1 ring-red-600" : ""
+            }`}
+          />
+          {fieldError(errors.message)}
+        </div>
       </div>
 
       {errors.submit && (
