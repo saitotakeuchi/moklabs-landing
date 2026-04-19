@@ -79,7 +79,7 @@ export const metadata: Metadata = {
       "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
     images: [
       {
-        url: "/og-image.svg",
+        url: "/og-home.png",
         width: 1200,
         height: 630,
         alt: "Mok Labs",
@@ -91,7 +91,7 @@ export const metadata: Metadata = {
     title: "Mok Labs - PNLD Digital Sem Complicação",
     description:
       "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
-    images: ["/og-image.svg"],
+    images: ["/og-home.png"],
   },
   robots: {
     index: true,

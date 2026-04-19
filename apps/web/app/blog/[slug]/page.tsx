@@ -42,7 +42,7 @@ export async function generateMetadata({
     };
   }
 
-  const ogImage = `${seoConfig.home.url}/og-image.svg`;
+  const ogImage = `${seoConfig.home.url}/og-blog-default.png`;
 
   return {
     title: `${post.title} | Blog Mok Labs`,
@@ -190,7 +190,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
-    image: `${seoConfig.home.url}/og-image.svg`,
+    image: `${seoConfig.home.url}/og-blog-default.png`,
     datePublished: post.date,
     dateModified: post.date,
     author: {
