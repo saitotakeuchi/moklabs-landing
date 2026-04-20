@@ -1,17 +1,22 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import type { ServiceCardItem } from "@/content/mainContent";
 
 interface ServicesMainProps {
   content: {
     title: string;
-    items: string[];
+    items: ReadonlyArray<ServiceCardItem>;
     splashImage: string;
     splashText: string;
   };
 }
+
+const serviceHref = (canonical: string) =>
+  `/?service=${encodeURIComponent(canonical)}#contato`;
 
 const ServicesMain = ({ content }: ServicesMainProps) => {
   const splashRef = useRef(null);
@@ -74,13 +79,14 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
 
           {/* Services List */}
           <div className="flex flex-col gap-10 items-center w-full">
-            {content.items.map((item, index) => (
-              <div
-                key={index}
-                className="text-[24px] font-bold text-mok-blue text-center leading-[1.2]"
+            {content.items.map((item) => (
+              <Link
+                key={item.canonical}
+                href={serviceHref(item.canonical)}
+                className="text-[24px] font-bold text-mok-blue text-center leading-[1.2] hover:underline underline-offset-4 transition"
               >
-                {item}
-              </div>
+                {item.label}
+              </Link>
             ))}
           </div>
         </div>
@@ -115,13 +121,14 @@ const ServicesMain = ({ content }: ServicesMainProps) => {
 
           {/* Services List */}
           <div className="flex flex-col gap-6 sm:gap-10 items-center w-full">
-            {content.items.map((item, index) => (
-              <div
-                key={index}
-                className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2]"
+            {content.items.map((item) => (
+              <Link
+                key={item.canonical}
+                href={serviceHref(item.canonical)}
+                className="text-[18px] sm:text-[24px] font-bold text-mok-blue text-center leading-[1.2] hover:underline underline-offset-4 transition"
               >
-                {item}
-              </div>
+                {item.label}
+              </Link>
             ))}
           </div>
 

@@ -12,7 +12,7 @@ interface HowWorksPnldProps {
 
 const HowWorksPnld = ({ content }: HowWorksPnldProps) => {
   return (
-    <section className="bg-mok-green py-12 sm:py-24">
+    <section id="como-funciona" className="bg-mok-green py-12 sm:py-24">
       <div className="max-w-[1184px] mx-auto px-4 sm:px-8 flex flex-col items-center">
         <h2 className="text-mok-blue text-center text-[24px] sm:text-[32px] font-bold leading-[1.2] mb-8 sm:mb-16">
           {content.title}

@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Header, Footer } from "@/components/sections";
+import { StickyWhatsAppButton } from "@/components/common";
 import { ReactNode } from "react";
 
 interface ConditionalLayoutProps {
@@ -33,6 +34,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
       <Header />
       {children}
       <Footer />
+      <StickyWhatsAppButton />
     </div>
   );
 }

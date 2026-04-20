@@ -14,6 +14,7 @@ import {
   getAdjacentPosts,
 } from "@/lib/blog";
 import { seoConfig } from "@/config/seoConfig";
+import { buildBreadcrumbSchema } from "@/lib/seo";
 
 interface BlogPostPageProps {
   params: {
@@ -41,12 +42,11 @@ export async function generateMetadata({
     };
   }
 
-  const ogImage = `${seoConfig.home.url}/og-image.svg`;
+  const ogImage = `${seoConfig.home.url}/og-blog-default.png`;
 
   return {
     title: `${post.title} | Blog Mok Labs`,
     description: post.description,
-    keywords: post.tags,
     authors: [{ name: "Mok Labs", url: seoConfig.home.url }],
     openGraph: {
       title: post.title,
@@ -190,7 +190,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
-    image: `${seoConfig.home.url}/og-image.svg`,
+    image: `${seoConfig.home.url}/og-blog-default.png`,
     datePublished: post.date,
     dateModified: post.date,
     author: {
@@ -215,12 +215,22 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     },
   };
 
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Blog", url: "/blog" },
+    { name: post.title, url: `/blog/${params.slug}` },
+  ]);
+
   return (
     <>
       {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <div className="min-h-screen bg-white">

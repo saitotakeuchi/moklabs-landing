@@ -1,16 +1,30 @@
+import type { ServiceSlug } from "@/lib/services";
+
+export interface ServiceCardItem {
+  label: string;
+  canonical: ServiceSlug;
+}
+
 export const mainContent = {
   hero: {
-    title: "Soluções digitais para a educação, sem complicação",
+    title:
+      "Tecnologia educacional feita sob medida para editoras e edtechs brasileiras.",
+    subtitle:
+      "Do livro digital ao PNLD, dos jogos educacionais à IA aplicada — entregamos com acessibilidade e conformidade como padrão, não como extra.",
     image: "/main-lp-hero.svg",
-    imageAlt: "Digital solutions illustration",
+    imageAlt: "Ilustração de soluções digitais educacionais — Mok Labs",
     buttons: [
       {
-        text: "Vamos conversar!",
-        url: "https://wa.me/5541936182622",
+        text: "Pedir orçamento",
         variant: "primary" as const,
+        whatsapp: {
+          message:
+            "Olá! Vim do site da Mok Labs e quero saber mais sobre soluções digitais para educação.",
+          placement: "hero-home",
+        },
       },
       {
-        text: "Conheça os serviços",
+        text: "Ver serviços",
         url: "#servicos",
         variant: "secondary" as const,
       },
@@ -20,13 +34,16 @@ export const mainContent = {
   services: {
     title: "Nossos Serviços",
     items: [
-      "LIVROS DIGITAIS",
-      "JOGOS EDUCACIONAIS",
-      "CONTEÚDO MULTIMÍDIA",
-      "ACESSIBILIDADE E AUDIODESCRIÇÃO",
-      "CONSULTORIA DIGITAL",
-      "AUTOMAÇÃO",
-    ],
+      { label: "LIVROS DIGITAIS", canonical: "Livro Digital" },
+      { label: "PNLD DIGITAL", canonical: "PNLD Digital" },
+      { label: "JOGOS EDUCACIONAIS", canonical: "Jogos Educacionais" },
+      { label: "CONTEÚDO MULTIMÍDIA", canonical: "Conteúdo Multimídia" },
+      { label: "IA APLICADA À EDUCAÇÃO", canonical: "IA Aplicada à Educação" },
+      { label: "ACESSIBILIDADE", canonical: "Acessibilidade" },
+      { label: "AUDIODESCRIÇÃO", canonical: "Audiodescrição" },
+      { label: "CONSULTORIA DIGITAL", canonical: "Consultoria" },
+      { label: "AUTOMAÇÃO", canonical: "Automação" },
+    ] satisfies ServiceCardItem[],
     splashImage: "/services-splash-white.svg",
     splashText: "CRIATIVIDADE, INOVAÇÃO E AGILIDADE",
     decorativeImages: [
@@ -65,8 +82,12 @@ export const mainContent = {
 
   ctaBanner: {
     text: "Pronto para tirar sua ideia do papel?",
-    buttonText: "Vamos conversar!",
-    buttonUrl: "https://wa.me/5541936182622",
+    buttonText: "Falar com especialista",
+    whatsapp: {
+      message:
+        "Olá! Pronto para tirar minha ideia do papel. Podemos conversar?",
+      placement: "banner-home",
+    },
   },
 
   ourWay: {

@@ -128,7 +128,7 @@ export const siteConfig = {
     ],
     creator: "Mok Labs",
     publisher: "Mok Labs",
-    ogImage: "/og-image.svg",
+    ogImage: "/og-home.png",
     twitterHandle: "@moklabs",
   },
 

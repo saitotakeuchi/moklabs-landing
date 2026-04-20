@@ -1,25 +1,47 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import posthog from "posthog-js";
 import { motion, AnimatePresence } from "framer-motion";
+
+export interface FAQRelatedLink {
+  label: string;
+  href: string;
+  variant?: "link" | "cta";
+}
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+  relatedLinks?: ReadonlyArray<FAQRelatedLink>;
+}
+
+const fireFaqOpened = (question: string, index: number): void => {
+  if (typeof window === "undefined" || !posthog.__loaded) return;
+  posthog.capture("faq_opened", {
+    question,
+    question_index: index,
+    page: window.location.pathname,
+  });
+};
 
 interface AccordionItemProps {
   number: number;
-  question: string;
-  answer: string;
+  item: FAQItem;
   isOpen: boolean;
   onToggle: () => void;
 }
 
 const AccordionItem = ({
   number,
-  question,
-  answer,
+  item,
   isOpen,
   onToggle,
 }: AccordionItemProps) => {
   const panelId = `accordion-panel-${number}`;
   const headingId = `accordion-heading-${number}`;
+  const { question, answer, relatedLinks } = item;
 
   return (
     <div className="w-full border-b border-mok-blue">
@@ -72,6 +94,23 @@ const AccordionItem = ({
           >
             <div className="pl-6 pb-6 text-mok-blue text-[16px] leading-[1.6]">
               {answer}
+              {relatedLinks && relatedLinks.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {relatedLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={
+                        link.variant === "cta"
+                          ? "inline-flex items-center rounded-full bg-mok-blue text-white px-4 py-1.5 text-sm font-semibold hover:bg-mok-blue/90 transition-colors"
+                          : "underline underline-offset-4 text-mok-blue hover:text-mok-blue/70 text-sm transition-colors"
+                      }
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -81,10 +120,7 @@ const AccordionItem = ({
 };
 
 interface AccordionProps {
-  items: Array<{
-    question: string;
-    answer: string;
-  }>;
+  items: ReadonlyArray<FAQItem>;
   allowMultiple?: boolean;
 }
 
@@ -93,6 +129,7 @@ const Accordion = ({ items, allowMultiple = false }: AccordionProps) => {
 
   const toggleItem = (index: number) => {
     const newOpenItems = new Set(openItems);
+    const isOpening = !newOpenItems.has(index);
 
     if (newOpenItems.has(index)) {
       newOpenItems.delete(index);
@@ -101,6 +138,10 @@ const Accordion = ({ items, allowMultiple = false }: AccordionProps) => {
         newOpenItems.clear();
       }
       newOpenItems.add(index);
+    }
+
+    if (isOpening) {
+      fireFaqOpened(items[index].question, index);
     }
 
     setOpenItems(newOpenItems);
@@ -112,8 +153,7 @@ const Accordion = ({ items, allowMultiple = false }: AccordionProps) => {
         <AccordionItem
           key={index}
           number={index + 1}
-          question={item.question}
-          answer={item.answer}
+          item={item}
           isOpen={openItems.has(index)}
           onToggle={() => toggleItem(index)}
         />

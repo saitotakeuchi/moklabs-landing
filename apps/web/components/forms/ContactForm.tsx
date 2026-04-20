@@ -1,13 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import {
   flattenAttribution,
   getAttribution,
   type Attribution,
 } from "@/lib/attribution";
+import {
+  SERVICE_GROUPS,
+  isServiceSlug,
+  type ServiceSlug,
+} from "@/lib/services";
 
 const safeCapture = (
   event: string,
@@ -18,23 +24,11 @@ const safeCapture = (
   posthog.capture(event, properties);
 };
 
-const SERVICE_OPTIONS = [
-  "Conversão EPUB3",
-  "Recursos Digitais",
-  "Simuladores",
-  "Objetos Digitais",
-  "Livro Digital",
-  "PNLD Digital",
-  "Audiodescrição",
-  "Ilustração",
-  "Outros",
-] as const;
-
 interface FormData {
   name: string;
   email: string;
   company: string;
-  service: string;
+  service: ServiceSlug | "";
   message: string;
 }
 
@@ -57,10 +51,12 @@ const EMPTY_FORM: FormData = {
 
 const ContactForm = () => {
   const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
+  const searchParams = useSearchParams();
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const hasFiredFieldFocus = useRef(false);
 
   useEffect(() => {
     // Defer one tick so the PostHogProvider's init effect runs first.
@@ -69,6 +65,17 @@ const ContactForm = () => {
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    // Source of truth for `?service=...` pre-fill — `useSearchParams` reacts
+    // to client-side navigation (service-card Link clicks re-emit new params).
+    const raw = searchParams?.get("service") ?? null;
+    if (raw && isServiceSlug(raw)) {
+      setFormData((prev) =>
+        prev.service === raw ? prev : { ...prev, service: raw }
+      );
+    }
+  }, [searchParams]);
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
@@ -112,6 +119,20 @@ const ContactForm = () => {
         [name]: "",
       }));
     }
+  };
+
+  const handleFieldFocus = (
+    e: React.FocusEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    if (hasFiredFieldFocus.current) return;
+    hasFiredFieldFocus.current = true;
+    safeCapture("contact_form_field_focused", {
+      first_field: e.target.name,
+      page:
+        typeof window !== "undefined" ? window.location.pathname : undefined,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,6 +196,7 @@ const ContactForm = () => {
         safeCapture("lead_submitted", {
           service: payload.service,
           company: payload.company || undefined,
+          has_company: payload.company.length > 0,
           duration_ms: durationMs,
           ...flattenAttribution(attribution),
         });
@@ -258,10 +280,16 @@ const ContactForm = () => {
   const fieldError = (error?: string) =>
     error ? <p className="text-red-600 text-xs mt-1">{error}</p> : null;
 
-  const inputClass = (error?: string) =>
-    `bg-white p-2.5 h-[42px] text-xs text-[#575756] border-0 outline-none ${
-      error ? "ring-1 ring-red-600" : ""
-    }`;
+  const inputBase =
+    "peer bg-white w-full h-[56px] px-2.5 pt-5 pb-1.5 text-xs text-[#575756] border-0 outline-none";
+  const ring = (error?: string) => (error ? "ring-1 ring-red-600" : "");
+
+  // Floating-label class for input/textarea (uses peer-placeholder-shown trick).
+  // Requires placeholder=" " on the paired field.
+  const floatingLabel =
+    "absolute left-2.5 top-1.5 text-[10px] font-medium text-[#0013ff] transition-all pointer-events-none " +
+    "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-xs peer-placeholder-shown:text-[#9a9a99] peer-placeholder-shown:font-normal " +
+    "peer-focus:top-1.5 peer-focus:translate-y-0 peer-focus:text-[10px] peer-focus:text-[#0013ff] peer-focus:font-medium";
 
   return (
     <form
@@ -271,78 +299,117 @@ const ContactForm = () => {
     >
       <div className="flex flex-col gap-4 w-full">
         <div className="flex flex-col">
-          <input
-            id="name"
-            name="name"
-            type="text"
-            placeholder="Nome"
-            value={formData.name}
-            onChange={handleChange}
-            className={inputClass(errors.name)}
-          />
+          <div className="relative">
+            <input
+              id="name"
+              name="name"
+              type="text"
+              placeholder=" "
+              value={formData.name}
+              onChange={handleChange}
+              onFocus={handleFieldFocus}
+              className={`${inputBase} ${ring(errors.name)}`}
+            />
+            <label htmlFor="name" className={floatingLabel}>
+              Nome completo
+            </label>
+          </div>
           {fieldError(errors.name)}
         </div>
 
         <div className="flex flex-col">
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="E-mail"
-            value={formData.email}
-            onChange={handleChange}
-            className={inputClass(errors.email)}
-          />
+          <div className="relative">
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder=" "
+              value={formData.email}
+              onChange={handleChange}
+              onFocus={handleFieldFocus}
+              className={`${inputBase} ${ring(errors.email)}`}
+            />
+            <label htmlFor="email" className={floatingLabel}>
+              E-mail
+            </label>
+          </div>
           {fieldError(errors.email)}
         </div>
 
         <div className="flex flex-col">
-          <input
-            id="company"
-            name="company"
-            type="text"
-            placeholder="Empresa/Editora (opcional)"
-            value={formData.company}
-            onChange={handleChange}
-            className={inputClass(errors.company)}
-          />
+          <div className="relative">
+            <input
+              id="company"
+              name="company"
+              type="text"
+              placeholder=" "
+              value={formData.company}
+              onChange={handleChange}
+              onFocus={handleFieldFocus}
+              className={`${inputBase} ${ring(errors.company)}`}
+            />
+            <label htmlFor="company" className={floatingLabel}>
+              Empresa/Editora (opcional)
+            </label>
+          </div>
         </div>
 
         <div className="flex flex-col">
-          <select
-            id="service"
-            name="service"
-            value={formData.service}
-            onChange={handleChange}
-            aria-label="Serviço de interesse"
-            className={`bg-white p-2.5 h-[42px] text-xs border-0 outline-none appearance-none bg-[url('data:image/svg+xml;utf8,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2020%2020%22%20fill=%22%23575756%22><path%20d=%22M5.5%208l4.5%204.5L14.5%208z%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] pr-8 ${
-              formData.service ? "text-[#575756]" : "text-[#9a9a99]"
-            } ${errors.service ? "ring-1 ring-red-600" : ""}`}
-          >
-            <option value="" disabled>
-              Serviço de interesse
-            </option>
-            {SERVICE_OPTIONS.map((option) => (
-              <option key={option} value={option} className="text-[#575756]">
-                {option}
+          <div className="relative">
+            <select
+              id="service"
+              name="service"
+              value={formData.service}
+              onChange={handleChange}
+              onFocus={handleFieldFocus}
+              className={`bg-white w-full h-[56px] px-2.5 pt-5 pb-1.5 text-xs border-0 outline-none appearance-none bg-[url('data:image/svg+xml;utf8,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2020%2020%22%20fill=%22%23575756%22><path%20d=%22M5.5%208l4.5%204.5L14.5%208z%22/></svg>')] bg-no-repeat bg-[right_0.75rem_center] pr-8 ${
+                formData.service ? "text-[#575756]" : "text-transparent"
+              } ${ring(errors.service)}`}
+            >
+              <option value="" disabled>
+                {/* Prompt hidden visually — label above replaces it. */}
               </option>
-            ))}
-          </select>
+              {SERVICE_GROUPS.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.slugs.map((slug) => (
+                    <option key={slug} value={slug} className="text-[#575756]">
+                      {slug}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            <label
+              htmlFor="service"
+              className="absolute left-2.5 top-1.5 text-[10px] font-medium text-[#0013ff] pointer-events-none"
+            >
+              Serviço de interesse
+            </label>
+          </div>
           {fieldError(errors.service)}
         </div>
 
         <div className="flex flex-col">
-          <textarea
-            id="message"
-            name="message"
-            placeholder="Mensagem"
-            rows={8}
-            value={formData.message}
-            onChange={handleChange}
-            className={`bg-white p-2.5 h-[200px] text-xs text-[#575756] border-0 outline-none resize-none ${
-              errors.message ? "ring-1 ring-red-600" : ""
-            }`}
-          />
+          <div className="relative">
+            <textarea
+              id="message"
+              name="message"
+              placeholder=" "
+              rows={8}
+              value={formData.message}
+              onChange={handleChange}
+              onFocus={handleFieldFocus}
+              className={`peer bg-white w-full h-[200px] px-2.5 pt-5 pb-1.5 text-xs text-[#575756] border-0 outline-none resize-none ${ring(
+                errors.message
+              )}`}
+            />
+            <label
+              htmlFor="message"
+              className="absolute left-2.5 top-1.5 text-[10px] font-medium text-[#0013ff] transition-all pointer-events-none peer-placeholder-shown:top-3 peer-placeholder-shown:text-xs peer-placeholder-shown:text-[#9a9a99] peer-placeholder-shown:font-normal peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-[#0013ff] peer-focus:font-medium"
+            >
+              Mensagem
+            </label>
+          </div>
           {fieldError(errors.message)}
         </div>
       </div>

@@ -12,6 +12,7 @@ import {
   PostHogProvider,
   VercelAnalytics,
 } from "@/components/common";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const firaCode = Fira_Code({
@@ -40,8 +41,6 @@ export const metadata: Metadata = {
     maximumScale: 5,
     userScalable: true,
   },
-  keywords:
-    "PNLD digital, livros digitais acessíveis, conversão PDF, ePUB, materiais educacionais, editais PNLD",
   authors: [{ name: "Mok Labs" }],
   creator: "Mok Labs",
   publisher: "Mok Labs",
@@ -80,7 +79,7 @@ export const metadata: Metadata = {
       "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
     images: [
       {
-        url: "/og-image.svg",
+        url: "/og-home.png",
         width: 1200,
         height: 630,
         alt: "Mok Labs",
@@ -92,7 +91,7 @@ export const metadata: Metadata = {
     title: "Mok Labs - PNLD Digital Sem Complicação",
     description:
       "Transformamos seus materiais em versões digitais acessíveis e em conformidade com os editais do PNLD.",
-    images: ["/og-image.svg"],
+    images: ["/og-home.png"],
   },
   robots: {
     index: true,
@@ -118,6 +117,16 @@ export default function RootLayout({
         <meta name="theme-color" content="#0013FF" />
       </head>
       <body className={`${firaCode.variable} ${inter.variable} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         <GoogleTagManagerNoscript />
         <GoogleTagManager />
         <GoogleAnalytics />
