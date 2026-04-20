@@ -38,15 +38,16 @@ const HeroMain = ({ content }: HeroMainProps) => {
       }}
     >
       <div className="max-w-[1184px] mx-auto">
-        <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-end">
-          {/* Text Content - Left Side */}
-          <div className="flex-1 flex flex-col gap-6 md:gap-16 items-start pb-12 md:pb-24">
-            <h1 className="text-[32px] sm:text-[40px] md:text-[52px] lg:text-[60px] font-bold text-mok-blue leading-[1.2] text-left">
-              {content.title}
-            </h1>
+        {/* Title - full width row */}
+        <h1 className="text-[32px] sm:text-[44px] md:text-[56px] lg:text-[64px] font-bold text-mok-blue leading-[1.1] mb-8 md:mb-16 max-w-[1040px]">
+          {content.title}
+        </h1>
 
+        {/* Subtitle + CTAs | Illustration - even split below the title */}
+        <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-end">
+          <div className="flex-1 flex flex-col gap-6 md:gap-8 items-start pb-12 md:pb-24">
             {content.subtitle && (
-              <p className="text-lg sm:text-xl md:text-2xl text-mok-blue/80 leading-[1.4] max-w-2xl">
+              <p className="text-lg sm:text-xl md:text-2xl text-mok-blue/80 leading-[1.4] max-w-xl">
                 {content.subtitle}
               </p>
             )}
@@ -101,7 +102,6 @@ const HeroMain = ({ content }: HeroMainProps) => {
 
           {/* Illustration - Right Side - Bottom Aligned */}
           <div className="flex-1 flex justify-center md:justify-end relative">
-            {/* Character Illustration - Bottom aligned, no wrapper height constraint */}
             <Image
               src={content.image}
               alt={content.imageAlt}
